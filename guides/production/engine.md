@@ -88,6 +88,8 @@ module.exports = {
 | `k.dot({ cx, cy, r, fill, line })` | 圆点 |
 | `k.shape(type, opts)` | 任意 pptxgenjs 形状（逃生口，慎用） |
 
+**光** `k.light({ cx, cy, rx, ry, color, strength })`：在 (cx, cy) 放一圈径向渐变、自然衰减的光（默认颜色取 theme 的 `glow`），自动置于最底层；每页最多一束；Morph 名固定为 `light`，整套使用 Morph 转场时会在页面之间移动。
+
 **图片** `k.image(src, { x, y, w, h, fit: 'cover' | 'contain', focus: { x, y }, bleed, name, transparency })`，src 相对于 deck 目录。只支持 PNG 和 JPEG。
 
 **图表** `k.chart(type, data, opts)`：`type` 为 `bar | line | area | pie | doughnut | scatter`；`data` 为 `[{ name, labels, values }]`。opts：`x y w h`、`colors`、`legend`、`labels`（显示数值）、`format`（数字格式，如 `'0%'`）、`grid: false`、`valAxis: false`、`horizontal`、`min/max`、`markers`、`lineSize`、`raw`（直接传 pptxgenjs 的选项）。

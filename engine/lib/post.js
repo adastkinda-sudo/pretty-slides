@@ -58,7 +58,30 @@ function timingXml(xml, builds) {
   };
 }
 
-async function postProcess(buffer, { transitions, fontPairs, builds = [] }) {
+// Light pools: replace the placeholder fill of the '!!light' ellipse with a radial gradient that fades to the
+// page colour (so even renderers that ignore alpha blend the edge), and move it to the back of the slide.
+function applyLight(xml, spec) {
+  if (!spec) return xml;
+  const m = xml.match(/<p:sp>(?:(?!<\/p:sp>)[\s\S])*?name="!!light"[\s\S]*?<\/p:sp>/);
+  if (!m) throw new Error('light shape not found');
+  const mid = mixHex(spec.edge, spec.color, 0.45);
+  const a = Math.round(100000 * Math.min(1, spec.strength));
+  const grad = `<a:gradFill rotWithShape="1"><a:gsLst>`
+    + `<a:gs pos="0"><a:srgbClr val="${spec.color}"><a:alpha val="${a}"/></a:srgbClr></a:gs>`
+    + `<a:gs pos="35000"><a:srgbClr val="${mid}"><a:alpha val="${Math.round(a * 0.65)}"/></a:srgbClr></a:gs>`
+    + `<a:gs pos="70000"><a:srgbClr val="${mixHex(spec.edge, spec.color, 0.12)}"><a:alpha val="${Math.round(a * 0.2)}"/></a:srgbClr></a:gs>`
+    + `<a:gs pos="100000"><a:srgbClr val="${spec.edge}"><a:alpha val="0"/></a:srgbClr></a:gs>`
+    + `</a:gsLst><a:path path="circle"><a:fillToRect l="50000" t="50000" r="50000" b="50000"/></a:path></a:gradFill>`;
+  const sp = m[0].replace(/<a:solidFill>[\s\S]*?<\/a:solidFill>/, grad);
+  const without = xml.replace(m[0], '');
+  return without.replace(/(<p:spTree>[\s\S]*?<\/p:grpSpPr>)/, `$1${sp}`);
+}
+function mixHex(a, b, t) {
+  const p = [0, 2, 4].map((i) => parseInt(a.slice(i, i + 2), 16)), q = [0, 2, 4].map((i) => parseInt(b.slice(i, i + 2), 16));
+  return p.map((v, i) => Math.round(v + (q[i] - v) * t).toString(16).padStart(2, '0')).join('').toUpperCase();
+}
+
+async function postProcess(buffer, { transitions, fontPairs, builds = [], lights = [] }) {
   const zip = await JSZip.loadAsync(buffer);
   for (let i = 0; i < transitions.length; i++) {
     const file = `ppt/slides/slide${i + 1}.xml`;
@@ -70,6 +93,8 @@ async function postProcess(buffer, { transitions, fontPairs, builds = [] }) {
     }
     const tx = transitionXml(transitions[i]);
     if (tx) xml = xml.replace('</p:clrMapOvr>', `</p:clrMapOvr>${tx}`);
+    if (lights[i] && lights[i].length > 1) throw new Error(`slide ${i + 1}: only one light per slide`);
+    xml = applyLight(xml, lights[i] && lights[i][0]);
     const tm = timingXml(xml, builds[i]);
     if (tm.missing.length) throw new Error(`slide ${i + 1}: build targets not found in XML: ${tm.missing.join(', ')}`);
     if (tm.xml) xml = xml.replace('</p:sld>', `${tm.xml}</p:sld>`);

@@ -1,5 +1,5 @@
 // S01 — 封面 ★：暗室里一张注意力矩阵是唯一的光源；最亮的一格是 it → animal。视觉中心：那一格。
-const { TOKENS, IT, heat, room } = require('../parts');
+const { TOKENS, IT, heat } = require('../parts');
 
 function weight(r, c) {
   if (r === IT && c === 1) return 1;                      // it → animal
@@ -16,9 +16,9 @@ module.exports = {
   transition: 'none',
   notes: '开场：今天只讲一个想法——注意力机制本质上是一次“按内容检索”。右侧是例句的注意力矩阵（示意），最亮的格子是 it 看向 animal。',
   build(k) {
-    room(k, 'cover');
     const N = TOKENS.length, cell = 0.5, gap = 0.06, pitch = cell + gap;
     const x0 = k.W - 0.55 - N * pitch + gap, y0 = (k.H - (N * pitch - gap)) / 2;
+    k.light({ cx: x0 + 1 * pitch + cell / 2, cy: y0 + IT * pitch + cell / 2, rx: 5, ry: 4.2, strength: 1 });
     for (let r = 0; r < N; r++) {
       for (let c = 0; c < N; c++) k.rect({ x: x0 + c * pitch, y: y0 + r * pitch, w: cell, h: cell, fill: heat(k, weight(r, c)) });
       k.text(TOKENS[r], { style: 'caption', font: 'latin', color: r === IT ? 'accent' : 'stone', x: x0 - 1.1, y: y0 + r * pitch + 0.12, w: 1.0, align: 'right', nowrap: true });

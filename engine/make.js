@@ -66,7 +66,7 @@ async function build(opt) {
   pptx.title = deck.title || name;
   if (deck.author) pptx.author = deck.author;
 
-  const manifest = [], transitions = [], reports = [], builds = [];
+  const manifest = [], transitions = [], reports = [], builds = [], lights = [];
   for (const [index, id] of deck.slides.entries()) {
     const file = findSlideFile(opt.dir, id);
     const mod = fresh(file);
@@ -82,13 +82,14 @@ async function build(opt) {
     if (mod.notes) k.notes(String(mod.notes).trim());
     transitions.push(mod.transition || theme.transition || 'none');
     builds.push(k._builds());
+    lights.push(k._lights());
     manifest.push({ id, index: index + 1, title: mod.title || '', rhythm: mod.rhythm || '', file: path.relative(opt.dir, file) });
     const q = k._qa();
     reports.push(check({ id, boxes: q.boxes, bg: q.bg, W, H, M: k.M, rhythm: mod.rhythm, textOnly: mod.textOnly }));
   }
 
   const raw = await pptx.write({ outputType: 'nodebuffer' });
-  const buf = await postProcess(raw, { transitions, fontPairs: theme.fontPairs, builds });
+  const buf = await postProcess(raw, { transitions, fontPairs: theme.fontPairs, builds, lights });
   const outDir = path.join(opt.dir, 'out');
   fs.mkdirSync(outDir, { recursive: true });
   const pptxPath = path.join(outDir, `${name}.pptx`);

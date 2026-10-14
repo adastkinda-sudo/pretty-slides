@@ -1,6 +1,6 @@
 // S04 — 变换流程：it 的词向量经三个矩阵分出 Q / K / V。视觉中心：被点亮的 Q 一行（它要去“找”）。
 // 逐行出现：Q → K → V。q / k / v 与 q-vec 同名，Morph 到 S05。
-const { vector, room, frame } = require('../parts');
+const { vector, frame } = require('../parts');
 
 const ROLES = [
   { L: 'Q', name: 'q', en: 'Query', zh: '我在找：我指代的是谁？', seed: 3, lo: 0.45, hi: 1 },
@@ -14,7 +14,6 @@ module.exports = {
   title: 'Q K V',
   notes: '模型怎么“看”？每个词先派生出三个向量。以 it 为例：词向量分别乘以三个可学习的矩阵 W_Q、W_K、W_V。（单击 1：Query——它在找什么。单击 2：Key——它能被怎样找到。单击 3：Value——被关注时交出的内容。）',
   build(k) {
-    room(k, 'left');
     frame(k, { section: '01', name: '按内容检索' });
     k.text('每个词同时扮演三个角色', { style: 'title', x: k.M.x, y: k.M.top, w: 8, nowrap: true });
 
@@ -25,6 +24,7 @@ module.exports = {
     k.text('词向量', { style: 'caption', x: k.M.x + 0.5, y: inY - 0.6, w: 1.2, nowrap: true });
 
     const opX = k.col(5) - 0.1, outX = k.col(6) + 0.25, letterX = k.col(9) + 0.05, textX = k.col(10);
+    k.light({ cx: outX + 1.6, cy: rows[0] + 0.12, rx: 4.2, ry: 1.9 }); // the Query row
     ROLES.forEach((r, i) => {
       const y = rows[i], hot = i === 0, step = i + 1;
       k.line({ x1: input.right + 0.15, y1: input.cy, x2: opX - 0.12, y2: y + 0.12, color: hot ? 'accent' : 'stone', weight: hot ? 1.5 : 0.75, build: step });

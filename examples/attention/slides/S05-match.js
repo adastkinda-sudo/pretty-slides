@@ -1,6 +1,6 @@
 // S05 — 匹配 ★：it 的 Q 依次与各词的 K 比较，得分经 softmax 变成权重；权重按亮度点亮，最亮的是 animal。
 // 视觉中心：0.46 那根最亮的权重条。Morph 自 S04（q / k / v / q-vec 同名）。权重与 S03 一致（节选）。
-const { vector, heat, room, frame } = require('../parts');
+const { vector, heat, frame } = require('../parts');
 
 const KEYS = [
   { t: 'The', w: 0.02, seed: 21 },
@@ -14,10 +14,8 @@ module.exports = {
   id: 'S05',
   rhythm: 'dense',
   title: 'Q 与 K 匹配',
-  transition: 'morph',
   notes: 'it 的 Query 依次与每个词的 Key 做点积，得到匹配分数（单击 1）；softmax 把分数变成权重——animal 最亮，0.46（单击 2）；最后按权重把各词的 Value 加权求和，得到 it 的新表示（单击 3）。图中只列出 5 个词，权重为示意值。',
   build(k) {
-    room(k, 'right');
     frame(k, { section: '01', name: '按内容检索' });
     k.text('匹配度，决定从每个词取多少', { style: 'title', x: k.M.x, y: k.M.top, w: 9, nowrap: true });
 
@@ -45,6 +43,7 @@ module.exports = {
 
     // ③ softmax weights — the light
     const barX = keyRight + 0.5, barMax = 2.7;
+    k.light({ cx: barX + 1.3, cy: rowsY[1] + 0.12, rx: 3.6, ry: 2.2 }); // the 0.46 bar
     k.text('softmax 权重', { style: 'label', x: barX, y: top - 0.62, w: 2, nowrap: true });
     KEYS.forEach((r, i) => {
       const y = rowsY[i], lit = r.w >= 0.4, bw = Math.max(0.05, (r.w / 0.5) * barMax);
