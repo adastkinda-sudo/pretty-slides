@@ -105,7 +105,34 @@ async function postProcess(buffer, { transitions, fontPairs, builds = [], lights
     if (tm.xml) xml = xml.replace('</p:sld>', `${tm.xml}</p:sld>`);
     zip.file(file, xml);
   }
+  await sanitizePackage(zip);
   return zip.generateAsync({ type: 'nodebuffer', compression: 'DEFLATE' });
+}
+
+// Package integrity. pptxgenjs declares content-type overrides for parts it never writes (e.g. slideMaster2..N),
+// which makes PowerPoint offer to "repair" the file on every open (LibreOffice doesn't care). Drop overrides for
+// missing parts, and fail loudly on any relationship that points at a part that does not exist.
+async function sanitizePackage(zip) {
+  const ctPath = '[Content_Types].xml';
+  let ct = await zip.file(ctPath).async('string');
+  ct = ct.replace(/\s*<Override PartName="([^"]+)"[^>]*\/>/g, (m, part) => (zip.file(part.replace(/^\//, '')) ? m : ''));
+  zip.file(ctPath, ct);
+  const dangling = [];
+  for (const relPath of Object.keys(zip.files).filter((n) => n.endsWith('.rels'))) {
+    const rels = await zip.file(relPath).async('string');
+    const baseDir = relPath.replace(/_rels\/[^/]*\.rels$/, ''); // root part is "_rels/.rels"
+    for (const [, target, mode] of rels.matchAll(/Target="([^"]+)"(?:\s+TargetMode="([^"]+)")?/g)) {
+      if (mode === 'External') continue;
+      const resolved = target.startsWith('/') ? target.slice(1) : normalize(baseDir + target);
+      if (!zip.file(resolved)) dangling.push(`${relPath} → ${target}`);
+    }
+  }
+  if (dangling.length) throw new Error(`pptx package has relationships to missing parts:\n  ${dangling.join('\n  ')}`);
+}
+function normalize(p) {
+  const out = [];
+  for (const seg of p.split('/')) { if (seg === '..') out.pop(); else if (seg && seg !== '.') out.push(seg); }
+  return out.join('/');
 }
 
 module.exports = { postProcess };
