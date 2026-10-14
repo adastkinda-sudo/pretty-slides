@@ -12,10 +12,9 @@ module.exports = {
     graphite: '4B4A46',  // secondary text
     stone: '6F6C65',     // labels, captions (≥4.5:1 on paper)
     hairline: 'D3CFC5',  // rules, axes
-    accent: 'B4442B',    // vermilion — the only chromatic color; ≤ 10% of any page
-    night: '151514',     // dark pages
-    nightText: 'EDEAE3',
-    nightMuted: 'A19D94', // secondary text on night
+    accent: 'B4442B',    // vermilion — the one accent; give every colour a job
+    glow: 'E4DCCB',      // k.light colour (on a light ground: a slightly warmer, brighter paper)
+    // One world per deck: for a dark deck, make paper itself dark — don't mix light and dark pages.
   },
   fonts: {
     serif: 'Songti SC',

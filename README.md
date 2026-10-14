@@ -4,15 +4,19 @@
 
 ![示例：注意力机制（引擎自测 deck）](examples/attention/renders/_contact.png)
 
+示例的意象、设计系统、逐页的视觉中心和动效，以及每个决定的来龙去脉，见 [examples/attention/design-notes.md](examples/attention/design-notes.md)。
+
 ## 为什么做这个
 
 市面上的 AI 做 PPT，问题大多不在功能，而在审美：卡片网格、图标当项目符号、渐变色带、编号圆圈、千篇一律的“标题 + 三栏”。它们让每一页都“像幻灯片”，却没有一页是为自己的内容设计的。
 
 Pretty Slides 换了一种做法。它的审美标准写在 [guides/aesthetic/principles.md](guides/aesthetic/principles.md)，核心是：
 
-- **视觉语言从主题里长出来**：讲注意力机制，封面就是一张注意力矩阵，向量就是一排方格。能套在任何主题上的风格，本身就是模板。
-- **尺度有戏剧性，密度要对**：一页一个主角，大的非常大；论断页可以很空，讲解页要有一张承担机制的图，可以很满。
-- **工艺精确，整套是一部片子**：对齐、混排、换行这些细节都要讲究；整套有起伏，有让人记住的签名画面。
+- **设计服务于内容，先找到主题的意象**：注意力机制像在黑夜里找到规律，于是整套是一间暗室，注意力是照亮它的光。能套在任何主题上的风格，本身就是模板。
+- **一个世界，一脉相承**：同一种底色、质感和图形语言，不在黑白蓝之间跳；节奏靠光的强弱和尺度变化。
+- **每页一个视觉中心，用图说话**：光落在重点上，引导线把视线带过去；每页都有图，文字只留重点。
+- **动起来**：按讲解顺序逐步出现，翻页时光随 Morph 移到下一个重点。
+- **工艺精确，有让人记住的画面**：对齐、混排、换行这些细节都要讲究；整套有起伏，有签名画面。
 - **在比较中选择**：样张阶段先把 2–3 个截然不同的视觉方向做成探针页并排对比，你选定之后再深化。
 - **先设计，再制作**：设计文稿把每一页要做成什么样写到可以直接制作的程度；样张会原样进入成稿。
 - **每个阶段在新会话里只读文件**：上下文干净，你的偏好和禁令都记录在文件里，不会在长对话里丢失。
@@ -42,14 +46,14 @@ Pretty Slides 换了一种做法。它的审美标准写在 [guides/aesthetic/pr
 |---|---|
 | `guides/content.md` | 写内容文稿 |
 | `guides/design-doc.md` | 写设计文稿 |
-| `guides/aesthetic/principles.md` | 审美标准（八条）、怎么判断、冲突时的取舍 |
-| `guides/aesthetic/anti-ai.md` | 三种失败方式（通用部件、伪极简、安全的千篇一律）与自检问题 |
+| `guides/aesthetic/principles.md` | 审美标准（九条）、怎么判断、冲突时的取舍 |
+| `guides/aesthetic/anti-ai.md` | 四种失败方式（通用部件、伪极简、安全的千篇一律、风格跳变）与自检问题 |
 | `guides/aesthetic/typography.md` | 字体（只列本机已验证的）、字号层级、中文排版 |
 | `guides/aesthetic/color.md` | 从主题取色；五个截然不同的方向示例（已校验对比度） |
 | `guides/aesthetic/composition.md` | 网格、构图动作、尺度、强度曲线、签名画面、结构层、章节页 |
 | `guides/aesthetic/imagery.md` | 图片来源与处理 |
 | `guides/aesthetic/data-and-diagrams.md` | 图表、图解、公式、代码 |
-| `guides/aesthetic/motion.md` | Morph 与转场 |
+| `guides/aesthetic/motion.md` | 页内动效、Morph、移动的光、转场 |
 | `guides/production/engine.md` | 引擎 API |
 | `guides/production/review.md` | 渲染自查：硬问题、判断问题、工艺检查、不准动的范围 |
 

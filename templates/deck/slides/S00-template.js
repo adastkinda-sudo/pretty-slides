@@ -3,8 +3,7 @@ module.exports = {
   id: 'SXX',
   title: '<短名>',
   rhythm: 'dense',  // anchor | breathing | dense — 照抄 design.md 的节奏表
-  // bg: 'night',
-  // transition: 'morph',
+  // transition: 'morph',   // when this page shares named objects with the previous one
   notes: `<演讲者备注>`,
   build(k) {
     k.text('<论断标题>', { style: 'title', ...k.span(1, 8), y: k.M.top });
