@@ -84,6 +84,7 @@ module.exports = {
 | `k.vrule({ x, y, h, ... })` | 垂直细线 |
 | `k.line({ x1, y1, x2, y2, color, weight, dash, arrow })` | 任意线段；`arrow: 'end' \| 'start' \| 'both'` |
 | `k.rect({ x, y, w, h, fill, line, lineW, transparency, radius, bleed, name })` | 矩形。`radius` 默认不用 |
+| `k.arc({ x1, x2, y, h, color, weight })` | 基线 y 上方、从 x1 到 x2 的半椭圆弧，顶点高 h（弧线图）；返回 `{ apex }` |
 | `k.dot({ cx, cy, r, fill, line })` | 圆点 |
 | `k.shape(type, opts)` | 任意 pptxgenjs 形状（逃生口，慎用） |
 

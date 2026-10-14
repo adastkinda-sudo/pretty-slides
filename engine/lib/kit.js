@@ -133,6 +133,19 @@ function makeKit({ pptx, slide, theme, deckDir, slideId, page }) {
     record('line', { x, y, w, h }, { bleed: o.bleed, allowOverlap: true });
   }
 
+  // Arc above a baseline, from x1 to x2, rising h at its apex (arc diagrams: links between items in a row).
+  function arc(o) { // { x1, x2, y, h, color, weight, name, build }
+    const x = Math.min(o.x1, o.x2), w = Math.abs(o.x2 - o.x1);
+    const box = { x, y: o.y - o.h, w, h: 2 * o.h };
+    slide.addShape(pptx.ShapeType.arc, {
+      ...box, angleRange: [180, 360],
+      line: { color: color(o.color || 'ink'), width: o.weight ?? 0.75, dashType: o.dash },
+      ...named(o),
+    });
+    record('line', { x, y: o.y - o.h, w, h: o.h }, { allowOverlap: true });
+    return { apex: { x: x + w / 2, y: o.y - o.h } };
+  }
+
   const rule = (o) => line({ x1: o.x, y1: o.y, x2: o.x + o.w, y2: o.y, color: o.color || 'hairline', weight: o.weight ?? 0.75, name: o.name, build: o.build });
   const vrule = (o) => line({ x1: o.x, y1: o.y, x2: o.x, y2: o.y + o.h, color: o.color || 'hairline', weight: o.weight ?? 0.75, name: o.name, build: o.build });
 
@@ -253,7 +266,7 @@ function makeKit({ pptx, slide, theme, deckDir, slideId, page }) {
   return {
     theme, W, H, M, innerW, colW, col, span, color, face, mix,
     page, // { id, index, total } — for running heads and progress marks
-    text, rect, line, rule, vrule, dot, shape, image, chart, table, bg, bgImage, notes,
+    text, rect, line, arc, rule, vrule, dot, shape, image, chart, table, bg, bgImage, notes,
     _qa: () => ({ boxes, bg: bgColor }), _builds: () => builds, _slide: slide, _pptx: pptx,
   };
 }

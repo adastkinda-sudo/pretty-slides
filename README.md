@@ -79,8 +79,5 @@ node engine/make.js examples/attention          # 构建示例
 
 ## 已知问题（待修）
 
-- **字体在 PowerPoint 与预览之间不一致。** 示例 S05 的 Q/K/V 写的是 `Songti SC`（已安装），PowerPoint 中却显示为无衬线体；`PingFang SC Medium` 这类带字重后缀的字体名，LibreOffice 有时会解析成别的字体（例如 S05 的标题被渲染成了衬线体）。待查：PowerPoint 中选中这些文字时字体框显示的名称，以及中文是否也被替换。可能的修法：西文使用独立的西文字体（`fontPairs`，例如 `Songti SC → Baskerville`）；字重用“家族名 + 粗体”代替字重后缀名；字体推荐表按 PowerPoint 的实际表现重新核对。
-
-## 许可
-
-MIT，见 [LICENSE](LICENSE)。
+- **宋体的西文字形在 PowerPoint 中被替换。** 字体写成 `Songti SC` 时，西文字母在 PowerPoint 里显示为无衬线体。待查 PowerPoint 中字体框显示的名称。临时做法：西文使用独立的西文字体。
+- 预览中把苹方渲染成宋体的问题已经修复：原因是带字重后缀的中文字体名，现在由 QA 拦截（见 `typography.md`）。

@@ -1,8 +1,12 @@
-// Deck-local building blocks.
-// Motif: the vector strip / matrix cell. Structure layer: running head + progress cells + folio,
-// dimension lines and leaders — every element carries information (where we are, how big, what points where).
+// Deck-local building blocks for "暗室之光".
+// Motif: cells and links whose brightness is attention. Structure layer: navigation frame, leaders, dimension lines.
 
-// Deterministic pseudo-random values in [0, 1) so renders are stable between builds.
+// The running example and its (illustrative) attention from "it".
+const TOKENS = ['The', 'animal', "didn't", 'cross', 'the', 'street', 'because', 'it', 'was', 'too', 'tired'];
+const IT = 7;
+const WEIGHTS = [0.02, 0.46, 0.03, 0.04, 0.02, 0.17, 0.03, 0.08, 0.04, 0.03, 0.08];
+
+// Deterministic pseudo-random values in [0, 1).
 function values(seed, n) {
   return Array.from({ length: n }, (_, i) => {
     const s = Math.sin(seed * 12.9898 + i * 78.233) * 43758.5453;
@@ -10,16 +14,52 @@ function values(seed, n) {
   });
 }
 
-// A row of n square cells whose tone encodes value. `name` gives each cell a stable Morph name.
-function vector(k, { x, y, n = 8, cell = 0.24, gap = 0.04, seed = 1, tone = 'ink', light = 'paperDeep', min = 0.15, max = 0.8, name }) {
+// Heat ramp: unlit cell → ember → amber → hot. t in [0, 1]. Brightness = attention.
+function heat(k, t) {
+  const stops = [['paperDeep', 0], ['ember', 0.35], ['accent', 0.75], ['hot', 1]];
+  const v = Math.max(0, Math.min(1, t));
+  for (let i = 1; i < stops.length; i++) {
+    const [c0, p0] = stops[i - 1], [c1, p1] = stops[i];
+    if (v <= p1) return k.mix(c0, c1, (v - p0) / (p1 - p0));
+  }
+  return k.color('hot');
+}
+
+// Lit room: the page texture with its light falloff placed behind the page's visual center
+// (generated with engine/texture.js --light; see assets/).
+function room(k, where) { k.bgImage(`assets/room-${where}.jpg`); }
+
+// A row of n cells (a vector), brightness from heat(). build = [step, delay] staggers the cells.
+function vector(k, { x, y, n = 8, cell = 0.24, gap = 0.04, seed = 1, lo = 0.1, hi = 0.6, name, build }) {
   values(seed, n).forEach((v, i) => {
-    k.rect({ x: x + i * (cell + gap), y, w: cell, h: cell, fill: k.mix(light, tone, min + v * (max - min)), name: name && `${name}-${i}` });
+    const b = Array.isArray(build) ? [build[0], build[1] + i * 40] : build;
+    k.rect({ x: x + i * (cell + gap), y, w: cell, h: cell, fill: heat(k, lo + v * (hi - lo)), name: name && `${name}-${i}`, build: b });
   });
   return { x, y, w: n * cell + (n - 1) * gap, h: cell, right: x + n * cell + (n - 1) * gap, cy: y + cell / 2 };
 }
 
+// An n×n attention matrix; weight(r, c) in [0, 1]. build = [step, delayPerRow] reveals it row by row.
+function matrix(k, { x, y, n, cell, gap, weight, build }) {
+  for (let r = 0; r < n; r++) {
+    for (let c = 0; c < n; c++) {
+      k.rect({ x: x + c * (cell + gap), y: y + r * (cell + gap), w: cell, h: cell, fill: heat(k, weight(r, c)),
+        build: build && [build[0], r * (build[1] || 0)] });
+    }
+  }
+  const size = n * cell + (n - 1) * gap;
+  return { x, y, w: size, h: size, right: x + size, bottom: y + size };
+}
+
+// Lay the example sentence out on one line, centred; returns x/width/centre per token.
+function sentence(k, { size = 24, gap = 0.34 } = {}) {
+  const em = (ch) => (/[A-Z]/.test(ch) ? 0.66 : /[il.']/.test(ch) ? 0.3 : /[mw]/.test(ch) ? 0.85 : 0.56);
+  const ws = TOKENS.map((t) => [...t].reduce((s, ch) => s + em(ch), 0) * size / 72);
+  const total = ws.reduce((a, b) => a + b, 0) + gap * (TOKENS.length - 1);
+  let x = (k.W - total) / 2;
+  return ws.map((w) => { const p = { x, w, cx: x + w / 2 }; x += w + gap; return p; });
+}
+
 // Navigation frame for content pages: running head (top right), progress cells (bottom left), folio (bottom right).
-// The progress cells reuse the deck motif: done = graphite, current = accent, ahead = hairline.
 // `page` overrides the position, e.g. { index: 5, total: 7 } for a probe deck that holds only a few pages.
 function frame(k, { section, name, ink = 'stone', page }) {
   const { index, total } = page || k.page;
@@ -27,26 +67,25 @@ function frame(k, { section, name, ink = 'stone', page }) {
   k.text([{ text: section, font: 'latin' }, { text: `   ${name}` }], { style: 'label', color: ink, x: right - 4, y: 0.4, w: 4, align: 'right', nowrap: true, chrome: true });
   const cell = 0.085, gap = 0.05, y = k.H - 0.42;
   for (let i = 1; i <= total; i++) {
-    const fill = i < index ? 'graphite' : i === index ? 'accent' : 'hairline';
+    const fill = i < index ? 'stone' : i === index ? 'accent' : 'hairline';
     k.rect({ x: k.M.x + (i - 1) * (cell + gap), y, w: cell, h: cell, fill });
   }
   const pad = (n) => String(n).padStart(2, '0');
   k.text(`${pad(index)} / ${pad(total)}`, { style: 'caption', font: 'latin', color: ink, x: right - 1.2, y: y - 0.055, w: 1.2, align: 'right', nowrap: true, chrome: true });
 }
 
-// Dimension line (engineering-drawing style): a hairline with end ticks spanning x1→x2, label centred below.
-function dim(k, { x1, x2, y, label, color = 'stone' }) {
-  k.line({ x1, y1: y, x2, y2: y, color, weight: 0.5 });
-  k.line({ x1, y1: y - 0.06, x2: x1, y2: y + 0.06, color, weight: 0.5 });
-  k.line({ x1: x2, y1: y - 0.06, x2, y2: y + 0.06, color, weight: 0.5 });
-  const w = 2;
-  k.text(label, { style: 'caption', font: 'latin', color, x: (x1 + x2) / 2 - w / 2, y: y + 0.08, w, align: 'center', nowrap: true });
+// Dimension line (engineering-drawing style).
+function dim(k, { x1, x2, y, label, color = 'stone', build }) {
+  k.line({ x1, y1: y, x2, y2: y, color, weight: 0.5, build });
+  k.line({ x1, y1: y - 0.06, x2: x1, y2: y + 0.06, color, weight: 0.5, build });
+  k.line({ x1: x2, y1: y - 0.06, x2, y2: y + 0.06, color, weight: 0.5, build });
+  k.text(label, { style: 'caption', font: 'latin', color, x: (x1 + x2) / 2 - 1, y: y + 0.08, w: 2, align: 'center', nowrap: true, build });
 }
 
-// Leader: from an annotation anchor to a target point, ending in a small dot on the target.
-function leader(k, { from, to, color = 'graphite', dot = 'accent' }) {
-  k.line({ x1: from.x, y1: from.y, x2: to.x, y2: to.y, color, weight: 0.5 });
-  k.dot({ cx: to.x, cy: to.y, r: 0.045, fill: dot });
+// Leader: a thin line from an annotation to its target, ending in a small lit dot.
+function leader(k, { from, to, color = 'stone', dot = 'accent', build }) {
+  k.line({ x1: from.x, y1: from.y, x2: to.x, y2: to.y, color, weight: 0.5, build });
+  k.dot({ cx: to.x, cy: to.y, r: 0.05, fill: dot, build });
 }
 
-module.exports = { values, vector, frame, dim, leader };
+module.exports = { TOKENS, IT, WEIGHTS, values, heat, room, vector, matrix, sentence, frame, dim, leader };
