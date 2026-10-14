@@ -41,8 +41,8 @@ QA 输出分两级：`✗` 是硬问题，给用户看之前必须修掉；`·` 
 module.exports = {
   id: 'S04',
   title: '平方代价',               // 给人看的短名
-  rhythm: 'dense',                 // anchor | breathing | dense（来自 design.md 的节奏表；dense 页 QA 会检查有没有图）
-  // textOnly: true,               // 纯公式或代码的 dense 页，跳过“必须有图”的检查
+  rhythm: 'dense',                 // anchor | breathing | dense（来自 design.md 的节奏表）；QA 检查每页有没有图：dense 页没有图是硬问题，其他页是提示
+  // textOnly: true,               // 纯公式或代码页，跳过“必须有图”的检查
   bg: 'paper',                     // 可选，默认 theme.background
   transition: 'fade',              // 可选：'none' | 'fade' | 'morph' | { type, duration }
   notes: `演讲者备注……`,            // 可选，强烈建议写
@@ -104,14 +104,14 @@ module.exports = {
 ```js
 module.exports = {
   size: { w: 13.333, h: 7.5 }, lang: 'zh-CN', background: 'paper',
-  colors: { paper, paperDeep, ink, graphite, stone, hairline, accent, night, nightText, nightMuted },
+  colors: { paper, paperDeep, ink, graphite, stone, hairline, accent, glow, ... }, // glow：k.light 的光色
   fonts: { serif: 'Songti SC', sans: 'PingFang SC', ... },          // 角色名 → 真实字体名
   fontPairs: { 'PingFang SC': 'Helvetica Neue' },                    // 可选：中文字体里的西文改用某字体
   backgroundImages: { paper: 'assets/grain-paper.jpg' },             // 可选：某个背景色用纹理图（node engine/texture.js 生成）
   grid: { margin: { x: 0.85, top: 0.75, bottom: 0.6 }, cols: 12, gutter: 0.22 },
   type: { display: { font: 'serif', size: 66, leading: 1.12, tracking: 0, color: 'ink' }, ... },
   chart: { series: ['accent', 'stone'] },
-  transition: 'fade',
+  transition: 'fade',                                                // 或 { type: 'morph', duration: 1400 }：整套 Morph，配合移动的光
 };
 ```
 

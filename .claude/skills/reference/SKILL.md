@@ -58,7 +58,7 @@ node engine/compare.js projects/<slug>/03-reference/directions/_compare.png \
 
 1. 搭建 `03-reference/`：以选定方向的 `directions/<X>/` 为起点，复制它的 `theme.js`、`parts.js` 和 `assets/`；`deck.js` 的 `name` 为 `<slug>-reference`，`slides` 为 design.md 第 9 节的深化页，按 design.md 的顺序排列。探针页可以直接沿用并继续打磨。
 2. 每张样张一个文件：`slides/<ID>-<短名>.js`，**使用 design.md 中的页面 ID**，写上节奏表里的 `rhythm`。
-3. 整套反复出现的图形（母题）写进 `parts.js`，供成稿复用。按 design.md 的“结构层”启用导航框架等部件；需要纸张颗粒时，用 `node engine/texture.js <paper 色值> projects/<slug>/03-reference/assets/grain-paper.jpg` 生成。
+3. 整套反复出现的图形（母题）写进 `parts.js`，供成稿复用。按 design.md 的“结构层”启用导航框架等部件；需要底色质感时，用 `node engine/texture.js <paper 色值> projects/<slug>/03-reference/assets/<名字>.jpg` 生成（深底加 `--strength 0.15 --mottle 0 --vignette 0.5`，见 `color.md`）；暗场方向用 `k.light` 把光放在每页的视觉中心上。
 4. 素材放到 `03-reference/assets/`。需要下载图片时记录来源；来源或许可不清楚时，先用排版或原生图形实现，并在报告中说明。
 5. 构建并自查：`node engine/make.js projects/<slug>/03-reference`。按 `review.md` 先看缩略总览，再逐页看大图。普通页自修最多 2 轮；**签名画面**做不止一个版本，用 `engine/compare.js` 并排比较，留下更好的那个。
 6. 最后对照 `anti-ai.md` 的自检问题和 `review.md` 的工艺检查，再看一遍每一页。

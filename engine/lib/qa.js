@@ -45,12 +45,15 @@ function check({ id, boxes, bg, W, H, M, rhythm, textOnly }) {
       if (inter(ah, bh)) hard.push(`文字重叠: “${a.sample}” × “${b.sample}”（有意叠压加 overlap:true）`);
     }
   }
-  // Explanatory (dense) pages need a figure that carries the mechanism — names alone read as lazy.
-  if (rhythm === 'dense' && !textOnly) {
-    const figs = boxes.filter((b) => b.kind !== 'text' && !(b.kind === 'line' && (b.h < 0.02 || b.w < 0.02)));
+  // Every page should carry a figure (principles.md §4); on explanatory (dense) pages it is required.
+  // The light and structure elements sitting in the margins (frame, progress cells) don't count as figures.
+  if (!textOnly) {
+    const inSafe = (b) => b.x + b.w > M.x && b.x < W - M.x && b.y + b.h > M.top && b.y < H - M.bottom;
+    const figs = boxes.filter((b) => b.kind !== 'text' && b.kind !== 'light' && inSafe(b) && !(b.kind === 'line' && (b.h < 0.02 || b.w < 0.02)));
     if (!figs.length) {
-      hard.push('dense 页没有图形主体：讲解页需要一张表达机制的图（见 anti-ai.md「伪极简」）。纯公式或代码页可在模块里写 textOnly: true');
-    } else {
+      if (rhythm === 'dense') hard.push('dense 页没有图形主体：讲解页需要一张表达机制的图（见 anti-ai.md「伪极简」）。纯公式或代码页可在模块里写 textOnly: true');
+      else if (rhythm) soft.push('本页没有图：每页都应该有一张辅助理解的图（principles.md 第 4 条）');
+    } else if (rhythm === 'dense') {
       const x0 = Math.min(...figs.map((b) => b.x)), x1 = Math.max(...figs.map((b) => b.x + b.w));
       const y0 = Math.min(...figs.map((b) => b.y)), y1 = Math.max(...figs.map((b) => b.y + b.h));
       const share = ((x1 - x0) * (y1 - y0)) / ((W - 2 * M.x) * (H - M.top - M.bottom));

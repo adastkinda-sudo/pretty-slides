@@ -23,6 +23,7 @@ pptx 不嵌入字体。**设计文稿里写的字体，必须在播放的电脑�
 | 中文衬线 | `Songti SC`（粗体：`bold: true`） | 编辑感、人文、学术；大标题极佳 |
 | 中文楷体 | `STKaiti` / `Kaiti SC` | 引文、手记；只在少数页面用 |
 | 英文无衬线 | `Helvetica Neue Light` / `Helvetica Neue` / `Helvetica Neue Medium` | 瑞士风格，中性 |
+| 英文无衬线 | `Gill Sans`、`Optima`、`Futura` | 人文、优雅、几何；Gill Sans 线条均匀，适合小字和标签 |
 | 英文无衬线 | `Avenir Next` / `Avenir Next Medium` | 更柔和的几何风格（**避免** `Avenir Next Demi Bold`，渲染会出现假粗体） |
 | 英文衬线 | `Baskerville`、`Charter`、`Hoefler Text`、`Didot`（展示用）、`Bodoni 72` | 古典、编辑感 |
 | 数字 | `Helvetica Neue Light`、`DIN Alternate`、`Didot` | 大号数字 |
