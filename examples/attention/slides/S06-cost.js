@@ -26,7 +26,7 @@ module.exports = {
     specs.forEach((s, i) => {
       const size = s.n * pitch - gap;
       const m = matrix(k, { x: s.x, y: baseY - size, n: s.n, cell, gap, weight: pattern(s.n), build: i ? [i, 25] : undefined });
-      k.text([{ text: `n = ${s.n}`, font: 'latin', color: i === 2 ? 'ink' : 'graphite' }, { text: `   ${s.n * s.n} 格`, color: 'stone' }],
+      k.text([{ text: `n = ${s.n}`, font: 'label', color: i === 2 ? 'ink' : 'graphite' }, { text: `   ${s.n * s.n} 格`, color: 'stone' }],
         { style: 'caption', x: s.x, y: baseY + 0.18, w: 1.6, nowrap: true, build: i || undefined });
       if (prev) {
         const ax1 = prev.right + 0.2, ax2 = m.x - 0.2, ay = baseY - 0.5;
