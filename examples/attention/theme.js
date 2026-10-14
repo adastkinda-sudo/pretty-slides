@@ -1,5 +1,5 @@
 // Design tokens — "暗室之光": attention is light finding pattern in a dark, lawless room. Typography: T1 "电影片头" (Songti headlines with wide tracking, Didot for Latin/numbers/letters, Gill Sans labels)
-// with T3's Hoefler Text italic for the example sentence's words.
+// The example sentence is set as a prompt typed to the model (Menlo), with a prompt mark and a cursor.
 // One world for the whole deck: warm charcoal with grain, lit by whatever the page is about. Amber heat is the only color.
 module.exports = {
   name: 'Light in the Dark',
@@ -24,7 +24,7 @@ module.exports = {
     latin: 'Didot',
     latinLight: 'Didot',
     label: 'Gill Sans',
-    quote: 'Hoefler Text', // the example sentence's words, set like a quoted source
+    prompt: 'Menlo', // the example sentence: a prompt typed to the model
     mono: 'Menlo',
   },
   fontPairs: { 'Songti SC': 'Didot', 'PingFang SC': 'Gill Sans' }, // family names only
@@ -40,7 +40,7 @@ module.exports = {
     body: { font: 'sans', size: 15, leading: 1.55, color: 'graphite' },
     label: { font: 'label', size: 11, leading: 1.3, tracking: 18, color: 'stone' },
     caption: { font: 'sans', size: 11, leading: 1.5, color: 'stone' },
-    word: { font: 'quote', size: 26, leading: 1.2, italic: true, color: 'stone' },
+    word: { font: 'prompt', size: 20, leading: 1.2, color: 'stone' },
     letter: { font: 'latin', size: 64, leading: 1, color: 'ink' },
     number: { font: 'latin', size: 120, leading: 1, color: 'accent' },
     math: { font: 'STIX Two Math', size: 22, leading: 1.2, color: 'graphite' },
