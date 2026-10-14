@@ -16,13 +16,18 @@ const { execFileSync } = require('child_process');
 
 const [hex, out, ...rest] = process.argv.slice(2);
 if (!/^#?[0-9a-fA-F]{6}$/.test(hex || '') || !out) {
-  console.error('usage: node engine/texture.js <hex> <out.jpg> [--strength 1]');
+  console.error('usage: node engine/texture.js <hex> <out.jpg> [--strength 1] [--light cx,cy,radius,#hex]');
   process.exit(2);
 }
 const si = rest.indexOf('--strength');
 const strength = si >= 0 ? Number(rest[si + 1]) : 1;
 const li = rest.indexOf('--light');
-const light = li >= 0 ? rest[li + 1].split(',') : null;
+const light = li >= 0 ? (rest[li + 1] || '').split(',') : null;
+if (light && (light.length !== 4 || light.slice(0, 3).some((v) => Number.isNaN(Number(v))) || !/^#?[0-9a-fA-F]{6}$/.test(light[3]))) {
+  console.error('--light expects cx,cy,radius,#hex  e.g. --light 0.72,0.5,0.6,#2E2620');
+  process.exit(2);
+}
+if (light && !light[3].startsWith('#')) light[3] = `#${light[3]}`;
 // Contrast window for the noise layers: narrower window = stronger grain.
 const win = (base) => { const half = Math.min(49, base / strength); return [`${50 - half}%`, `${50 + half}%`]; };
 
