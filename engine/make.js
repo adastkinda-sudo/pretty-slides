@@ -66,7 +66,7 @@ async function build(opt) {
   pptx.title = deck.title || name;
   if (deck.author) pptx.author = deck.author;
 
-  const manifest = [], transitions = [], reports = [];
+  const manifest = [], transitions = [], reports = [], builds = [];
   for (const [index, id] of deck.slides.entries()) {
     const file = findSlideFile(opt.dir, id);
     const mod = fresh(file);
@@ -81,19 +81,25 @@ async function build(opt) {
     }
     if (mod.notes) k.notes(String(mod.notes).trim());
     transitions.push(mod.transition || theme.transition || 'none');
+    builds.push(k._builds());
     manifest.push({ id, index: index + 1, title: mod.title || '', rhythm: mod.rhythm || '', file: path.relative(opt.dir, file) });
     const q = k._qa();
     reports.push(check({ id, boxes: q.boxes, bg: q.bg, W, H, M: k.M, rhythm: mod.rhythm, textOnly: mod.textOnly }));
   }
 
   const raw = await pptx.write({ outputType: 'nodebuffer' });
-  const buf = await postProcess(raw, { transitions, fontPairs: theme.fontPairs });
+  const buf = await postProcess(raw, { transitions, fontPairs: theme.fontPairs, builds });
   const outDir = path.join(opt.dir, 'out');
   fs.mkdirSync(outDir, { recursive: true });
   const pptxPath = path.join(outDir, `${name}.pptx`);
   fs.writeFileSync(pptxPath, buf);
   fs.writeFileSync(path.join(outDir, 'manifest.json'), JSON.stringify(manifest, null, 2));
-  return { name, pptxPath, manifest, reports, missing: missingFonts(theme) };
+  // CJK faces must be named by family only ('PingFang SC'); weight comes from bold: true.
+  // Weight-suffixed CJK names ('PingFang SC Light') resolve inconsistently and fall back to another face (often a serif).
+  const cjkSuffixed = (f) => /(PingFang|Songti|Heiti|Hiragino|Kaiti|Yuanti|Lantinghei)/.test(f) && / (Ultralight|Thin|Light|Regular|Medium|Semibold|Bold|Heavy|Black)$/.test(f);
+  const used = [...Object.values(theme.fonts || {}), ...Object.keys(theme.fontPairs || {}), ...Object.values(theme.type || {}).map((t) => t.font)];
+  const badPairs = [...new Set(used.filter((f) => f && cjkSuffixed(f)))];
+  return { name, pptxPath, manifest, reports, missing: missingFonts(theme), badPairs };
 }
 
 function render(opt, { name, pptxPath, manifest }) {
@@ -151,6 +157,10 @@ function contactArgs(manifest, rDir, out) {
   const res = await build(opt);
   console.log(`✓ built ${path.relative(process.cwd(), res.pptxPath)} (${res.manifest.length} slides)`);
   let hardCount = 0;
+  if (res.badPairs.length) {
+    hardCount += res.badPairs.length;
+    console.log(`\n中文字体不能带字重后缀（会被渲染成别的字体）: ${res.badPairs.join(', ')} — 只写家族名（如 'PingFang SC'），字重用 bold: true`);
+  }
   if (res.missing.length) {
     hardCount += res.missing.length;
     console.log(`\n字体未安装（会被替换）: ${res.missing.join(', ')}`);

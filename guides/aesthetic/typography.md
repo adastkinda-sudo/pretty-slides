@@ -13,12 +13,14 @@ pptx 不嵌入字体。**设计文稿里写的字体，必须在播放的电脑�
 - **用自己的 Mac 播放**（默认）：可以用下面所有 macOS 系统字体。
 - **用别人的 Windows 电脑播放**：只能用两边都有的字体，或者交付 PDF 备份。中文字体可用微软雅黑或等线（Windows 自带；Mac 上装了 Office 也有），英文字体用 Arial、Georgia、Segoe UI。必要时让用户确认现场电脑。
 
-### macOS 上已验证可用的字体（LibreOffice 渲染与 PowerPoint 都能识别字重名称）
+### macOS 上已验证可用的字体
+
+**中文字体只写家族名**（`PingFang SC`、`Songti SC`），字重用 `bold: true`。`PingFang SC Light` 这类带字重后缀的中文字体名解析不稳定，会被渲染成别的字体（常常是宋体），`make.js` 会把它判为硬问题。西文字体的字重名（`Helvetica Neue Light`）可以正常使用。
 
 | 角色 | 字体（fontFace 写法） | 气质 |
 |---|---|---|
-| 中文无衬线 | `PingFang SC Light` / `PingFang SC` / `PingFang SC Medium` / `PingFang SC Semibold` | 现代、干净；中文正文的默认选择 |
-| 中文衬线 | `Songti SC Light` / `Songti SC` / `Songti SC Bold` | 编辑感、人文、学术；大标题极佳 |
+| 中文无衬线 | `PingFang SC`（粗体：`bold: true`） | 现代、干净；中文正文的默认选择 |
+| 中文衬线 | `Songti SC`（粗体：`bold: true`） | 编辑感、人文、学术；大标题极佳 |
 | 中文楷体 | `STKaiti` / `Kaiti SC` | 引文、手记；只在少数页面用 |
 | 英文无衬线 | `Helvetica Neue Light` / `Helvetica Neue` / `Helvetica Neue Medium` | 瑞士风格，中性 |
 | 英文无衬线 | `Avenir Next` / `Avenir Next Medium` | 更柔和的几何风格（**避免** `Avenir Next Demi Bold`，渲染会出现假粗体） |
@@ -34,15 +36,17 @@ pptx 不嵌入字体。**设计文稿里写的字体，必须在播放的电脑�
 | 方向 | 标题 | 正文 | 西文与数字 |
 |---|---|---|---|
 | 现代编辑 | Songti SC | PingFang SC | Helvetica Neue |
-| 瑞士极简 | PingFang SC Semibold | PingFang SC Light | Helvetica Neue |
-| 人文学术 | Songti SC | Songti SC Light / PingFang SC | Baskerville / Charter |
-| 精确技术 | PingFang SC Medium | PingFang SC | Helvetica Neue + Menlo |
+| 瑞士极简 | PingFang SC（粗体） | PingFang SC | Helvetica Neue |
+| 人文学术 | Songti SC | PingFang SC | Baskerville / Charter |
+| 精确技术 | PingFang SC | PingFang SC | Helvetica Neue + Menlo |
 
 一套演示通常只用 **1–2 个字体家族**。
 
 ### 中西文混排
 
 theme 中的 `fontPairs` 可以让中文字体里的西文字符改用另一个西文字体渲染，例如 `{ 'PingFang SC': 'Helvetica Neue' }`。苹方自带的西文已经不错，配对是可选项。
+
+配对的键同样只写中文字体的家族名。
 
 ## 2. 字号层级
 
