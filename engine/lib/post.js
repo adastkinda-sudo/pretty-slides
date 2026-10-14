@@ -29,8 +29,13 @@ function timingXml(xml, builds) {
     const m = xml.match(new RegExp(`<p:cNvPr id="(\\d+)" name="${b.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"`));
     if (!m) { missing.push(b.name); continue; }
     const before = xml.slice(0, m.index);
-    const isSp = before.lastIndexOf('<p:sp>') > Math.max(before.lastIndexOf('<p:pic>'), before.lastIndexOf('<p:graphicFrame>'), before.lastIndexOf('<p:cxnSp>'));
-    items.push({ ...b, spid: m[1], isSp });
+    // bldP (paragraph build) is only valid for shapes that carry a text body; PowerPoint asks to "repair" files
+    // that list it for plain shapes, lines or pictures. Those animate fine without it.
+    const start = before.lastIndexOf('<p:sp>');
+    const isSp = start > Math.max(before.lastIndexOf('<p:pic>'), before.lastIndexOf('<p:graphicFrame>'), before.lastIndexOf('<p:cxnSp>'));
+    const spXml = isSp ? xml.slice(start, xml.indexOf('</p:sp>', m.index)) : '';
+    const hasText = isSp && spXml.includes('<p:txBody>');
+    items.push({ ...b, spid: m[1], hasText });
   }
   if (!items.length) return { xml: '', missing };
   let id = 2;
@@ -40,14 +45,14 @@ function timingXml(xml, builds) {
     const outer = ++id, inner = ++id;
     const effects = group.map((it, n) => {
       const a = ++id, b = ++id, c = ++id;
-      return `<p:par><p:cTn id="${a}" presetID="10" presetClass="entr" presetSubtype="0" fill="hold"${it.isSp ? ' grpId="0"' : ''} nodeType="${n === 0 ? 'clickEffect' : 'withEffect'}"><p:stCondLst><p:cond delay="${it.delay}"/></p:stCondLst><p:childTnLst>`
+      return `<p:par><p:cTn id="${a}" presetID="10" presetClass="entr" presetSubtype="0" fill="hold"${it.hasText ? ' grpId="0"' : ''} nodeType="${n === 0 ? 'clickEffect' : 'withEffect'}"><p:stCondLst><p:cond delay="${it.delay}"/></p:stCondLst><p:childTnLst>`
         + `<p:set><p:cBhvr><p:cTn id="${b}" dur="1" fill="hold"><p:stCondLst><p:cond delay="0"/></p:stCondLst></p:cTn><p:tgtEl><p:spTgt spid="${it.spid}"/></p:tgtEl><p:attrNameLst><p:attrName>style.visibility</p:attrName></p:attrNameLst></p:cBhvr><p:to><p:strVal val="visible"/></p:to></p:set>`
         + `<p:animEffect transition="in" filter="fade"><p:cBhvr><p:cTn id="${c}" dur="500"/><p:tgtEl><p:spTgt spid="${it.spid}"/></p:tgtEl></p:cBhvr></p:animEffect>`
         + '</p:childTnLst></p:cTn></p:par>';
     }).join('');
     return `<p:par><p:cTn id="${outer}" fill="hold"><p:stCondLst><p:cond delay="indefinite"/></p:stCondLst><p:childTnLst><p:par><p:cTn id="${inner}" fill="hold"><p:stCondLst><p:cond delay="0"/></p:stCondLst><p:childTnLst>${effects}</p:childTnLst></p:cTn></p:par></p:childTnLst></p:cTn></p:par>`;
   }).join('');
-  const bld = items.filter((i) => i.isSp).map((i) => `<p:bldP spid="${i.spid}" grpId="0"/>`).join('');
+  const bld = items.filter((i) => i.hasText).map((i) => `<p:bldP spid="${i.spid}" grpId="0"/>`).join('');
   return {
     missing,
     xml: '<p:timing><p:tnLst><p:par><p:cTn id="1" dur="indefinite" restart="never" nodeType="tmRoot"><p:childTnLst>'
