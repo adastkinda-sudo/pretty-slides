@@ -88,7 +88,7 @@ function makeKit({ pptx, slide, theme, deckDir, slideId, page }) {
       ...named(opts.name),
     };
     slide.addText(out, box);
-    record('text', box, { est, lineW, nowrap: !!opts.nowrap, chrome: !!opts.chrome, color: color(st.color), size: st.size, sample: paras[0].text.slice(0, 24), allowOverlap: opts.overlap });
+    record('text', box, { est, lineW, nowrap: !!opts.nowrap, chrome: !!opts.chrome, bleed: opts.bleed, color: color(st.color), size: st.size, sample: paras[0].text.slice(0, 24), allowOverlap: opts.overlap });
     return { ...box, bottom: box.y + box.h, right: box.x + box.w, estH: est };
   }
 

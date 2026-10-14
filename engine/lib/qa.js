@@ -24,7 +24,7 @@ function check({ id, boxes, bg, W, H, M, rhythm, textOnly }) {
       hard.push(`文本框宽度余量不足: “${t.sample}” 估算宽 ${t.lineW.toFixed(2)}in / 框宽 ${t.w.toFixed(2)}in — PowerPoint 的字体度量不同，可能意外折行；单行标签用 nowrap:true，或加宽到 ≥ 1.15 倍`);
     }
     if (t.est > t.h * 1.08) hard.push(`文字可能溢出: “${t.sample}” 估算高 ${t.est.toFixed(2)}in > 框高 ${t.h.toFixed(2)}in`);
-    if (!t.chrome && (t.x < M.x - 0.02 || t.x + t.w > W - M.x + 0.02 || t.y < M.top - 0.02 || t.y + t.h > H - M.bottom + 0.02)) {
+    if (!t.chrome && !t.bleed && (t.x < M.x - 0.02 || t.x + t.w > W - M.x + 0.02 || t.y < M.top - 0.02 || t.y + t.h > H - M.bottom + 0.02)) {
       soft.push(`文字越过安全边距: “${t.sample}”（有意为之可忽略）`);
     }
     // background under the text: topmost filled rect containing the text centre, else page bg

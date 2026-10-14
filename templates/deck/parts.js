@@ -4,8 +4,9 @@
 
 // Navigation frame for content pages: running head (top right), progress cells (bottom left), folio (bottom right).
 // Done pages = graphite, current = accent, ahead = hairline. Replace the progress cells with the deck motif if it has one.
-function frame(k, { section, name, ink = 'stone' }) {
-  const { index, total } = k.page;
+// `page` overrides the position, e.g. { index: 5, total: 7 } for a probe deck that holds only a few pages.
+function frame(k, { section, name, ink = 'stone', page }) {
+  const { index, total } = page || k.page;
   const right = k.W - k.M.x;
   k.text([{ text: section, font: 'latin' }, { text: `   ${name}` }], { style: 'label', color: ink, x: right - 4, y: 0.4, w: 4, align: 'right', nowrap: true, chrome: true });
   const cell = 0.085, gap = 0.05, y = k.H - 0.42;
