@@ -1,0 +1,15 @@
+{
+  "name": "pretty-slides-engine",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Build, QA and render native-editable .pptx decks for Pretty Slides.",
+  "license": "MIT",
+  "type": "commonjs",
+  "scripts": {
+    "example": "node make.js ../examples/attention"
+  },
+  "dependencies": {
+    "jszip": "3.10.1",
+    "pptxgenjs": "3.12.0"
+  }
+}
