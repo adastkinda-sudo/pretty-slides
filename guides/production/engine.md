@@ -88,7 +88,7 @@ module.exports = {
 | `k.dot({ cx, cy, r, fill, line })` | 圆点 |
 | `k.shape(type, opts)` | 任意 pptxgenjs 形状（逃生口，慎用） |
 
-**光** `k.light({ cx, cy, rx, ry, color, strength })`：让 (cx, cy) 周围的区域稍微亮一点，漫反射式的自然衰减，没有可见的形状边缘（rx、ry 是光的范围；默认颜色取 theme 的 `glow`），自动置于最底层；每页最多一束；Morph 名固定为 `light`，整套使用 Morph 转场时会在页面之间移动。
+**光** `k.light({ cx, cy, r, color, strength })`：让 (cx, cy) 周围的区域稍微亮一点，漫反射式的自然衰减，没有可见的形状边缘（r 是光的范围，光是圆形的；默认颜色取 theme 的 `glow`），自动置于最底层；每页最多一束；Morph 名固定为 `light`，整套使用 Morph 转场时会在页面之间移动。
 
 **图片** `k.image(src, { x, y, w, h, fit: 'cover' | 'contain', focus: { x, y }, bleed, name, transparency })`，src 相对于 deck 目录。只支持 PNG 和 JPEG。
 
@@ -130,5 +130,5 @@ module.exports = {
 
 - 页内动效目前只有淡入（`build`）；移动和变形用跨页 Morph（见 `aesthetic/motion.md`）。
 - 不生成可编辑的 OMML 公式（见 `aesthetic/data-and-diagrams.md`）。
-- 预览由 LibreOffice 渲染，与 PowerPoint 有细微差异：中西文之间的自动间距、个别字体的行高。最终以 PowerPoint 为准。
+- 预览由 LibreOffice 渲染，与 PowerPoint 有差异：中西文之间的自动间距、个别字体的行高；径向渐变在 LibreOffice 里会随形状拉伸成椭圆，在 PowerPoint 里则是正圆（所以 `k.light` 的承载形状必须是正方形）。涉及渐变、透明度、动效的效果，最终以 PowerPoint 为准。
 - pptx 不嵌入字体，播放环境必须装有所用字体。

@@ -177,10 +177,13 @@ function makeKit({ pptx, slide, theme, deckDir, slideId, page }) {
   // so nothing of the shape can be seen. Every page's light shares the Morph name 'light': with Morph transitions
   // it drifts from focus to focus. Post-processing writes the gradient and sends it to the back.
   const lights = [];
-  function light(o) { // { cx, cy, rx, ry = rx * 0.75, color = theme.colors.glow, strength = 0.8 }
-    const rx = o.rx ?? 3.5, ry = o.ry ?? rx * 0.75;
-    // radial 'circle' paths reach 100% at the box corners; the light is zero from 60% on, i.e. 0.85 × half-size on the axes
-    const box = { x: o.cx - rx / 0.85, y: o.cy - ry / 0.85, w: 2 * rx / 0.85, h: 2 * ry / 0.85 };
+  function light(o) { // { cx, cy, r, color = theme.colors.glow, strength = 0.8 }  (rx / ry accepted: the larger is used)
+    const r = o.r ?? (Math.max(o.rx || 0, o.ry || 0) || 3.5);
+    // PowerPoint's radial 'circle' gradient is a true circle reaching 100% at the box corners (it does not stretch with
+    // the box). On a SQUARE carrier every edge sits at 70.7%; the light is zero from 60% on, so no edge can show.
+    // (LibreOffice stretches the gradient to the box, which hid a cut-off on non-square boxes — keep this square.)
+    const half = r / 0.85;
+    const box = { x: o.cx - half, y: o.cy - half, w: 2 * half, h: 2 * half };
     slide.addShape(pptx.ShapeType.rect, { ...box, fill: { color: 'FF00FF' }, line: { type: 'none' }, objectName: '!!light' });
     lights.push({ color: color(o.color || theme.colors.glow || 'accent'), edge: bgColor, strength: o.strength ?? 0.8 });
     record('light', box, { bleed: true, allowOverlap: true });

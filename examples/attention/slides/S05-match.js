@@ -43,7 +43,7 @@ module.exports = {
 
     // ③ softmax weights — the light
     const barX = keyRight + 0.5, barMax = 2.7;
-    k.light({ cx: barX + 1.3, cy: rowsY[1] + 0.12, rx: 3.6, ry: 2.2 }); // the 0.46 bar
+    k.light({ cx: barX + 1.3, cy: rowsY[1] + 0.12, r: 2.8 }); // the 0.46 bar
     k.text('softmax 权重', { style: 'label', x: barX, y: top - 0.62, w: 2, nowrap: true });
     KEYS.forEach((r, i) => {
       const y = rowsY[i], lit = r.w >= 0.4, bw = Math.max(0.05, (r.w / 0.5) * barMax);

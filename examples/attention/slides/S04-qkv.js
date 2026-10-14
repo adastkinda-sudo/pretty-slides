@@ -24,7 +24,7 @@ module.exports = {
     k.text('词向量', { style: 'caption', x: k.M.x + 0.5, y: inY - 0.6, w: 1.2, nowrap: true });
 
     const opX = k.col(5) - 0.1, outX = k.col(6) + 0.25, letterX = k.col(9) + 0.05, textX = k.col(10);
-    k.light({ cx: outX + 1.6, cy: rows[0] + 0.12, rx: 4.2, ry: 1.9 }); // the Query row
+    k.light({ cx: outX + 1.6, cy: rows[0] + 0.12, r: 2.9 }); // the Query row
     ROLES.forEach((r, i) => {
       const y = rows[i], hot = i === 0, step = i + 1;
       k.line({ x1: input.right + 0.15, y1: input.cy, x2: opX - 0.12, y2: y + 0.12, color: hot ? 'accent' : 'stone', weight: hot ? 1.5 : 0.75, build: step });

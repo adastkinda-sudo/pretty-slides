@@ -21,7 +21,7 @@ module.exports = {
     const baseY = 5.75; // shared baseline: matrices sit on it
     const specs = [{ n: 4, x: k.M.x + 0.3 }, { n: 8, x: 3.35 }, { n: 16, x: 6.7 }];
     const big = 16 * pitch - gap;
-    k.light({ cx: specs[2].x + big / 2, cy: baseY - big / 2, rx: 3.6, ry: 3.1 }); // the largest matrix
+    k.light({ cx: specs[2].x + big / 2, cy: baseY - big / 2, r: 3.4 }); // the largest matrix
     let prev;
     specs.forEach((s, i) => {
       const size = s.n * pitch - gap;
