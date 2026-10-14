@@ -39,9 +39,11 @@ pptx 不嵌入字体。**设计文稿里写的字体，必须在播放的电脑�
 | 瑞士极简 | PingFang SC（粗体） | PingFang SC | Helvetica Neue |
 | 人文学术 | Songti SC | PingFang SC | Baskerville / Charter |
 | 精确技术 | PingFang SC | PingFang SC | Helvetica Neue + Menlo |
-| 电影片头（暗场） | Songti SC，字距 +5–8% | PingFang SC | Didot（大字号、数字、符号）+ Gill Sans（小字、标签）；引用的原文用 Hoefler Text 斜体 |
+| 电影片头（暗场） | Songti SC，字距 +5–8% | PingFang SC | Didot（大字号、数字、符号）+ Gill Sans（小字、标签） |
 
 一套演示通常只用 **1–2 个字体家族**，再加一两个有明确职责的点缀字体（例如引用原文用的斜体）。
+
+**例子要像它在真实世界里的样子。** 讲 AI 时，输入给模型的句子用等宽字体加提示符和光标，像一条真正的 prompt；模型输出的内容同理。讲古籍时，原文用宋体或楷体竖排。这样的字体选择让观众有代入感，比单纯“好看”的字体更有说服力。
 
 **高反差衬线体（Didot、Bodoni）只用于大字号**（约 20pt 以上）：它们的细线在小字号投影时会消失。同一套里的小字、标签、页码改用 Gill Sans 这类线条均匀的字体。
 

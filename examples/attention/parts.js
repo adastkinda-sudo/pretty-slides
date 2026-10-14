@@ -47,13 +47,22 @@ function matrix(k, { x, y, n, cell, gap, weight, build }) {
   return { x, y, w: size, h: size, right: x + size, bottom: y + size };
 }
 
-// Lay the example sentence out on one line, centred; returns x/width/centre per token.
-function sentence(k, { size = 24, gap = 0.34 } = {}) {
-  const em = (ch) => (/[A-Z]/.test(ch) ? 0.66 : /[il.']/.test(ch) ? 0.3 : /[mw]/.test(ch) ? 0.85 : 0.56);
-  const ws = TOKENS.map((t) => [...t].reduce((s, ch) => s + em(ch), 0) * size / 72);
+// Lay the example sentence out on one line, centred, as a monospaced prompt; returns x/width/centre per token.
+function sentence(k, { size = 20, gap = 0.26 } = {}) {
+  const ws = TOKENS.map((t) => t.length * 0.602 * size / 72); // Menlo advance ≈ 0.6 em
   const total = ws.reduce((a, b) => a + b, 0) + gap * (TOKENS.length - 1);
-  let x = (k.W - total) / 2;
+  let x = (k.W - total) / 2 + 0.275; // centre the prompt mark + sentence together
   return ws.map((w) => { const p = { x, w, cx: x + w / 2 }; x += w + gap; return p; });
+}
+
+// Prompt chrome around the sentence: a prompt mark before it and (optionally) a cursor after it.
+// Shared Morph names keep them in place across pages. cursorBuild lets the cursor appear when typing ends.
+function prompt(k, xs, y, { cursor = false, cursorBuild } = {}) {
+  k.text('›', { style: 'word', color: 'accent', x: xs[0].x - 0.55, y, w: 0.3, h: 0.5, nowrap: true, name: 'prompt-mark' });
+  if (cursor) {
+    const last = xs[xs.length - 1];
+    k.rect({ x: last.x + last.w + 0.14, y: y + 0.05, w: 0.12, h: 0.36, fill: 'accent', name: 'prompt-cursor', build: cursorBuild });
+  }
 }
 
 // Navigation frame for content pages: running head (top right), progress cells (bottom left), folio (bottom right).
@@ -85,4 +94,4 @@ function leader(k, { from, to, color = 'stone', dot = 'accent', build }) {
   k.dot({ cx: to.x, cy: to.y, r: 0.05, fill: dot, build });
 }
 
-module.exports = { TOKENS, IT, WEIGHTS, values, heat, vector, matrix, sentence, frame, dim, leader };
+module.exports = { TOKENS, IT, WEIGHTS, values, heat, vector, matrix, sentence, prompt, frame, dim, leader };
