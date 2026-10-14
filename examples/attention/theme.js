@@ -15,6 +15,7 @@ module.exports = {
     accent: 'F0A93B',    // amber: attention, light
     hot: 'FFE2A6',       // the brightest point on a page
     ember: '6B2A16',     // dim heat
+    glow: '4A3820',      // the light pool on each page's focus (k.light)
   },
   fonts: {
     sans: 'PingFang SC',
@@ -23,8 +24,9 @@ module.exports = {
     mono: 'Menlo',
   },
   fontPairs: { 'PingFang SC': 'Helvetica Neue' }, // regular weight only — see typography.md
-  // Default ground; pages pick a texture lit from where their visual center is (parts.room).
-  backgroundImages: { paper: 'assets/room-center.jpg' },
+  // The room: base + very fine grain + darkened corners. The light itself is a shape (k.light) on each page's focus,
+  // so it can glide between pages with Morph.
+  backgroundImages: { paper: 'assets/room.jpg' },
   grid: { margin: { x: 0.85, top: 0.75, bottom: 0.6 }, cols: 12, gutter: 0.22 },
   type: {
     display: { font: 'sans', size: 60, leading: 1.15, color: 'ink' },
@@ -40,5 +42,5 @@ module.exports = {
     math: { font: 'STIX Two Math', size: 22, leading: 1.2, color: 'graphite' },
   },
   chart: { series: ['accent', 'stone'] },
-  transition: 'fade',
+  transition: { type: 'morph', duration: 1400 }, // every page: the light glides to the next focus
 };

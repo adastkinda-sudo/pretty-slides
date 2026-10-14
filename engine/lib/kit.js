@@ -171,6 +171,20 @@ function makeKit({ pptx, slide, theme, deckDir, slideId, page }) {
     record('shape', o, { allowOverlap: true });
   }
 
+  // ---- light ----
+  // A soft pool of light on the page's focus: an ellipse with a radial gradient fading to the page colour.
+  // Every page's light shares the Morph name 'light', so with Morph transitions it glides from focus to focus.
+  // Post-processing rewrites the fill and sends it to the back.
+  const lights = [];
+  function light(o) { // { cx, cy, rx, ry = rx * 0.75, color = theme.colors.glow, strength = 1 }
+    const rx = o.rx ?? 3.5, ry = o.ry ?? rx * 0.75;
+    const box = { x: o.cx - rx, y: o.cy - ry, w: 2 * rx, h: 2 * ry };
+    slide.addShape(pptx.ShapeType.ellipse, { ...box, fill: { color: 'FF00FF' }, line: { type: 'none' }, objectName: '!!light' });
+    lights.push({ color: color(o.color || theme.colors.glow || 'accent'), edge: bgColor, strength: o.strength ?? 1 });
+    record('light', box, { bleed: true, allowOverlap: true });
+    return box;
+  }
+
   // ---- images ----
   // fit: 'cover' (fill box, crop overflow) | 'contain' (fit inside) ; focus: {x:0..1,y:0..1} crop anchor for cover
   function image(src, o) {
@@ -266,8 +280,8 @@ function makeKit({ pptx, slide, theme, deckDir, slideId, page }) {
   return {
     theme, W, H, M, innerW, colW, col, span, color, face, mix,
     page, // { id, index, total } — for running heads and progress marks
-    text, rect, line, arc, rule, vrule, dot, shape, image, chart, table, bg, bgImage, notes,
-    _qa: () => ({ boxes, bg: bgColor }), _builds: () => builds, _slide: slide, _pptx: pptx,
+    text, rect, line, arc, rule, vrule, dot, shape, image, chart, table, light, bg, bgImage, notes,
+    _qa: () => ({ boxes, bg: bgColor }), _builds: () => builds, _lights: () => lights, _slide: slide, _pptx: pptx,
   };
 }
 

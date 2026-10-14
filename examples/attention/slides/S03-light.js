@@ -1,15 +1,13 @@
 // S03 — 光 ★：从 it 出发，向每个词伸出一道弧；弧的粗细与亮度就是注意力。最粗最亮的一道落在 animal 上。
 // 视觉中心：it → animal 的弧与被点亮的 animal。Morph 自 S02（tok-* 同名同位）。
-const { TOKENS, IT, WEIGHTS, heat, room, frame, sentence, leader } = require('../parts');
+const { TOKENS, IT, WEIGHTS, heat, frame, sentence, leader } = require('../parts');
 
 module.exports = {
   id: 'S03',
   rhythm: 'dense',
   title: 'it 看向 animal',
-  transition: 'morph',
   notes: '模型的做法：让 it 去“看”句子里的每一个词，并给每个词一个注意力权重。（单击 1：微弱的连线依次亮起。单击 2：street 和 animal 两道最亮的弧。单击 3：结论。）animal 拿到 0.46，street 0.17——it 指的是 animal。权重为示意值。',
   build(k) {
-    room(k, 'it');
     frame(k, { section: '01', name: '按内容检索' });
     k.text([
       { text: 'it', font: 'latin', color: 'accent' },
@@ -20,6 +18,7 @@ module.exports = {
     const xs = sentence(k);
     const y = 4.95, base = y - 0.1;
     const it = xs[IT];
+    k.light({ cx: xs[1].cx + (it.cx - xs[1].cx) * 0.3, cy: base - 0.7, rx: 4.6, ry: 2.8 }); // the light moves onto animal
     // arcs: weak first (click 1, staggered), then the two strong ones (click 2)
     const order = TOKENS.map((_, i) => i).filter((i) => i !== IT).sort((a, b) => WEIGHTS[a] - WEIGHTS[b]);
     let weak = 0;

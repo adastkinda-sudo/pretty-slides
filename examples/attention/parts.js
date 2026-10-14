@@ -25,10 +25,6 @@ function heat(k, t) {
   return k.color('hot');
 }
 
-// Lit room: the page texture with its light falloff placed behind the page's visual center
-// (generated with engine/texture.js --light; see assets/).
-function room(k, where) { k.bgImage(`assets/room-${where}.jpg`); }
-
 // A row of n cells (a vector), brightness from heat(). build = [step, delay] staggers the cells.
 function vector(k, { x, y, n = 8, cell = 0.24, gap = 0.04, seed = 1, lo = 0.1, hi = 0.6, name, build }) {
   values(seed, n).forEach((v, i) => {
@@ -89,4 +85,4 @@ function leader(k, { from, to, color = 'stone', dot = 'accent', build }) {
   k.dot({ cx: to.x, cy: to.y, r: 0.05, fill: dot, build });
 }
 
-module.exports = { TOKENS, IT, WEIGHTS, values, heat, room, vector, matrix, sentence, frame, dim, leader };
+module.exports = { TOKENS, IT, WEIGHTS, values, heat, vector, matrix, sentence, frame, dim, leader };

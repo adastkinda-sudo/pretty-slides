@@ -1,6 +1,6 @@
 // S06 — 代价：每个词都要看每个词，矩阵是 n × n。长度翻倍，格子变为四倍。视觉中心：最大的那张矩阵。
 // 逐步出现：4×4 → 8×8 → 16×16，每次一个 ×4。格子数量是准确的（16、64、256）。
-const { matrix, room, frame, dim } = require('../parts');
+const { matrix, frame, dim } = require('../parts');
 
 const pattern = (n) => (r, c) => {
   const local = Math.exp(-Math.abs(r - c) * (6 / n)) * 0.75;
@@ -14,13 +14,14 @@ module.exports = {
   title: '平方代价',
   notes: '代价在这里：每个词都要看每个词，所以注意力矩阵是 n × n。（单击 1：长度从 4 到 8，格子从 16 到 64。单击 2：到 16，格子 256。）长度每翻一倍，计算量和显存约变为四倍——这也是长文本昂贵的根本原因。',
   build(k) {
-    room(k, 'right');
     frame(k, { section: '01', name: '按内容检索' });
     k.text([{ text: '长度翻倍，代价变为' }, { text: '四倍', color: 'accent' }], { style: 'title', x: k.M.x, y: k.M.top, w: 9, nowrap: true });
 
     const pitch = 0.205, gap = 0.035, cell = pitch - gap;
     const baseY = 5.75; // shared baseline: matrices sit on it
     const specs = [{ n: 4, x: k.M.x + 0.3 }, { n: 8, x: 3.35 }, { n: 16, x: 6.7 }];
+    const big = 16 * pitch - gap;
+    k.light({ cx: specs[2].x + big / 2, cy: baseY - big / 2, rx: 3.6, ry: 3.1 }); // the largest matrix
     let prev;
     specs.forEach((s, i) => {
       const size = s.n * pitch - gap;
