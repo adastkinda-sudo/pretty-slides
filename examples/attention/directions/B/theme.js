@@ -6,8 +6,8 @@ module.exports = {
   lang: 'zh-CN',
   background: 'paper',
   colors: {
-    paper: '0F0F11',     // the room
-    paperDeep: '1B1A1E', // cold cells, quiet fields
+    paper: '17151A',     // the room: warm charcoal, never flat black
+    paperDeep: '221F24', // cold cells, quiet fields
     ink: 'F2F0EB',
     graphite: 'C9C5BD',
     stone: '9C978E',
@@ -38,6 +38,8 @@ module.exports = {
     number: { font: 'latinLight', size: 120, leading: 1, tracking: -3, color: 'ink' },
     math: { font: 'STIX Two Math', size: 30, leading: 1.2, color: 'ink' },
   },
+  // Grain + a soft light falloff: the matrix is the light source of the room (engine/texture.js --light).
+  backgroundImages: { paper: 'assets/room.jpg' },
   chart: { series: ['accent', 'stone'] },
   transition: 'fade',
 };
