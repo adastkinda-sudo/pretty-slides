@@ -26,7 +26,18 @@ function makeKit({ pptx, slide, theme, deckDir, slideId, page }) {
     const [p, q] = [color(a), color(b)].map((h) => [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16)));
     return p.map((v, i) => Math.round(v + (q[i] - v) * t).toString(16).padStart(2, '0')).join('').toUpperCase();
   };
-  const named = (name) => (name ? { objectName: `!!${name}` } : {});
+  // Object names: `name` → `!!name` (PowerPoint's forced Morph pairing). `build` registers an in-slide
+  // entrance animation: build: 2 → fades in on the 2nd click; build: [2, 300] → with click 2, 300 ms later.
+  const builds = [];
+  const named = (o = {}) => {
+    let objectName = o.name ? `!!${o.name}` : undefined;
+    if (o.build != null) {
+      const [step, delay = 0] = Array.isArray(o.build) ? o.build : [o.build, 0];
+      objectName = objectName || `b-${slideId}-${builds.length}`;
+      builds.push({ name: objectName, step, delay });
+    }
+    return objectName ? { objectName } : {};
+  };
   const record = (kind, o, extra = {}) => boxes.push({ kind, x: o.x, y: o.y, w: o.w, h: o.h, ...extra });
 
   // ---- grid ----
@@ -85,7 +96,7 @@ function makeKit({ pptx, slide, theme, deckDir, slideId, page }) {
       lineSpacingMultiple: st.leading || 1.2,
       paraSpaceAfter: opts.paraSpace || 0,
       fit: 'none', wrap: !opts.nowrap, rotate: opts.rotate,
-      ...named(opts.name),
+      ...named(opts),
     };
     slide.addText(out, box);
     record('text', box, { est, lineW, nowrap: !!opts.nowrap, chrome: !!opts.chrome, bleed: opts.bleed, color: color(st.color), size: st.size, sample: paras[0].text.slice(0, 24), allowOverlap: opts.overlap });
@@ -99,7 +110,7 @@ function makeKit({ pptx, slide, theme, deckDir, slideId, page }) {
       ...box,
       fill: o.fill ? { color: color(o.fill), transparency: o.transparency || 0 } : { type: 'none' },
       line: o.line ? { color: color(o.line), width: o.lineW ?? 0.75, dashType: o.dash } : { type: 'none' },
-      rectRadius: o.radius, rotate: o.rotate, ...named(o.name),
+      rectRadius: o.radius, rotate: o.rotate, ...named(o),
     });
     record('rect', box, { bleed: o.bleed, fill: o.fill && color(o.fill), allowOverlap: true });
     return box;
@@ -117,13 +128,13 @@ function makeKit({ pptx, slide, theme, deckDir, slideId, page }) {
         beginArrowType: ['start', 'both'].includes(o.arrow) ? arrow.type : undefined,
         endArrowType: ['end', 'both'].includes(o.arrow) ? arrow.type : undefined,
       },
-      ...named(o.name),
+      ...named(o),
     });
     record('line', { x, y, w, h }, { bleed: o.bleed, allowOverlap: true });
   }
 
-  const rule = (o) => line({ x1: o.x, y1: o.y, x2: o.x + o.w, y2: o.y, color: o.color || 'hairline', weight: o.weight ?? 0.75, name: o.name });
-  const vrule = (o) => line({ x1: o.x, y1: o.y, x2: o.x, y2: o.y + o.h, color: o.color || 'hairline', weight: o.weight ?? 0.75, name: o.name });
+  const rule = (o) => line({ x1: o.x, y1: o.y, x2: o.x + o.w, y2: o.y, color: o.color || 'hairline', weight: o.weight ?? 0.75, name: o.name, build: o.build });
+  const vrule = (o) => line({ x1: o.x, y1: o.y, x2: o.x, y2: o.y + o.h, color: o.color || 'hairline', weight: o.weight ?? 0.75, name: o.name, build: o.build });
 
   function dot(o) { // { cx, cy, r, fill, line }
     const box = { x: o.cx - o.r, y: o.cy - o.r, w: 2 * o.r, h: 2 * o.r };
@@ -131,7 +142,7 @@ function makeKit({ pptx, slide, theme, deckDir, slideId, page }) {
       ...box,
       fill: o.fill ? { color: color(o.fill), transparency: o.transparency || 0 } : { type: 'none' },
       line: o.line ? { color: color(o.line), width: o.lineW ?? 0.75 } : { type: 'none' },
-      ...named(o.name),
+      ...named(o),
     });
     record('dot', box, { allowOverlap: true });
     return box;
@@ -142,7 +153,7 @@ function makeKit({ pptx, slide, theme, deckDir, slideId, page }) {
       ...o,
       fill: o.fill ? { color: color(o.fill), transparency: o.transparency || 0 } : { type: 'none' },
       line: o.line ? { color: color(o.line), width: o.lineW ?? 0.75 } : { type: 'none' },
-      ...named(o.name),
+      ...named(o),
     });
     record('shape', o, { allowOverlap: true });
   }
@@ -154,7 +165,7 @@ function makeKit({ pptx, slide, theme, deckDir, slideId, page }) {
     const nat = imageSize(file);
     const ar = nat.w / nat.h;
     const box = { x: o.x, y: o.y, w: o.w, h: o.h };
-    const base = { path: file, transparency: o.transparency, ...named(o.name) };
+    const base = { path: file, transparency: o.transparency, ...named(o) };
     if ((o.fit || 'cover') === 'contain') {
       let w = o.w, h = o.w / ar;
       if (h > o.h) { h = o.h; w = o.h * ar; }
@@ -199,7 +210,7 @@ function makeKit({ pptx, slide, theme, deckDir, slideId, page }) {
       valAxisMinVal: o.min, valAxisMaxVal: o.max,
       barDir: o.horizontal ? 'bar' : 'col',
       holeSize: o.holeSize, showPercent: o.showPercent, showTitle: false,
-      ...named(o.name), ...(o.raw || {}),
+      ...named(o), ...(o.raw || {}),
     };
     slide.addChart(pptx.ChartType[type] ?? type, data, opts);
     record('chart', opts, { allowOverlap: true });
@@ -243,7 +254,7 @@ function makeKit({ pptx, slide, theme, deckDir, slideId, page }) {
     theme, W, H, M, innerW, colW, col, span, color, face, mix,
     page, // { id, index, total } — for running heads and progress marks
     text, rect, line, rule, vrule, dot, shape, image, chart, table, bg, bgImage, notes,
-    _qa: () => ({ boxes, bg: bgColor }), _slide: slide, _pptx: pptx,
+    _qa: () => ({ boxes, bg: bgColor }), _builds: () => builds, _slide: slide, _pptx: pptx,
   };
 }
 

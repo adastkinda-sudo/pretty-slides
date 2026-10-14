@@ -18,22 +18,20 @@ module.exports = {
   },
   fonts: {
     sans: 'PingFang SC',
-    sansLight: 'PingFang SC Light',
-    sansMedium: 'PingFang SC Medium',
     serif: 'Helvetica Neue Light', // the probe slide code asks for 'serif' letters; this direction answers with light sans
     latin: 'Helvetica Neue',
     latinLight: 'Helvetica Neue Light',
     mono: 'Menlo',
   },
-  fontPairs: { 'PingFang SC': 'Helvetica Neue', 'PingFang SC Light': 'Helvetica Neue Light' },
+  fontPairs: { 'PingFang SC': 'Helvetica Neue' }, // regular weight only — see typography.md
   grid: { margin: { x: 0.85, top: 0.75, bottom: 0.6 }, cols: 12, gutter: 0.22 },
   type: {
-    display: { font: 'sansLight', size: 64, leading: 1.1, tracking: -1, color: 'ink' },
-    statement: { font: 'sansLight', size: 44, leading: 1.3, color: 'ink' },
-    title: { font: 'sansMedium', size: 26, leading: 1.3, color: 'ink' },
-    lead: { font: 'sansLight', size: 20, leading: 1.55, color: 'graphite' },
+    display: { font: 'sans', size: 64, leading: 1.1, tracking: -1, color: 'ink' },
+    statement: { font: 'sans', size: 44, leading: 1.3, color: 'ink' },
+    title: { font: 'sans', size: 26, leading: 1.3, color: 'ink' },
+    lead: { font: 'sans', size: 20, leading: 1.55, color: 'graphite' },
     body: { font: 'sans', size: 15, leading: 1.6, color: 'graphite' },
-    label: { font: 'sansMedium', size: 11, leading: 1.3, tracking: 14, color: 'stone' },
+    label: { font: 'sans', size: 11, leading: 1.3, tracking: 14, color: 'stone' },
     caption: { font: 'sans', size: 11, leading: 1.5, color: 'stone' },
     number: { font: 'latinLight', size: 120, leading: 1, tracking: -3, color: 'ink' },
     math: { font: 'STIX Two Math', size: 30, leading: 1.2, color: 'ink' },

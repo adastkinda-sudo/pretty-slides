@@ -70,7 +70,7 @@ module.exports = {
 **文字** `k.text(content, opts)`
 
 - `content`：字符串（`\n` 表示换段），或者 run 数组：`['普通', { text: '强调', color: 'accent' }, { text: 'Latin', font: 'latin' }]`。run 也可以带 `style`。
-- `opts`：`style`（theme.type 里的名字），`x y w h`，`align`（left/center/right），`valign`（默认 top），`paraSpace`（段后距，pt），`name`（Morph 配对名），`overlap: true`（有意叠压，跳过重叠检查），`nowrap: true`（不自动换行），`chrome: true`（结构层元素，允许放在边距内），`bleed: true`（有意出血的大字），`rotate`。
+- `opts`：`style`（theme.type 里的名字），`x y w h`，`align`（left/center/right），`valign`（默认 top），`paraSpace`（段后距，pt），`name`（Morph 配对名），`overlap: true`（有意叠压，跳过重叠检查），`nowrap: true`（不自动换行），`chrome: true`（结构层元素，允许放在边距内），`bleed: true`（有意出血的大字），`build: 1` 或 `build: [1, 300]`（页内动效：第几次单击淡入、延迟毫秒；所有元素都支持），`rotate`。
 - **单行标签一律 `nowrap: true`**：PowerPoint 的字体度量和预览不同，卡着宽度的文本框在 PowerPoint 里会意外折行（例如 “animal” 被折成 “anima / l”）。QA 会把余量小于 12% 的文本框判为硬问题。
 - 也可以覆盖样式：`font size color bold italic tracking leading`。
 - 不写 `h` 时，按估算的高度自动给出。
@@ -125,7 +125,7 @@ module.exports = {
 
 ## 已知限制
 
-- 不生成页内逐项动画，渐进展示用多页 Morph 代替（见 `aesthetic/motion.md`）。
+- 页内动效目前只有淡入（`build`）；移动和变形用跨页 Morph（见 `aesthetic/motion.md`）。
 - 不生成可编辑的 OMML 公式（见 `aesthetic/data-and-diagrams.md`）。
 - 预览由 LibreOffice 渲染，与 PowerPoint 有细微差异：中西文之间的自动间距、个别字体的行高。最终以 PowerPoint 为准。
 - pptx 不嵌入字体，播放环境必须装有所用字体。

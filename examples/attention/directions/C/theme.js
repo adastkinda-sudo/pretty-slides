@@ -19,19 +19,17 @@ module.exports = {
   },
   fonts: {
     sans: 'PingFang SC',
-    sansMedium: 'PingFang SC Medium',
-    sansBold: 'PingFang SC Semibold',
     latin: 'Helvetica Neue',
     latinMedium: 'Helvetica Neue Medium',
     latinBold: 'Helvetica Neue Bold',
     mono: 'Menlo',
   },
-  fontPairs: { 'PingFang SC': 'Helvetica Neue', 'PingFang SC Semibold': 'Helvetica Neue Bold' },
+  fontPairs: { 'PingFang SC': 'Helvetica Neue' }, // regular weight only — see typography.md
   grid: { margin: { x: 0.7, top: 0.6, bottom: 0.55 }, cols: 12, gutter: 0.2 },
   type: {
     glyph: { font: 'latinBold', size: 300, leading: 1, tracking: -4, color: 'ink' },
-    display: { font: 'sansBold', size: 54, leading: 1.15, tracking: -1, color: 'ink' },
-    title: { font: 'sansBold', size: 28, leading: 1.3, color: 'ink' },
+    display: { font: 'sans', bold: true, size: 54, leading: 1.15, tracking: -1, color: 'ink' },
+    title: { font: 'sans', bold: true, size: 28, leading: 1.3, color: 'ink' },
     lead: { font: 'sans', size: 19, leading: 1.5, color: 'graphite' },
     body: { font: 'sans', size: 15, leading: 1.55, color: 'graphite' },
     label: { font: 'latinMedium', size: 11, leading: 1.3, tracking: 10, color: 'stone' },

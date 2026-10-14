@@ -18,24 +18,21 @@ module.exports = {
   },
   fonts: {
     serif: 'Songti SC',
-    serifLight: 'Songti SC Light',
     sans: 'PingFang SC',
-    sansLight: 'PingFang SC Light',
-    sansMedium: 'PingFang SC Medium',
     latin: 'Helvetica Neue',
     latinLight: 'Helvetica Neue Light',
     mono: 'Menlo',
   },
   // Latin glyphs inside runs set in the key font are rendered with the value font.
-  fontPairs: { 'PingFang SC': 'Helvetica Neue', 'PingFang SC Light': 'Helvetica Neue Light' },
+  fontPairs: { 'PingFang SC': 'Helvetica Neue' }, // regular weight only — see typography.md
   grid: { margin: { x: 0.85, top: 0.75, bottom: 0.6 }, cols: 12, gutter: 0.22 },
   type: {
     display: { font: 'serif', size: 66, leading: 1.12, tracking: 0, color: 'ink' },
     statement: { font: 'serif', size: 44, leading: 1.3, color: 'ink' },
-    title: { font: 'sansMedium', size: 26, leading: 1.3, color: 'ink' },
-    lead: { font: 'sansLight', size: 20, leading: 1.55, color: 'graphite' },
+    title: { font: 'sans', size: 26, leading: 1.3, color: 'ink' },
+    lead: { font: 'sans', size: 20, leading: 1.55, color: 'graphite' },
     body: { font: 'sans', size: 15, leading: 1.6, color: 'graphite' },
-    label: { font: 'sansMedium', size: 11, leading: 1.3, tracking: 12, color: 'stone' },
+    label: { font: 'sans', size: 11, leading: 1.3, tracking: 12, color: 'stone' },
     caption: { font: 'sans', size: 11, leading: 1.5, color: 'stone' },
     number: { font: 'latinLight', size: 120, leading: 1, tracking: -3, color: 'ink' },
     math: { font: 'STIX Two Math', size: 30, leading: 1.2, color: 'ink' },
