@@ -115,6 +115,30 @@ async function postProcess(buffer, { transitions, fontPairs, builds = [], lights
 async function sanitizePackage(zip) {
   const ctPath = '[Content_Types].xml';
   let ct = await zip.file(ctPath).async('string');
+
+  // Charts: pptxgenjs references a third (series) axis id in every bar/line/area chart group but only defines
+  // a <c:serAx> for 3D bars. PowerPoint deletes such charts on repair. Drop axis references nothing defines.
+  for (const chartPath of Object.keys(zip.files).filter((n) => /^ppt\/charts\/chart\d+\.xml$/.test(n))) {
+    let x = await zip.file(chartPath).async('string');
+    const defined = new Set([...x.matchAll(/<c:(?:catAx|valAx|dateAx|serAx)>\s*<c:axId val="(\d+)"/g)].map((m) => m[1]));
+    x = x.replace(/<c:axId val="(\d+)"\/>/g, (m, id) => (defined.has(id) ? m : ''));
+    zip.file(chartPath, x);
+  }
+
+  // Notes master: pptxgenjs points it at the slide master's theme; PowerPoint wants one theme part per master.
+  const nmRels = 'ppt/notesMasters/_rels/notesMaster1.xml.rels';
+  if (zip.file(nmRels)) {
+    const rels = await zip.file(nmRels).async('string');
+    const m = rels.match(/Target="\.\.\/theme\/(theme\d+)\.xml"/);
+    const slideMasterUses = (await Promise.all(Object.keys(zip.files).filter((n) => /^ppt\/slideMasters\/_rels\/.*\.rels$/.test(n))
+      .map((n) => zip.file(n).async('string')))).some((r) => m && r.includes(`../theme/${m[1]}.xml`));
+    if (m && slideMasterUses) {
+      let n = 1; while (zip.file(`ppt/theme/theme${n}.xml`)) n++;
+      zip.file(`ppt/theme/theme${n}.xml`, await zip.file(`ppt/theme/${m[1]}.xml`).async('string'));
+      zip.file(nmRels, rels.replace(`../theme/${m[1]}.xml`, `../theme/theme${n}.xml`));
+      ct = ct.replace('</Types>', `<Override PartName="/ppt/theme/theme${n}.xml" ContentType="application/vnd.openxmlformats-officedocument.theme+xml"/></Types>`);
+    }
+  }
   ct = ct.replace(/\s*<Override PartName="([^"]+)"[^>]*\/>/g, (m, part) => (zip.file(part.replace(/^\//, '')) ? m : ''));
   zip.file(ctPath, ct);
   const dangling = [];
