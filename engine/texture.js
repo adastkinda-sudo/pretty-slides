@@ -1,9 +1,12 @@
 #!/usr/bin/env node
 // Generate a subtle paper-grain background for a given page color.
 //
-//   node engine/texture.js <hex> <out.jpg> [--strength 1]
+//   node engine/texture.js <hex> <out.jpg> [--strength 1] [--light cx,cy,radius,#hex]
 //
 // strength 1 ≈ luminance σ 1.9 on a light page: visible up close, calm from a distance. Use 0.5–1.5.
+// --light adds a soft light falloff around a point (cx, cy as fractions of the page, radius as a fraction
+// of the page width) — for dark pages where the subject is the light source, e.g. --light 0.72,0.5,0.6,#2A241F.
+// Only use it when something on the page motivates the light; a glow for its own sake is decoration.
 // Wire it up in theme.js: backgroundImages: { paper: 'assets/grain-paper.jpg' }.
 
 const fs = require('fs');
@@ -18,6 +21,8 @@ if (!/^#?[0-9a-fA-F]{6}$/.test(hex || '') || !out) {
 }
 const si = rest.indexOf('--strength');
 const strength = si >= 0 ? Number(rest[si + 1]) : 1;
+const li = rest.indexOf('--light');
+const light = li >= 0 ? rest[li + 1].split(',') : null;
 // Contrast window for the noise layers: narrower window = stronger grain.
 const win = (base) => { const half = Math.min(49, base / strength); return [`${50 - half}%`, `${50 + half}%`]; };
 
@@ -30,7 +35,17 @@ run(['-size', `${W}x${H}`, 'xc:gray50', '-seed', '3', '-attenuate', '1', '+noise
 run(['-size', `${Math.round(W / 20)}x${Math.round(H / 20)}`, 'xc:gray50', '-seed', '9', '-attenuate', '1', '+noise', 'Gaussian', '-colorspace', 'gray', '-blur', '0x2', '-resize', `${W}x${H}!`, mottle]);
 const [f0, f1] = win(25), [m0, m1] = win(20);
 fs.mkdirSync(path.dirname(path.resolve(out)), { recursive: true });
-run(['-size', `${W}x${H}`, `xc:#${hex.replace('#', '')}`,
+const base = `#${hex.replace('#', '')}`;
+const ground = path.join(tmp, 'ground.png');
+run(['-size', `${W}x${H}`, `xc:${base}`, ground]);
+if (light) {
+  const [cx, cy, rr, color] = light;
+  const r = Math.round(Number(rr) * W);
+  const glow = path.join(tmp, 'glow.png');
+  run(['-size', `${2 * r}x${2 * r}`, `radial-gradient:${color}-${base}`, glow]);
+  run([ground, glow, '-geometry', `+${Math.round(Number(cx) * W - r)}+${Math.round(Number(cy) * H - r)}`, '-compose', 'lighten', '-composite', ground]);
+}
+run([ground,
   '(', fine, '-level', `${f0},${f1}`, ')', '-compose', 'overlay', '-composite',
   '(', mottle, '-level', `${m0},${m1}`, ')', '-compose', 'overlay', '-composite',
   '-quality', '90', out]);

@@ -83,7 +83,7 @@
 | **尺寸线** | 多长、多大、哪一段 | 工程图式：细线加两端短竖线，标注在下方 |
 | **刻度与对位** | 这一步对应图的哪一列 | 例：把公式拆成几步，分别对齐到画它的那一列，在分隔线上用刻度相连 |
 | **色块分区** | 这一块是不同的区域（输入 / 输出、正文 / 注释） | 整块平涂次背景色（paperDeep），可以出血；不加圆角、阴影和边框。分区内的小字改用 graphite 色，以保证对比度 |
-| **纸张颗粒** | 质感（整套统一） | `node engine/texture.js <背景色> assets/grain-paper.jpg` 生成，在 theme 中设置 `backgroundImages: { paper: ... }`。强度默认 1（亮度标准差约 1.9），必须在投影或大屏上确认效果 |
+| **纸张颗粒 / 光照** | 质感（整套统一）；深色页上由主体驱动的光 | `node engine/texture.js <背景色> assets/grain-paper.jpg` 生成，在 theme 中设置 `backgroundImages: { paper: ... }`。浅底强度约 1，深底约 0.5；深色页可加 `--light`（见 `color.md`）。必须在投影或大屏上确认效果 |
 
 - 结构层在**设计阶段**决定：这套演示用哪几种，写进 `design.md` 的“结构层”一节，并实现在 deck 的 `parts.js` 里（模板见 `templates/deck/parts.js`，实例见 `examples/attention/parts.js`）。
 - 结构元素必须比内容更轻：字号用 label 或 caption，颜色用 stone 或 graphite，线宽 0.5pt。如果它比图解还抢眼，就是做错了。

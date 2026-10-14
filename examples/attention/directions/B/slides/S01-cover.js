@@ -16,6 +16,7 @@ module.exports = {
   transition: 'none',
   notes: '开场：今天只讲一个想法——注意力机制本质上是一次“按内容检索”。右侧是例句的注意力矩阵（示意），最亮的格子是 it 看向 animal。',
   build(k) {
+    k.bgImage('assets/room-cover.jpg'); // light centred on the matrix
     const N = TOKENS.length, cell = 0.5, gap = 0.06, pitch = cell + gap;
     const x0 = k.W - 0.55 - N * pitch + gap, y0 = (k.H - (N * pitch - gap)) / 2;
     for (let r = 0; r < N; r++) {
