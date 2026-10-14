@@ -5,6 +5,7 @@
       "Bash(node engine/dump.js:*)",
       "Bash(node engine/texture.js:*)",
       "Bash(node engine/compare.js:*)",
+      "Bash(node engine/pptdiff.js:*)",
       "Bash(npm --prefix engine install)"
     ]
   }

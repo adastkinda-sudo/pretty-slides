@@ -28,6 +28,7 @@ node engine/make.js <deckDir> --only S03,S07  # 只渲染这几页（修改时�
 node engine/make.js <deckDir> --no-render     # 只构建 + QA
 node engine/dump.js <file.pptx> [页码]        # 读出 pptx 中各对象的名称、位置、文字
 node engine/texture.js <hex> <out.jpg>         # 生成与背景色匹配的纸张颗粒
+node engine/pptdiff.js <原文件.pptx> <修复后.pptx>  # PowerPoint 提示“修复”时，找出它改了什么
 node engine/compare.js <out.png> <dirA> <dirB> [dirC] [--only S01,S05] [--labels A,B,C]  # 并排对比图：一列一个 deck（或 renders 目录），一行一页
 ```
 
@@ -125,6 +126,14 @@ module.exports = {
 - 文件开头写一行注释：页面 ID、构图动作、主角是什么。
 - 需要跨页 Morph 的对象，在相关页面上起相同的 `name`。
 - 不要在幻灯片代码里写演示内容以外的东西（例如“TODO”“草稿”）：它们会出现在画面上。
+
+## PowerPoint 提示“修复”时
+
+LibreOffice 对不合规范的 XML 很宽容，所以预览正常不代表 PowerPoint 能接受。`make.js` 的后处理已经修正了 pptxgenjs 已知的几类问题（多余的内容类型声明、备注母版共用主题、图表的悬空坐标轴、同一段落里重复的 `pPr`、动画的 `bldP`），并会在包内引用指向不存在的部件时直接报错。如果仍然出现修复提示：
+
+1. 让用户点“修复”，另存一份。
+2. `node engine/pptdiff.js out/<name>.pptx <修复后>.pptx`，看 PowerPoint 改了哪里。重新保存本身也会带来一些无关的变化（属性顺序、命名空间位置、图片去重、扩展信息），要找的是在多页上重复出现、或者删除和合并了内容的变化。
+3. 在 `engine/lib/post.js` 里修正，再请用户确认。PowerPoint 打开后才弹出的修复对话框，自动检测发现不了，必须由用户确认。
 
 ## 已知限制
 

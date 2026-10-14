@@ -52,6 +52,7 @@ node engine/make.js <deckDir> --only S03,S07  # 只渲染这几页（构建仍�
 node engine/dump.js <file.pptx> [页码]        # 读出 pptx 里各对象的名称、位置、文字
 node engine/texture.js <hex> <out.jpg>         # 生成与背景色匹配的纸张颗粒
 node engine/compare.js <out.png> <dirA> <dirB> [--only S03] [--labels A,B]  # 并排对比图（方向对比、修改前后）
+node engine/pptdiff.js <原文件.pptx> <修复后.pptx>  # PowerPoint 提示“修复”时，找出它改了什么
 ```
 
 首次使用前运行 `npm --prefix engine install`。渲染依赖 LibreOffice（`soffice`）、`pdftoppm`（poppler）和 ImageMagick（`magick`）。
