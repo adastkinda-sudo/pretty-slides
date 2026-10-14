@@ -1,6 +1,6 @@
 # Pretty Slides
 
-一条和 AI 一起做演示的流水线：从一个主题出发，产出**原生可编辑、有设计感、没有 AI 味**的 PowerPoint。
+一条和 AI 一起做演示的流水线：从一个主题出发，产出**原生可编辑、审美好、有主题个性**的 PowerPoint。
 
 ![示例：注意力机制（引擎自测 deck）](examples/attention/renders/_contact.png)
 
@@ -8,12 +8,13 @@
 
 市面上的 AI 做 PPT，问题大多不在功能，而在审美：卡片网格、图标当项目符号、渐变色带、编号圆圈、千篇一律的“标题 + 三栏”。它们让每一页都“像幻灯片”，却没有一页是为自己的内容设计的。
 
-Pretty Slides 换了一种做法：
+Pretty Slides 换了一种做法。它的审美标准写在 [guides/aesthetic/principles.md](guides/aesthetic/principles.md)，核心是：
 
-- **排版和留白是主要的设计手段**：一页一个主角，字号对比大，一种强调色，用细线代替盒子。引擎里根本没有“卡片”和“图标”这类部件。
-- **讲解页必须有图，页面靠结构层丰富**：讲解机制的页面一定有一张承担机制的图解；导航框架、引导线、尺寸线、色块分区、纸张颗粒这些承载信息的细小元素，让纯色页面不再单调。
-- **先设计，再制作**：设计文稿把每一页要做成什么样写到可以直接制作的程度。
-- **先看样张，再做整套**：3–5 页真实的样张先让你确认视觉语言，它们之后原样进入成稿。
+- **视觉语言从主题里长出来**：讲注意力机制，封面就是一张注意力矩阵，向量就是一排方格。能套在任何主题上的风格，本身就是模板。
+- **尺度有戏剧性，密度要对**：一页一个主角，大的非常大；论断页可以很空，讲解页要有一张承担机制的图，可以很满。
+- **工艺精确，整套是一部片子**：对齐、混排、换行这些细节都要讲究；整套有起伏，有让人记住的签名画面。
+- **在比较中选择**：样张阶段先把 2–3 个截然不同的视觉方向做成探针页并排对比，你选定之后再深化。
+- **先设计，再制作**：设计文稿把每一页要做成什么样写到可以直接制作的程度；样张会原样进入成稿。
 - **每个阶段在新会话里只读文件**：上下文干净，你的偏好和禁令都记录在文件里，不会在长对话里丢失。
 - **渲染才算数**：每次修改都会渲染出图，AI 自己先看过，再给你看。
 
@@ -24,7 +25,8 @@ Pretty Slides 换了一种做法：
 | 0 立项 | 给一个主题 | `/new-deck 注意力机制入门` | `projects/<slug>/` |
 | 1 内容 | 和 AI 聊：受众、时长、目标、材料；审阅文稿 | （直接对话） | `01-content/content.md` |
 | 2 设计 | 审阅设计文稿，提意见，认可 | `/design` | `02-design/design.md` |
-| 3 样张 | 看 3–5 页真实样张，确认视觉语言 | `/reference` | `03-reference/*.pptx` |
+| 3a 方向 | 看 2–3 个视觉方向的并排对比，选一个（也可以混合） | `/reference` | `03-reference/directions/_compare.png` |
+| 3b 样张 | 看 3–5 页正式样张，确认视觉语言 | `/reference`（再次运行） | `03-reference/out/*.pptx` |
 | 4 成稿 | 等待 | `/build-deck` | `04-deck/out/<slug>.pptx` |
 | 5 修改 | 逐页提意见，想改几轮就改几轮 | `/revise S03 标题太大` | 前后对比 + 修改记录 |
 
@@ -40,16 +42,16 @@ Pretty Slides 换了一种做法：
 |---|---|
 | `guides/content.md` | 写内容文稿 |
 | `guides/design-doc.md` | 写设计文稿 |
-| `guides/aesthetic/principles.md` | 设计原则与取舍优先级 |
-| `guides/aesthetic/anti-ai.md` | 去 AI 味：禁用清单与好的样子（每一步都读） |
+| `guides/aesthetic/principles.md` | 审美标准（八条）、怎么判断、冲突时的取舍 |
+| `guides/aesthetic/anti-ai.md` | 三种失败方式（通用部件、伪极简、安全的千篇一律）与自检问题 |
 | `guides/aesthetic/typography.md` | 字体（只列本机已验证的）、字号层级、中文排版 |
-| `guides/aesthetic/color.md` | 色板配方（已校验对比度） |
-| `guides/aesthetic/composition.md` | 网格、构图动作、节奏、结构层、章节页 |
+| `guides/aesthetic/color.md` | 从主题取色；五个截然不同的方向示例（已校验对比度） |
+| `guides/aesthetic/composition.md` | 网格、构图动作、尺度、强度曲线、签名画面、结构层、章节页 |
 | `guides/aesthetic/imagery.md` | 图片来源与处理 |
 | `guides/aesthetic/data-and-diagrams.md` | 图表、图解、公式、代码 |
 | `guides/aesthetic/motion.md` | Morph 与转场 |
 | `guides/production/engine.md` | 引擎 API |
-| `guides/production/review.md` | 渲染自查（硬规则、软规则、不准动的范围） |
+| `guides/production/review.md` | 渲染自查：硬问题、判断问题、工艺检查、不准动的范围 |
 
 ## 制作引擎
 

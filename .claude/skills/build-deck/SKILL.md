@@ -11,15 +11,15 @@ context: fork
 
 ## 0. 定位项目
 
-- 项目 slug：`$ARGUMENTS`。如果为空：选关口 3 已勾选、关口 4 未勾选、且最近修改的项目。
-- 读 `project.md`。**如果关口 3 没有勾选**，停止并报告。
+- 项目 slug：`$ARGUMENTS`。如果为空：选关口 3b 已勾选、关口 4 未勾选、且最近修改的项目。
+- 读 `project.md`。**如果关口 3b 没有勾选**，停止并报告。
 - 如果 `04-deck/` 已经存在：从已有的页面继续，不要覆盖已经存在的页面文件（它们可能已经被用户修改过）。
 
 ## 1. 读取
 
 1. `project.md`（决策记录）、`02-design/design.md`（全文，包括“样张回写”）。
 2. `03-reference/` 中的 `theme.js`、`parts.js`（如果有）和全部样张代码：它们是**已认可的视觉标准**。
-3. `guides/production/engine.md`、`guides/aesthetic/anti-ai.md`、`guides/production/review.md`。
+3. `guides/aesthetic/principles.md`、`guides/aesthetic/anti-ai.md`、`guides/production/engine.md`、`guides/production/review.md`。
 4. `guides/aesthetic/data-and-diagrams.md`（讲解页的图解配方）。
 5. 按需：`imagery.md`、`motion.md`、`composition.md`。
 
@@ -53,8 +53,10 @@ cp projects/<slug>/03-reference/slides/*.js projects/<slug>/04-deck/slides/
 ## 4. 整套检查
 
 1. `node engine/make.js projects/<slug>/04-deck`（全部渲染 + 缩略总览）。
-2. 看 `renders/_contact.png`：统一性、节奏、有没有突然变粗糙的页面；新页面和样张页面放在一起，是否属于同一套作品。
-3. 修复，然后重新渲染受影响的页面。
+2. 看 `renders/_contact.png`：统一性、强度曲线、有没有突然变粗糙的页面；新页面和样张页面放在一起，是否属于同一套作品。
+3. **签名画面**（design.md 中标 ★ 的页）：样张里没有做过的，至少做两个版本，用 `node engine/compare.js` 并排比较，留下更好的那个；已经做过的，放回整套里再看一遍是否仍然是全场最强的画面。
+4. **工艺检查**：按 `review.md` 的“工艺检查”逐页过一遍，修掉细节问题。
+5. 修复，然后重新渲染受影响的页面。
 
 ## 5. 收尾
 
