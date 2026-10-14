@@ -21,7 +21,7 @@ module.exports = {
 
     const n = 8, cell = 0.21, gap = 0.04, size = n * (cell + gap) - gap;
     const x0 = 6.9, y0 = 1.45, gx = 0.55, gy = 0.75;
-    k.light({ cx: x0 + size + gx / 2, cy: y0 + size + gy / 2, rx: 4.4, ry: 3.6 }); // the four heads
+    k.light({ cx: x0 + size + gx / 2, cy: y0 + size + gy / 2, r: 4.0 }); // the four heads
     HEADS.forEach((h, i) => {
       const x = x0 + (i % 2) * (size + gx), y = y0 + Math.floor(i / 2) * (size + gy);
       matrix(k, { x, y, n, cell, gap, weight: h.f, build: [1, 0, i * 150] }); // each head at once, 150 ms apart

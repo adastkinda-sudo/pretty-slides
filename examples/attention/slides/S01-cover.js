@@ -18,7 +18,7 @@ module.exports = {
   build(k) {
     const N = TOKENS.length, cell = 0.5, gap = 0.06, pitch = cell + gap;
     const x0 = k.W - 0.55 - N * pitch + gap, y0 = (k.H - (N * pitch - gap)) / 2;
-    k.light({ cx: x0 + 1 * pitch + cell / 2, cy: y0 + IT * pitch + cell / 2, rx: 5, ry: 4.2, strength: 1 });
+    k.light({ cx: x0 + 1 * pitch + cell / 2, cy: y0 + IT * pitch + cell / 2, r: 4.6, strength: 1 });
     for (let r = 0; r < N; r++) {
       for (let c = 0; c < N; c++) k.rect({ x: x0 + c * pitch, y: y0 + r * pitch, w: cell, h: cell, fill: heat(k, weight(r, c)) });
       k.text(TOKENS[r], { style: 'caption', font: 'latin', color: r === IT ? 'accent' : 'stone', x: x0 - 1.1, y: y0 + r * pitch + 0.12, w: 1.0, align: 'right', nowrap: true });

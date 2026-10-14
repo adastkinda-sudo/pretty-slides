@@ -18,7 +18,7 @@ module.exports = {
     const xs = sentence(k);
     const y = 4.95, base = y - 0.1;
     const it = xs[IT];
-    k.light({ cx: xs[1].cx + (it.cx - xs[1].cx) * 0.3, cy: base - 0.7, rx: 4.6, ry: 2.8 }); // the light moves onto animal
+    k.light({ cx: xs[1].cx + (it.cx - xs[1].cx) * 0.3, cy: base - 0.7, r: 3.6 }); // the light moves onto animal
     // arcs: weak first (click 1, staggered), then the two strong ones (click 2)
     const order = TOKENS.map((_, i) => i).filter((i) => i !== IT).sort((a, b) => WEIGHTS[a] - WEIGHTS[b]);
     let weak = 0;

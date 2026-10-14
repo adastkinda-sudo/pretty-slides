@@ -13,7 +13,7 @@ module.exports = {
 
     const xs = sentence(k);
     const y = 4.95;
-    k.light({ cx: xs[IT].cx, cy: y + 0.2, rx: 2.6, ry: 1.9 }); // only “it” is lit
+    k.light({ cx: xs[IT].cx, cy: y + 0.2, r: 2.4 }); // only “it” is lit
     xs.forEach((p, i) => {
       k.text(TOKENS[i], { style: 'word', color: i === IT ? 'hot' : 'stone', x: p.x - 0.1, y, w: p.w + 0.2, h: 0.5, align: 'center', nowrap: true, name: `tok-${i}` });
     });
