@@ -11,7 +11,7 @@ argument-hint: "[S03] <修改意见>"
 ## 0. 定位
 
 - 项目：当前对话正在处理的项目；不明确时，选最近修改的项目，并告诉用户。
-- 目标 deck：关口 3 未勾选时是 `03-reference/`，否则是 `04-deck/`。
+- 目标 deck：关口 3b 未勾选时是 `03-reference/`，否则是 `04-deck/`。
 - 读 `project.md`、`guides/production/engine.md`、`guides/aesthetic/anti-ai.md`，以及 design.md 中与这几页相关的部分。
 - 读涉及页面的源文件，并用 Read 打开当前的渲染图。先看清楚现状，再动手。
 - 用户提到“第 5 页”时，用 `out/manifest.json` 把页码换算成页面 ID。
@@ -39,8 +39,10 @@ argument-hint: "[S03] <修改意见>"
 2. 渲染：
    - 单页修改：`node engine/make.js <deckDir> --only S03`（如果有 Morph 相邻页，一起渲染）。
    - 整套修改：`node engine/make.js <deckDir>`，并检查缩略总览。
-3. 用 Read 打开新的渲染图，按 `review.md` 自查。上一版渲染在 `renders/_prev/` 中，可以用来对比。
-4. 把修改后的页面（如果有必要，连同修改前的页面）展示给用户：能发送文件就发送 PNG，否则给出路径。
+3. 用 Read 打开新的渲染图，按 `review.md` 自查。
+4. 生成前后对比图并展示给用户（能发送文件就发送 PNG，否则给出路径）：
+   `node engine/compare.js <deckDir>/renders/_compare.png <deckDir>/renders/_prev <deckDir> --only S03 --labels 修改前,修改后`
+5. 用户拿不准时，可以做两三个改法并排给用户选。
 
 ## 4. 记录
 
@@ -51,4 +53,4 @@ argument-hint: "[S03] <修改意见>"
 
 ## 5. 修改参考样张时
 
-在 `03-reference/` 上修改。整套的改动必须同时更新 `design.md` 和 `theme.js`。用户认可视觉语言后，勾选关口 3，并建议 `/build-deck`。
+在 `03-reference/` 上修改。整套的改动必须同时更新 `design.md` 和 `theme.js`。用户认可视觉语言后，勾选关口 3b，并建议 `/build-deck`。

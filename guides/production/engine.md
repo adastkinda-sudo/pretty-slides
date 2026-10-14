@@ -28,6 +28,7 @@ node engine/make.js <deckDir> --only S03,S07  # 只渲染这几页（修改时�
 node engine/make.js <deckDir> --no-render     # 只构建 + QA
 node engine/dump.js <file.pptx> [页码]        # 读出 pptx 中各对象的名称、位置、文字
 node engine/texture.js <hex> <out.jpg>         # 生成与背景色匹配的纸张颗粒
+node engine/compare.js <out.png> <dirA> <dirB> [dirC] [--only S01,S05] [--labels A,B,C]  # 并排对比图：一列一个 deck（或 renders 目录），一行一页
 ```
 
 QA 输出分两级：`✗` 是硬问题，给用户看之前必须修掉；`·` 是软提示，看渲染图后判断。QA 只是几何上的估算，**仍然必须看渲染图**。
