@@ -172,15 +172,17 @@ function makeKit({ pptx, slide, theme, deckDir, slideId, page }) {
   }
 
   // ---- light ----
-  // A soft pool of light on the page's focus: an ellipse with a radial gradient fading to the page colour.
-  // Every page's light shares the Morph name 'light', so with Morph transitions it glides from focus to focus.
-  // Post-processing rewrites the fill and sends it to the back.
+  // Diffuse light on the page's focus: an area that is simply a little brighter, with no visible edge.
+  // rx / ry is the reach of the light. The carrier shape is larger and its gradient reaches zero well inside it,
+  // so nothing of the shape can be seen. Every page's light shares the Morph name 'light': with Morph transitions
+  // it drifts from focus to focus. Post-processing writes the gradient and sends it to the back.
   const lights = [];
-  function light(o) { // { cx, cy, rx, ry = rx * 0.75, color = theme.colors.glow, strength = 1 }
+  function light(o) { // { cx, cy, rx, ry = rx * 0.75, color = theme.colors.glow, strength = 0.8 }
     const rx = o.rx ?? 3.5, ry = o.ry ?? rx * 0.75;
-    const box = { x: o.cx - rx, y: o.cy - ry, w: 2 * rx, h: 2 * ry };
-    slide.addShape(pptx.ShapeType.ellipse, { ...box, fill: { color: 'FF00FF' }, line: { type: 'none' }, objectName: '!!light' });
-    lights.push({ color: color(o.color || theme.colors.glow || 'accent'), edge: bgColor, strength: o.strength ?? 1 });
+    // radial 'circle' paths reach 100% at the box corners; the light is zero from 60% on, i.e. 0.85 × half-size on the axes
+    const box = { x: o.cx - rx / 0.85, y: o.cy - ry / 0.85, w: 2 * rx / 0.85, h: 2 * ry / 0.85 };
+    slide.addShape(pptx.ShapeType.rect, { ...box, fill: { color: 'FF00FF' }, line: { type: 'none' }, objectName: '!!light' });
+    lights.push({ color: color(o.color || theme.colors.glow || 'accent'), edge: bgColor, strength: o.strength ?? 0.8 });
     record('light', box, { bleed: true, allowOverlap: true });
     return box;
   }

@@ -58,20 +58,20 @@ function timingXml(xml, builds) {
   };
 }
 
-// Light pools: replace the placeholder fill of the '!!light' ellipse with a radial gradient that fades to the
-// page colour (so even renderers that ignore alpha blend the edge), and move it to the back of the slide.
+// Diffuse light: replace the placeholder fill of the '!!light' shape with a soft radial gradient
+// (Gaussian-like falloff, zero from 60% outward so the carrier shape never shows) and move it to the back.
+// Each stop uses colour mix √f with alpha √f: renderers that honour alpha show the exact falloff f;
+// renderers that ignore alpha still fade smoothly into the page colour.
 function applyLight(xml, spec) {
   if (!spec) return xml;
   const m = xml.match(/<p:sp>(?:(?!<\/p:sp>)[\s\S])*?name="!!light"[\s\S]*?<\/p:sp>/);
   if (!m) throw new Error('light shape not found');
-  const mid = mixHex(spec.edge, spec.color, 0.45);
-  const a = Math.round(100000 * Math.min(1, spec.strength));
-  const grad = `<a:gradFill rotWithShape="1"><a:gsLst>`
-    + `<a:gs pos="0"><a:srgbClr val="${spec.color}"><a:alpha val="${a}"/></a:srgbClr></a:gs>`
-    + `<a:gs pos="35000"><a:srgbClr val="${mid}"><a:alpha val="${Math.round(a * 0.65)}"/></a:srgbClr></a:gs>`
-    + `<a:gs pos="70000"><a:srgbClr val="${mixHex(spec.edge, spec.color, 0.12)}"><a:alpha val="${Math.round(a * 0.2)}"/></a:srgbClr></a:gs>`
-    + `<a:gs pos="100000"><a:srgbClr val="${spec.edge}"><a:alpha val="0"/></a:srgbClr></a:gs>`
-    + `</a:gsLst><a:path path="circle"><a:fillToRect l="50000" t="50000" r="50000" b="50000"/></a:path></a:gradFill>`;
+  const stops = [0, 10, 20, 30, 40, 50, 60, 100].map((p) => {
+    const f = p >= 60 ? 0 : Math.exp(-3 * (p / 60) ** 2) * Math.min(1, spec.strength);
+    const r = Math.sqrt(f);
+    return `<a:gs pos="${p * 1000}"><a:srgbClr val="${mixHex(spec.edge, spec.color, r)}"><a:alpha val="${Math.round(r * 100000)}"/></a:srgbClr></a:gs>`;
+  }).join('');
+  const grad = `<a:gradFill rotWithShape="1"><a:gsLst>${stops}</a:gsLst><a:path path="circle"><a:fillToRect l="50000" t="50000" r="50000" b="50000"/></a:path></a:gradFill>`;
   const sp = m[0].replace(/<a:solidFill>[\s\S]*?<\/a:solidFill>/, grad);
   const without = xml.replace(m[0], '');
   return without.replace(/(<p:spTree>[\s\S]*?<\/p:grpSpPr>)/, `$1${sp}`);
