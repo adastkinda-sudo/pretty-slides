@@ -82,6 +82,20 @@ function applyLight(xml, spec) {
   const without = xml.replace(m[0], '');
   return without.replace(/(<p:spTree>[\s\S]*?<\/p:grpSpPr>)/, `$1${sp}`);
 }
+// pptxgenjs writes an <a:pPr> before every run of a multi-run paragraph; only one is allowed, first in <a:p>.
+// PowerPoint "repairs" such files (it merges them). Keep the first pPr of each paragraph, drop the rest.
+function singlePPr(xml) {
+  return xml.replace(/<a:p>([\s\S]*?)<\/a:p>/g, (whole, body) => {
+    let seen = false;
+    const out = body.replace(/<a:pPr\b[^>]*?\/>|<a:pPr\b[^>]*>[\s\S]*?<\/a:pPr>/g, (pPr) => {
+      if (seen) return '';
+      seen = true;
+      return pPr;
+    });
+    return `<a:p>${out}</a:p>`;
+  });
+}
+
 function mixHex(a, b, t) {
   const p = [0, 2, 4].map((i) => parseInt(a.slice(i, i + 2), 16)), q = [0, 2, 4].map((i) => parseInt(b.slice(i, i + 2), 16));
   return p.map((v, i) => Math.round(v + (q[i] - v) * t).toString(16).padStart(2, '0')).join('').toUpperCase();
@@ -97,6 +111,7 @@ async function postProcess(buffer, { transitions, fontPairs, builds = [], lights
         xml = xml.split(`<a:latin typeface="${cjk}"`).join(`<a:latin typeface="${latin}"`);
       }
     }
+    xml = singlePPr(xml);
     const tx = transitionXml(transitions[i]);
     if (tx) xml = xml.replace('</p:clrMapOvr>', `</p:clrMapOvr>${tx}`);
     if (lights[i] && lights[i].length > 1) throw new Error(`slide ${i + 1}: only one light per slide`);
