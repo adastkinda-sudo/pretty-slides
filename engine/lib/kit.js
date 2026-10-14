@@ -86,7 +86,7 @@ function makeKit({ pptx, slide, theme, deckDir, slideId, page }) {
       });
     });
     const w = opts.w ?? innerW;
-    const est = estimateHeight(paras, w) + (opts.paraSpace || 0) * (paras.length - 1) / 72;
+    const est = estimateHeight(paras, opts.nowrap ? Infinity : w) + (opts.paraSpace || 0) * (paras.length - 1) / 72; // nowrap: one line per paragraph
     // widest single-line paragraph (in) — used to catch boxes so tight that PowerPoint's metrics wrap them
     const lineW = Math.max(...paras.map((p) => lineWidthPt(p.text, p.sizePt, p.trackingPt || 0) / 72));
     const h = opts.h ?? +(est + 0.05).toFixed(3);
