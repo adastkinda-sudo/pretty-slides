@@ -1,0 +1,10 @@
+.DS_Store
+node_modules/
+
+# Presentation projects are personal work: each keeps its own git history inside projects/<slug>/
+projects/*
+!projects/README.md
+
+# Build outputs are reproducible
+**/out/
+**/renders/_prev/

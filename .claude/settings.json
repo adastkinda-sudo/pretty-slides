@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node engine/make.js:*)",
+      "Bash(node engine/dump.js:*)",
+      "Bash(node engine/texture.js:*)",
+      "Bash(npm --prefix engine install)"
+    ]
+  }
+}

@@ -1,0 +1,81 @@
+# 字体与排版
+
+> 何时读：设计文稿里确定字体和字号层级时；样张或成稿中排版出问题时。
+
+排版是本项目最主要的设计手段。一套演示的气质，八成由字体选择、字号对比和留白决定。
+
+## 1. 字体：只用真实存在的
+
+pptx 不嵌入字体。**设计文稿里写的字体，必须在播放的电脑上存在。** 否则 PowerPoint 会悄悄替换成别的字体，审美立刻崩掉。`make.js` 会检查本机是否安装了主题里的字体。
+
+先在 `design.md` 里确定播放环境：
+
+- **用自己的 Mac 播放**（默认）：可以用下面所有 macOS 系统字体。
+- **用别人的 Windows 电脑播放**：只能用两边都有的字体，或者交付 PDF 备份。中文字体可用微软雅黑或等线（Windows 自带；Mac 上装了 Office 也有），英文字体用 Arial、Georgia、Segoe UI。必要时让用户确认现场电脑。
+
+### macOS 上已验证可用的字体（LibreOffice 渲染与 PowerPoint 都能识别字重名称）
+
+| 角色 | 字体（fontFace 写法） | 气质 |
+|---|---|---|
+| 中文无衬线 | `PingFang SC Light` / `PingFang SC` / `PingFang SC Medium` / `PingFang SC Semibold` | 现代、干净；中文正文的默认选择 |
+| 中文衬线 | `Songti SC Light` / `Songti SC` / `Songti SC Bold` | 编辑感、人文、学术；大标题极佳 |
+| 中文楷体 | `STKaiti` / `Kaiti SC` | 引文、手记；只在少数页面用 |
+| 英文无衬线 | `Helvetica Neue Light` / `Helvetica Neue` / `Helvetica Neue Medium` | 瑞士风格，中性 |
+| 英文无衬线 | `Avenir Next` / `Avenir Next Medium` | 更柔和的几何风格（**避免** `Avenir Next Demi Bold`，渲染会出现假粗体） |
+| 英文衬线 | `Baskerville`、`Charter`、`Hoefler Text`、`Didot`（展示用）、`Bodoni 72` | 古典、编辑感 |
+| 数字 | `Helvetica Neue Light`、`DIN Alternate`、`Didot` | 大号数字 |
+| 等宽 | `Menlo`、`SF Mono`（不一定有）、`PT Mono` | 代码 |
+| 数学 | `STIX Two Math`、`STIX Two Text` | 公式 |
+
+本机没有安装 Inter 和思源黑体（Source Han Sans）。旧规范推荐过它们，但除非用户先安装，否则不要用。
+
+### 推荐搭配（起点，不是菜单）
+
+| 方向 | 标题 | 正文 | 西文与数字 |
+|---|---|---|---|
+| 现代编辑 | Songti SC | PingFang SC | Helvetica Neue |
+| 瑞士极简 | PingFang SC Semibold | PingFang SC Light | Helvetica Neue |
+| 人文学术 | Songti SC | Songti SC Light / PingFang SC | Baskerville / Charter |
+| 精确技术 | PingFang SC Medium | PingFang SC | Helvetica Neue + Menlo |
+
+一套演示通常只用 **1–2 个字体家族**。
+
+### 中西文混排
+
+theme 中的 `fontPairs` 可以让中文字体里的西文字符改用另一个西文字体渲染，例如 `{ 'PingFang SC': 'Helvetica Neue' }`。苹方自带的西文已经不错，配对是可选项。
+
+## 2. 字号层级
+
+在 16:9（13.333 × 7.5 英寸）画布上，投影观看的经验值：
+
+| 角色 | 字号（pt） | 行距倍数 | 说明 |
+|---|---|---|---|
+| display | 54–80 | 1.05–1.15 | 封面、章节页、论断页的主句 |
+| statement | 36–48 | 1.25–1.35 | 一整句的论断 |
+| title | 24–32 | 1.25–1.35 | 普通页的标题或论断标题 |
+| lead | 18–22 | 1.45–1.6 | 引导段、副标题 |
+| body | 14–18 | 1.5–1.65 | 正文、标注 |
+| label | 10–12 | 1.3 | 小型大写标签，可加 8–15% 字距 |
+| caption | 10–12 | 1.4–1.5 | 来源、说明 |
+| number | 96–200 | 1.0 | 大号数字，通常用细字重加负字距 |
+
+- **对比要大**：主角与正文之比通常 3–6 倍。28pt 的标题配 18pt 的正文，是最平庸的组合。
+- **每页 ≤ 4 个字号**。整套的字号全部来自 theme 的 `type`。临时字号如果出现第三次，就该加进 theme。
+- 投影时**最小 11pt**。看得到却读不清的字，不如删掉。
+- `leading` 是“字体自身行高”的倍数（PowerPoint 的“多倍行距”）。字体自身行高约为 1.2em，所以 leading 1.0 已经不算紧。
+
+## 3. 中文排版规则
+
+- 中文**不加正字距**；大标题可以用 0 到 -1% 的字距。西文小标签可以加 8–15% 字距，中文标签最多加 5%。
+- 中文**不用斜体**。强调靠颜色、字重或位置。
+- 中文与西文、数字之间**加一个空格**（“理解 Transformer 的”）。注意：LibreOffice 预览会自动再加一点间距，所以预览图里间隙偏大；PowerPoint 不会自动加，以 PowerPoint 为准。
+- 标题里**慎用弯引号** “ ”：在中文字体里它们按全角渲染，左右会出现空隙。强调一个词，可以改用强调色或西文字体，而不是加引号。
+- **避免孤字**：段落最后一行只剩一两个字时，调整文本框宽度或措辞。
+- 标点不要出现在行首。全角标点后面不要再加空格。
+- 标题写成**完整的判断句**（“序列长度翻倍，代价变为四倍”），而不是名词短语（“计算复杂度分析”）。
+
+## 4. 对齐
+
+- 文本框的 `margin` 默认是 0，所以文字的左边缘就是框的 x。这样文字才能和细线、图片精确对齐。
+- 同一页里的文字左对齐到少数几条网格线上（`k.col(n)`），不要出现 5 条不同的左边缘。
+- 多行文字靠上对齐（`valign: 'top'`），这样字号变化时位置是可预期的。
