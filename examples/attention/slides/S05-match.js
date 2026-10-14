@@ -49,7 +49,7 @@ module.exports = {
       const y = rowsY[i], lit = r.w >= 0.4, bw = Math.max(0.05, (r.w / 0.5) * barMax);
       const b = [2, lit ? 700 : i * 120];
       k.rect({ x: barX, y: y + 0.03, w: bw, h: 0.18, fill: heat(k, 0.2 + r.w * 1.75), build: b });
-      k.text(r.w.toFixed(2), { style: 'caption', font: 'latin', color: lit ? 'hot' : 'stone', x: barX + bw + 0.12, y: y - 0.01, w: 0.6, nowrap: true, build: b });
+      k.text(r.w.toFixed(2), { style: 'caption', font: 'label', color: lit ? 'hot' : 'stone', x: barX + bw + 0.12, y: y - 0.01, w: 0.6, nowrap: true, build: b });
     });
 
     // ④ weighted sum of values → it's new representation

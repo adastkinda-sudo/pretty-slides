@@ -21,12 +21,12 @@ module.exports = {
     k.light({ cx: x0 + 1 * pitch + cell / 2, cy: y0 + IT * pitch + cell / 2, r: 4.6, strength: 1 });
     for (let r = 0; r < N; r++) {
       for (let c = 0; c < N; c++) k.rect({ x: x0 + c * pitch, y: y0 + r * pitch, w: cell, h: cell, fill: heat(k, weight(r, c)) });
-      k.text(TOKENS[r], { style: 'caption', font: 'latin', color: r === IT ? 'accent' : 'stone', x: x0 - 1.1, y: y0 + r * pitch + 0.12, w: 1.0, align: 'right', nowrap: true });
+      k.text(TOKENS[r], { style: 'caption', font: 'label', color: r === IT ? 'accent' : 'stone', x: x0 - 1.1, y: y0 + r * pitch + 0.12, w: 1.0, align: 'right', nowrap: true });
     }
 
     k.text('TECH TALK  ·  2026', { style: 'label', color: 'accent', x: k.M.x, y: k.M.top, w: 4, nowrap: true });
     k.text('注意力，\n是一种检索', { style: 'display', x: k.M.x, y: 2.3, w: 4.4, nowrap: true });
-    k.text('从一个代词出发，\n理解 Transformer 的核心机制', { style: 'lead', x: k.M.x, y: 4.95, w: 4.4, nowrap: true });
+    k.text('从一个代词出发，\n理解 Transformer 的核心机制', { style: 'lead', x: k.M.x, y: 5.2, w: 4.4, nowrap: true });
     k.text('Asteria  ·  机器学习读书会 第 7 期', { style: 'caption', x: k.M.x, y: k.H - k.M.bottom - 0.26, w: 4.4, h: 0.26, nowrap: true });
   },
 };

@@ -36,12 +36,12 @@ module.exports = {
       k.text(t, { style: 'word', color: c, x: xs[i].x - 0.1, y, w: xs[i].w + 0.2, h: 0.5, align: 'center', nowrap: true, name: `tok-${i}` });
     });
     [[1, 'accent'], [5, 'stone']].forEach(([i, c]) => {
-      k.text(WEIGHTS[i].toFixed(2), { style: 'caption', font: 'latin', color: c, x: xs[i].x - 0.3, y: y + 0.55, w: xs[i].w + 0.6, align: 'center', nowrap: true, build: [2, 500] });
+      k.text(WEIGHTS[i].toFixed(2), { style: 'caption', font: 'label', color: c, x: xs[i].x - 0.3, y: y + 0.55, w: xs[i].w + 0.6, align: 'center', nowrap: true, build: [2, 500] });
     });
 
     // flag annotation dropping onto the apex of the it → animal arc
     const ax = animalArc.apex.x;
-    k.text([{ text: '指代消解\n', style: 'label', color: 'accent' }, { text: 'it = animal', style: 'body', font: 'latin', color: 'ink' }], { x: ax + 0.14, y: 1.75, w: 2.4, paraSpace: 2, build: 3 });
+    k.text([{ text: '指代消解\n', style: 'label', color: 'accent' }, { text: 'it = animal', style: 'body', font: 'quote', italic: true, size: 17, color: 'ink' }], { x: ax + 0.14, y: 1.75, w: 2.4, paraSpace: 2, build: 3 });
     leader(k, { from: { x: ax, y: 1.8 }, to: animalArc.apex, build: 3 });
 
     k.text('弧的粗细与亮度 = 注意力权重（示意值）', { style: 'caption', x: k.M.x, y: k.H - k.M.bottom - 0.32, w: 5, h: 0.26, nowrap: true });
