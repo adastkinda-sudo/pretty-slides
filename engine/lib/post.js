@@ -52,7 +52,8 @@ function timingXml(xml, builds) {
     }).join('');
     return `<p:par><p:cTn id="${outer}" fill="hold"><p:stCondLst><p:cond delay="indefinite"/></p:stCondLst><p:childTnLst><p:par><p:cTn id="${inner}" fill="hold"><p:stCondLst><p:cond delay="0"/></p:stCondLst><p:childTnLst>${effects}</p:childTnLst></p:cTn></p:par></p:childTnLst></p:cTn></p:par>`;
   }).join('');
-  const bld = items.filter((i) => i.hasText).map((i) => `<p:bldP spid="${i.spid}" grpId="0"/>`).join('');
+  // animBg="1": the whole shape builds as one (not paragraph by paragraph) — PowerPoint repairs files without it.
+  const bld = items.filter((i) => i.hasText).map((i) => `<p:bldP spid="${i.spid}" grpId="0" animBg="1"/>`).join('');
   return {
     missing,
     xml: '<p:timing><p:tnLst><p:par><p:cTn id="1" dur="indefinite" restart="never" nodeType="tmRoot"><p:childTnLst>'
