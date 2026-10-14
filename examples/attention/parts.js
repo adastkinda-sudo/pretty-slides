@@ -38,12 +38,13 @@ function vector(k, { x, y, n = 8, cell = 0.24, gap = 0.04, seed = 1, lo = 0.1, h
   return { x, y, w: n * cell + (n - 1) * gap, h: cell, right: x + n * cell + (n - 1) * gap, cy: y + cell / 2 };
 }
 
-// An n×n attention matrix; weight(r, c) in [0, 1]. build = [step, delayPerRow] reveals it row by row.
+// An n×n attention matrix; weight(r, c) in [0, 1].
+// build = [step, delayPerRow = 0, startDelay = 0] (ms): reveals it row by row, starting after startDelay.
 function matrix(k, { x, y, n, cell, gap, weight, build }) {
   for (let r = 0; r < n; r++) {
     for (let c = 0; c < n; c++) {
       k.rect({ x: x + c * (cell + gap), y: y + r * (cell + gap), w: cell, h: cell, fill: heat(k, weight(r, c)),
-        build: build && [build[0], r * (build[1] || 0)] });
+        build: build && [build[0], (build[2] || 0) + r * (build[1] || 0)] });
     }
   }
   const size = n * cell + (n - 1) * gap;

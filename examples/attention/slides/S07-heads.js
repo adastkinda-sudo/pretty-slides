@@ -24,8 +24,8 @@ module.exports = {
     const x0 = 6.9, y0 = 1.45, gx = 0.55, gy = 0.75;
     HEADS.forEach((h, i) => {
       const x = x0 + (i % 2) * (size + gx), y = y0 + Math.floor(i / 2) * (size + gy);
-      matrix(k, { x, y, n, cell, gap, weight: h.f, build: [1, i * 250] });
-      k.text([{ text: `头 ${i + 1}`, color: 'graphite' }, { text: `   ${h.name}`, color: 'stone' }], { style: 'caption', x, y: y + size + 0.12, w: size, nowrap: true, build: [1, i * 250] });
+      matrix(k, { x, y, n, cell, gap, weight: h.f, build: [1, 0, i * 150] }); // each head at once, 150 ms apart
+      k.text([{ text: `头 ${i + 1}`, color: 'graphite' }, { text: `   ${h.name}`, color: 'stone' }], { style: 'caption', x, y: y + size + 0.12, w: size, nowrap: true, build: [1, i * 150] });
     });
   },
 };
