@@ -1,0 +1,32 @@
+{
+  "_": "S03 父亲的篱笆 · 早晨 8 点：光从窗口斜进来，照在右边篱笆的背面和它身后的墙上，影子落在它右边；左边的正面在阴影里。两段篱笆同尺寸、同基线（同一段篱笆的两面），都靠墙站。name = id：room.py 按 name 报告每一段的受光。",
+  "sun": {
+    "time": 8.0,
+    "aim": {
+      "x": 9.9,
+      "y": 4.35,
+      "w": 5.4,
+      "h": 4.4
+    }
+  },
+  "objects": [
+    {
+      "use": "fence",
+      "id": "fence-front",
+      "morph": "obj-fence-front",
+      "side": "front",
+      "cx": 2.32,
+      "baseY": 5.97,
+      "h": 3.4
+    },
+    {
+      "use": "fence",
+      "id": "fence-back",
+      "morph": "obj-fence-back",
+      "side": "back",
+      "cx": 8.6,
+      "baseY": 5.97,
+      "h": 3.4
+    }
+  ]
+}
