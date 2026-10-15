@@ -43,6 +43,11 @@
 | 写讲解页（dense），或涉及图表、图解、公式、代码 | `guides/aesthetic/data-and-diagrams.md` |
 | 涉及动画或 Morph | `guides/aesthetic/motion.md` |
 | 渲染后自查 | `guides/production/review.md` |
+| 修改框架本身（engine、guides、templates、Skills），或与另一个 Agent 交接 | `guides/handoff.md` |
+
+## 框架开发
+
+以上规则针对做演示。修改框架本身时，Codex 与 Claude 各在独立 worktree 和任务分支中工作，用带 scope 的 Conventional Commits 提交，经 main 汇合；只在用户提醒或准备调整整体结构时查看对方改动。细则见 `guides/handoff.md`。
 
 ## 工具
 

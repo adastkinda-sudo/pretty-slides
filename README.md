@@ -56,6 +56,7 @@ Pretty Slides 换了一种做法。它的审美标准写在 [guides/aesthetic/pr
 | `guides/aesthetic/motion.md` | 页内动效、Morph、移动的光、转场 |
 | `guides/production/engine.md` | 引擎 API |
 | `guides/production/review.md` | 渲染自查：硬问题、判断问题、工艺检查、不准动的范围 |
+| `guides/handoff.md` | 框架开发：Codex 与 Claude 的 worktree、提交、经 main 汇合 |
 
 ## 制作引擎
 
