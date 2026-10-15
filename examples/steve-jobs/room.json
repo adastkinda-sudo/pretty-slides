@@ -1,5 +1,5 @@
 {
-  "_": "The room shared by every page (direction C, 空房间): one camera, one wall, one oak floor, one window in the left wall. Units: slide inches measured at the wall plane; x along the wall, h = height above the floor, z = depth from the back wall towards the camera. Per-page sun and objects live in rooms/<ID>.json. Do not change these numbers per page: the room is the anchor of the whole deck.",
+  "_": "The room shared by every page (空房间): one camera, one wall, one oak floor, one window in the left wall. Units: slide inches measured at the wall plane; x along the wall, h = height above the floor, z = depth from the back wall towards the camera. Per-page sun and objects live in rooms/<ID>.json. Do not change these numbers per page: the room is the anchor of the whole deck.",
   "camera": {
     "floorY": 5.85,
     "horizonY": 3.6,

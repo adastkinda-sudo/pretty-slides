@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""The room of direction C (空房间): renders the parts of the room that are light, not shapes.
+"""The empty room (空房间): renders the parts of the room that are light, not shapes.
 
     python3 room.py                  # the sun of every page in rooms/*.json (room.jpg only if it is missing)
     python3 room.py S10 S11          # only these pages — safe to run while other sessions work on other pages
@@ -9,12 +9,12 @@
 
 A board leaning on the wall (objects/apple1.js) is registered with "lean": 10 — room.py turns it into a staircase of
 boxes itself (lean_boxes). Profiles that are not a lean (S08's Apple II: low front, sloping keyboard, high lid) are
-still written by hand as shadow-only boxes; see making-a-page.md §5.
+still written by hand as shadow-only boxes.
 
 Inputs
 - room.json            the shared room: camera, planks, baseboard, the window wall.
 - rooms/<ID>.json      one page: the sun (a time of day + where the patch should land) and the objects standing in
-                       the room ({"use": "mac", "cx", "baseY", "h"}). See making-a-page.md.
+                       the room ({"use": "mac", "cx", "baseY", "h"}).
 - objects/<use>.js     each object's real size in mm (`real: { w, h, d }`), read through node, so the drawn object and
                        its shadow come from the same numbers.
 
@@ -105,11 +105,11 @@ def resolve(spec):
     for k in ('r', 's', 'color', 'strength', 'soft', 'ambient'):
         if k in spec:
             p[k] = spec[k]
-    if 'dir' in spec:  # raw direction, as in the direction-C probe
+    if 'dir' in spec:  # raw direction
         d = spec['dir']
         p['r'], p['s'] = -d[2] / d[0], -d[1] / d[0]
     r, s = p['r'], p['s']
-    if 'window' in spec:  # raw window (world units), as in the probe
+    if 'window' in spec:  # raw window (world units)
         win = dict(spec['window'])
         win.setdefault('mullions', [])
         win.setdefault('transoms', [])

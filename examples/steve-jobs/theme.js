@@ -1,4 +1,4 @@
-// Direction C「空房间」— 1982 年那间几乎空着的客厅：一面暖白灰泥墙、一条踢脚线、一块浅橡木地板、窗外照进来的一束太阳光。
+// 空房间 — 1982 年那间几乎空着的客厅：一面暖白灰泥墙、一条踢脚线、一块浅橡木地板、窗外照进来的一束太阳光。
 // 每一页都是同一间房间：墙、地板、光不变，只有太阳在移动（一生从早晨走到黄昏），房间里只放一件东西。
 // The room itself is assets/room.jpg and the sun is assets/sun/<ID>.png, both rendered by room.py from room.json and
 // rooms/<ID>.json (one camera, one window); the objects, the lifeline and all text are native shapes.

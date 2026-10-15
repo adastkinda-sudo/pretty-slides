@@ -1,12 +1,12 @@
-// Direction C「空房间」— the shared parts of the room. Objects live in objects/<use>.js, one file each; a page says
+// 空房间 — the shared parts of the room. Objects live in objects/<use>.js, one file each; a page says
 // which objects stand in its room, and where, in rooms/<ID>.json. room.py reads the same two files to cast the sun and
-// the shadows, so a drawn object always stands exactly where its shadow says. See making-a-page.md.
+// the shadows, so a drawn object always stands exactly where its shadow says.
 //
 //   sun(k)                      the page's sunlight (assets/sun/<ID>.png, Morph name 'sun'); sunInfo(id) its data
 //   place(k, id, extra)         draw an object registered in rooms/<ID>.json (objects/<use>.js), returns its anchors
 //   project(x,h,z) worldBox(at, real)   the room's camera, for objects that need true perspective (open, deep)
 //   lifeline(k, {...})          the floor seam 1955–2011 as navigation; lifelineCover(k) for S01
-//   linksBefore(id)             the connections already made before page <id> (design.md §7)
+//   linksBefore(id)             the connections already made before page <id>
 //   marks(k, {...})             part marker (top left) + the page's date (top right)
 //   leader(k, {...}) dim(k, {...})            annotation leader; dimension line
 //   stroke(k, pts, {...}) strokes(k, paths, {...})   smooth hand-drawn lines on the wall (diagrams, signatures)
@@ -132,7 +132,7 @@ const POINTS = [
   ['1979', 1979.95], ['1984', 1984.07], ['1985', 1985.7], ['1986', 1986.1], ['1997', 1997.0], ['2001', 2001.8],
   ['2007', 2007.03], ['2011', 2011.76],
 ];
-// Connections (design.md §7): id → [from, to]. Each appears first on one page and stays on every later page.
+// Connections: id → [from, to]. Each appears first on one page and stays on every later page.
 const LINKS = {
   '1961-1977': ['1961', '1977'], '1972-1984': ['1972', '1984'], '1955-1984': ['1955', '1984'],
   '1985-1997': ['1985', '1997'], '1974-1997': ['1974', '1997'], '1997-2007': ['1997', '2007'],
@@ -224,7 +224,7 @@ function lifelineCover(k, { dots = false, build, stagger = 40 } = {}) {
 
 // Main-figure scale (S23): the whole life on the first seam from the wall (the line has risen from the third), with
 // every connection drawn as a high arc above the row of objects. Draw it before the objects: the arcs rise from
-// behind them. Heights: span × 0.35, capped at 2.4 in (design.md §7) — then set apart where two arcs share an end
+// behind them. Heights: span × 0.35, capped at 2.4 in — then set apart where two arcs share an end
 // and would otherwise run on top of each other (1972→2007 / 1974→2007).
 const LINK_H_WALL = {
   '1972-1984': 0.8, '1985-1997': 0.85, '1997-2007': 0.72, '1961-1977': 1.12, '1986-2007': 1.4, '1974-1997': 1.6,

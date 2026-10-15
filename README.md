@@ -4,7 +4,7 @@
 
 ![示例：Steve Jobs 的一生（空房间，23 页）](examples/steve-jobs/renders/_contact.png)
 
-**Steve Jobs 的一生**（23 页）：设计不问“他的故事像什么”，而问“如果乔布斯来做这套关于他自己的演示，他会怎样做”。于是整套是 1982 年他那间几乎空着的客厅：每页只放一件按真实尺寸画的东西，窗外的阳光从清晨走到黄昏，他的一生是一天。意象、三个方向的对比、第一版为什么被否决，见 [examples/steve-jobs/README.md](examples/steve-jobs/README.md)。
+**Steve Jobs 的一生**（23 页）：1982 年他那间几乎空着的客厅。每页只放一件按真实尺寸画的东西，窗外的阳光从清晨走到黄昏。见 [examples/steve-jobs/README.md](examples/steve-jobs/README.md)。
 
 ![示例：注意力机制（引擎自测 deck）](examples/attention/renders/_contact.png)
 
