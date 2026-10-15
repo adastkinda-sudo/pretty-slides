@@ -1,0 +1,29 @@
+{
+  "_": "S09 施乐 PARC · 上午十一点多：光很高、很白，落在右边 Xerox Alto 的竖屏上；左边那台 1970 年代的单色显示器（Apple II 的命令行）站在光外。两台站在同一条线上（同样的 baseY = 同样离墙）。Alto 的 Morph 名用 obj-mac：翻到 S10 时，它变成 Macintosh。",
+  "sun": {
+    "time": 11.2,
+    "aim": {
+      "x": 10.35,
+      "y": 3.9,
+      "w": 6.0,
+      "h": 5.6
+    }
+  },
+  "objects": [
+    {
+      "use": "crt-monitor",
+      "id": "cli",
+      "cx": 3.75,
+      "baseY": 6.3,
+      "h": 2.665
+    },
+    {
+      "use": "alto",
+      "id": "gui",
+      "morph": "obj-mac",
+      "cx": 8.75,
+      "baseY": 6.3,
+      "h": 4.3
+    }
+  ]
+}

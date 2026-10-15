@@ -2,9 +2,15 @@
 
 一条和 AI 一起做演示的流水线：从一个主题出发，产出**原生可编辑、审美好、有主题个性**的 PowerPoint。
 
+![示例：Steve Jobs 的一生（空房间，23 页）](examples/steve-jobs/renders/_contact.png)
+
+**Steve Jobs 的一生**（23 页）：设计不问“他的故事像什么”，而问“如果乔布斯来做这套关于他自己的演示，他会怎样做”。于是整套是 1982 年他那间几乎空着的客厅：每页只放一件按真实尺寸画的东西，窗外的阳光从清晨走到黄昏，他的一生是一天。意象、三个方向的对比、第一版为什么被否决，见 [examples/steve-jobs/README.md](examples/steve-jobs/README.md)。
+
 ![示例：注意力机制（引擎自测 deck）](examples/attention/renders/_contact.png)
 
-示例的意象、设计系统、逐页的视觉中心和动效，以及每个决定的来龙去脉，见 [examples/attention/design-notes.md](examples/attention/design-notes.md)。
+**注意力机制**（7 页，引擎自测）：一间暗室，注意力是照亮它的光。设计系统和每个决定的来龙去脉，见 [examples/attention/design-notes.md](examples/attention/design-notes.md)。
+
+两套演示来自同一条流水线、同一套规范，却是完全不同的两个世界：风格从内容里长出来，而不是从模板里来。
 
 ## 为什么做这个
 
@@ -72,6 +78,7 @@ Pretty Slides 换了一种做法。它的审美标准写在 [guides/aesthetic/pr
 ```bash
 npm --prefix engine install
 node engine/make.js examples/attention          # 构建示例
+node engine/make.js examples/steve-jobs         # 另一个示例（23 页）
 ```
 
 依赖：Node.js 18+、LibreOffice、poppler（`pdftoppm`）、ImageMagick 7。macOS：`brew install --cask libreoffice && brew install poppler imagemagick`。

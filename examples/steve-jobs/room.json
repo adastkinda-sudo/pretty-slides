@@ -1,0 +1,25 @@
+{
+  "_": "The room shared by every page (direction C, 空房间): one camera, one wall, one oak floor, one window in the left wall. Units: slide inches measured at the wall plane; x along the wall, h = height above the floor, z = depth from the back wall towards the camera. Per-page sun and objects live in rooms/<ID>.json. Do not change these numbers per page: the room is the anchor of the whole deck.",
+  "camera": {
+    "floorY": 5.85,
+    "horizonY": 3.6,
+    "camZ": 25.6,
+    "vx": 6.6665
+  },
+  "floor": {
+    "plank": 2.8033,
+    "lifeline": 3
+  },
+  "baseboard": 0.15,
+  "window": {
+    "XL": -0.3,
+    "bar": 0.18
+  },
+  "colors": {
+    "wall": "F1ECE3",
+    "floor": "E3D5BC",
+    "trim": "F5F1EA",
+    "shade": "3A2F25",
+    "overcast": "4A4640"
+  }
+}
