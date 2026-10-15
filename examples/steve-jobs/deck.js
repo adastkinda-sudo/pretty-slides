@@ -1,4 +1,4 @@
-// The full deck (stage 4): all 23 pages in design.md order.
+// The full deck: all 23 pages in order.
 // Pages whose file does not exist yet are left out (with a warning), so the deck builds while pages are still being made.
 const fs = require('fs');
 const path = require('path');
