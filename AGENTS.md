@@ -30,7 +30,6 @@
 6. **审美标准**：设计、制作、修改的每一步都以 `guides/aesthetic/principles.md` 为准，并对照 `anti-ai.md` 自检。规范里的数字是经验参考，不是合格线；最终靠看渲染图判断，拿不准时做两个版本并排比较。
 7. **如实报告**：区分“已渲染检查”“启发式检查”“未验证（如 Morph 实际播放）”。没做的检查不写成通过。
 8. **不碰用户的手工修改**：如果用户在 PowerPoint 里改过 pptx，先用 `node engine/dump.js` 读出改动，回写到源文件，再重建。不要直接覆盖。
-9. **框架协作按需交接**：各用独立 worktree，以带 scope 的 Conventional Commits 记录完成阶段。仅在用户提醒或准备调整项目结构、整体逻辑时查看对方改动；具体规则见 [交接规范](guides/handoff.md)。
 
 ## 按需加载表
 
@@ -44,6 +43,11 @@
 | 写讲解页（dense），或涉及图表、图解、公式、代码 | `guides/aesthetic/data-and-diagrams.md` |
 | 涉及动画或 Morph | `guides/aesthetic/motion.md` |
 | 渲染后自查 | `guides/production/review.md` |
+| 修改框架本身（engine、guides、templates、Skills），或与另一个 Agent 交接 | `guides/handoff.md` |
+
+## 框架开发
+
+以上规则针对做演示。修改框架本身时，Codex 与 Claude 各在独立 worktree 和任务分支中工作，用带 scope 的 Conventional Commits 提交，经 main 汇合；只在用户提醒或准备调整整体结构时查看对方改动。细则见 `guides/handoff.md`。
 
 ## 工具
 
