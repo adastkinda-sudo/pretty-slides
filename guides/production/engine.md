@@ -14,6 +14,7 @@
 ├── slides/S01-cover.js      # 一页一个文件；文件名 = 页面 ID + 短名
 ├── assets/                  # 本 deck 用到的图片（加工后的版本）
 ├── out/<name>.pptx          # 构建产物（可再生）
+├── out/ppt/                 # pptcheck.js 的 PowerPoint 渲染图和对比图（可再生）
 └── renders/S01.png …        # 渲染图；_contact.png 是缩略总览
 ```
 
@@ -30,6 +31,7 @@ node engine/dump.js <file.pptx> [页码]        # 读出 pptx 中各对象的名
 node engine/texture.js <hex> <out.jpg>         # 生成与背景色匹配的纸张颗粒
 node engine/pptdiff.js <原文件.pptx> <修复后.pptx>  # PowerPoint 提示“修复”时，找出它改了什么
 node engine/compare.js <out.png> <dirA> <dirB> [dirC] [--only S01,S05] [--labels A,B,C]  # 并排对比图：一列一个 deck（或 renders 目录），一行一页
+node engine/pptcheck.js <deckDir> [--only S03,S07]  # 用 PowerPoint 渲染核对：实际用到的字体、与预览的差异（需要 PowerPoint for Mac）
 npm --prefix engine test                      # 引擎回归测试（修改 engine/lib 后运行）
 ```
 
@@ -137,6 +139,15 @@ module.exports = {
 - 需要跨页 Morph 的对象，在相关页面上起相同的 `name`。
 - 不要在幻灯片代码里写演示内容以外的东西（例如“TODO”“草稿”）：它们会出现在画面上。
 
+## PowerPoint 核对
+
+预览由 LibreOffice 渲染，预览正常不代表 PowerPoint 里正常：字体可能被替换，字形和间距也可能不同。装有 PowerPoint for Mac 时，`make.js` 之后运行 `node engine/pptcheck.js <deckDir>`：
+
+- 用脚本让 PowerPoint 打开 `out/<name>.pptx` 的副本，导出 PDF 再转成逐页图片 `out/ppt/Sxx.png`。PDF 只是中间文件，用完即删。用户在 PowerPoint 里开着的原文件不受影响。
+- **字体**：列出 PowerPoint 实际用到、而 theme 里没有的字体，以及出现在哪些页。正文落到这些字体上是硬问题；个别符号回退（如公式里的 √ 落到 Segoe UI Symbol），看图判断。
+- **画面**：按像素差异列出和预览差别最大的几页，生成 `out/ppt/_compare.png`（左边预览，右边 PowerPoint），包含有字体问题的页和差异最大的页；`--only` 时就是指定的页。像素差异包含正常的中西文间距差别，只用来排序，不是合格线。
+- 没有 PowerPoint 时跳过。第一次运行时，PowerPoint 可能要求授权访问 deck 所在的目录，需要用户在对话框里点“选择…”授权；脚本等待超时（5 分钟）会报错并提示原因。PowerPoint 弹出修复提示时同样会超时，按下一节处理。
+
 ## PowerPoint 提示“修复”时
 
 LibreOffice 对不合规范的 XML 很宽容，所以预览正常不代表 PowerPoint 能接受。`make.js` 的后处理已经修正了 pptxgenjs 已知的几类问题（多余的内容类型声明、备注母版共用主题、图表的悬空坐标轴、同一段落里重复的 `pPr`、动画的 `bldP`），并会在包内引用指向不存在的部件时直接报错。如果仍然出现修复提示：
@@ -149,5 +160,5 @@ LibreOffice 对不合规范的 XML 很宽容，所以预览正常不代表 Power
 
 - 页内动效目前只有淡入（`build`）；移动和变形用跨页 Morph（见 `aesthetic/motion.md`）。
 - 不生成可编辑的 OMML 公式（见 `aesthetic/data-and-diagrams.md`）。
-- 预览由 LibreOffice 渲染，与 PowerPoint 有差异：中西文之间的自动间距、个别字体的行高；径向渐变在 LibreOffice 里会随形状拉伸成椭圆，在 PowerPoint 里则是正圆（所以 `k.light` 的承载形状必须是正方形）。涉及渐变、透明度、动效的效果，最终以 PowerPoint 为准。
+- 预览由 LibreOffice 渲染，与 PowerPoint 有差异：中西文之间的自动间距、个别字体的行高；径向渐变在 LibreOffice 里会随形状拉伸成椭圆，在 PowerPoint 里则是正圆（所以 `k.light` 的承载形状必须是正方形）。涉及渐变、透明度的效果，用 `pptcheck.js` 看 PowerPoint 的渲染；动效只能在 PowerPoint 中放映检查。
 - pptx 不嵌入字体，播放环境必须装有所用字体。

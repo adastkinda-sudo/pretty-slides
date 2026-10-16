@@ -59,6 +59,7 @@ node engine/dump.js <file.pptx> [页码]        # 读出 pptx 里各对象的名
 node engine/texture.js <hex> <out.jpg>         # 生成与背景色匹配的纸张颗粒
 node engine/compare.js <out.png> <dirA> <dirB> [--only S03] [--labels A,B]  # 并排对比图（方向对比、修改前后）
 node engine/pptdiff.js <原文件.pptx> <修复后.pptx>  # PowerPoint 提示“修复”时，找出它改了什么
+node engine/pptcheck.js <deckDir> [--only S03]  # 用 PowerPoint 渲染核对：实际用到的字体、与预览的差异（需要 PowerPoint for Mac）
 ```
 
 首次使用前运行 `npm --prefix engine install`。渲染依赖 LibreOffice（`soffice`）、`pdftoppm`（poppler）和 ImageMagick（`magick`）。

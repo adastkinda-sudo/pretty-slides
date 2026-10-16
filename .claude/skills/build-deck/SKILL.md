@@ -59,6 +59,7 @@ cp projects/<slug>/03-reference/slides/*.js projects/<slug>/04-deck/slides/
 5. **讲解时长**：看 `make.js` 输出的估算。和 `minutes` 差得多时，先调整讲稿；仍然差得多，说明页数或内容量不对，写进报告，由用户决定增删页面。
 6. 修复，然后重新渲染受影响的页面。
 7. **独立审稿**：按 `review.md` 的“独立审稿”，调用 `deck-reviewer` 子代理审整套（超过 12 页时按章节分批，每批 12 页以内并给出页面 ID，各批可以同时调用）。处理意见，重新渲染受影响的页面。
+8. **PowerPoint 核对**：装有 PowerPoint 时，运行 `node engine/pptcheck.js projects/<slug>/04-deck`，按 `review.md` 处理。
 
 ## 5. 收尾
 
@@ -70,5 +71,5 @@ cp projects/<slug>/03-reference/slides/*.js projects/<slug>/04-deck/slides/
 1. pptx 路径、缩略总览路径、总页数。
 2. 制作中偏离或补充 design.md 的地方（逐条列出）。
 3. 自查和独立审稿中发现但没有修复的问题，附建议；讲解时长估算与目标时长。
-4. 需要在 PowerPoint 中检查的项目：哪些页使用了 Morph；字体是否在播放电脑上可用。
+4. PowerPoint 核对的结果（没有运行就写明）；仍需在 PowerPoint 中放映检查的项目：哪些页使用了 Morph；字体是否在播放电脑上可用。
 5. 给主会话的提示：把缩略总览展示给用户，请用户逐页提意见；意见用 `/revise` 处理。
