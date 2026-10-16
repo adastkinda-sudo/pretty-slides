@@ -16,7 +16,7 @@
 | 4 成稿 | `/build-deck` | **新会话**（fork） | `04-deck/`：完整 PPT | — |
 | 5 修改 | `/revise S03 …` | 当前会话 | 逐页修改，可无限轮 | 每轮用户确认 |
 
-技能文件在 `.claude/skills/<name>/SKILL.md`。不支持技能的 Agent 可以直接读这些文件，照着执行。
+技能文件在 `.claude/skills/<name>/SKILL.md`，审稿子代理在 `.claude/agents/deck-reviewer.md`。不支持技能或子代理的 Agent 可以直接读这些文件，照着执行。
 
 “新会话”的意思是：这一步只依赖**文件**，不依赖聊天记录。因此用户在聊天里表达过的偏好，必须先写进 `project.md` 的“决策记录”或对应文稿，才算存在。
 
@@ -43,6 +43,7 @@
 | 写讲解页（dense），或涉及图表、图解、公式、代码 | `guides/aesthetic/data-and-diagrams.md` |
 | 涉及动画或 Morph | `guides/aesthetic/motion.md` |
 | 渲染后自查 | `guides/production/review.md` |
+| 独立审稿（样张深化、成稿） | 调用 `.claude/agents/deck-reviewer.md` 子代理；不能调用子代理时，自己按它的正文再审一遍 |
 | 修改框架本身（engine、guides、templates、Skills），或与另一个 Agent 交接 | `guides/handoff.md` |
 
 ## 框架开发
@@ -52,7 +53,7 @@
 ## 工具
 
 ```bash
-node engine/make.js <deckDir>                 # 构建 + 几何 QA + 渲染全部 + 缩略总览
+node engine/make.js <deckDir>                 # 构建 + 几何 QA + 画面文字核对 + 讲解时长估算 + 渲染全部 + 缩略总览
 node engine/make.js <deckDir> --only S03,S07  # 只渲染这几页（构建仍是整套）
 node engine/dump.js <file.pptx> [页码]        # 读出 pptx 里各对象的名称、位置、文字
 node engine/texture.js <hex> <out.jpg>         # 生成与背景色匹配的纸张颗粒
