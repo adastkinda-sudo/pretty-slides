@@ -63,8 +63,8 @@ node engine/compare.js projects/<slug>/03-reference/directions/_compare.png \
 5. 构建并自查：`node engine/make.js projects/<slug>/03-reference`。按 `review.md` 先看缩略总览，再逐页看大图。普通页自修最多 2 轮；**签名画面**做不止一个版本，用 `engine/compare.js` 并排比较，留下更好的那个。
 6. 最后对照 `anti-ai.md` 的自检问题和 `review.md` 的工艺检查，再看一遍每一页。`make.js` 输出的“画面文字核对”逐条处理（补上，或同步回 design.md）。
 7. **独立审稿**：按 `review.md` 的“独立审稿”，调用 `deck-reviewer` 子代理审 `03-reference/` 的全部样张。处理意见，重新渲染受影响的页面。
-8. **PowerPoint 核对**：装有 PowerPoint 时，运行 `node engine/pptcheck.js projects/<slug>/03-reference`，按 `review.md` 处理。样张锁定了字体，字体问题要在这里解决，不留到成稿。
+8. **PowerPoint 核对**：确认渲染由 PowerPoint 完成，字体核对没有硬问题；由 LibreOffice 渲染时运行 `node engine/pptcheck.js projects/<slug>/03-reference`。按 `review.md` 处理。样张锁定了字体，字体问题要在这里解决，不留到成稿。
 9. 制作中做出的、design.md 里没有写明的设计决定，写进 design.md 的“样张回写”，必要时同步更新设计系统。
 10. 更新 `project.md`：当前阶段改为“3 样张（待用户审阅）”。提交：`git -C projects/<slug> add -A && git -C projects/<slug> commit -qm "reference: deepened"`。
 
-**最后的回复（主会话会转述给用户）**：pptx 路径和缩略总览路径；每页一句话说明它验证了什么；制作中做出的设计决定和仍需用户判断的问题；独立审稿的结论（没有采纳的意见及理由）；PowerPoint 核对的结果（没有运行就写明）；未验证的项目（例如 Morph 只能在 PowerPoint 中放映检查）。给主会话的提示：把缩略总览和样张大图展示给用户；用户的意见用 `/revise` 的方式在 `03-reference/` 上修改，影响整套的意见要同时更新 design.md 和 theme.js；用户认可后勾选关口 3b，然后建议 `/build-deck`。
+**最后的回复（主会话会转述给用户）**：pptx 路径和缩略总览路径；每页一句话说明它验证了什么；制作中做出的设计决定和仍需用户判断的问题；独立审稿的结论（没有采纳的意见及理由）；渲染器和字体核对的结果（由 LibreOffice 渲染、没有经过 PowerPoint 核对时写明）；未验证的项目（例如 Morph 只能在 PowerPoint 中放映检查）。给主会话的提示：把缩略总览和样张大图展示给用户；用户的意见用 `/revise` 的方式在 `03-reference/` 上修改，影响整套的意见要同时更新 design.md 和 theme.js；用户认可后勾选关口 3b，然后建议 `/build-deck`。

@@ -16,7 +16,7 @@
 5. 修改，然后只重新渲染受影响的页面（`--only`）。
 6. **打磨轮次**：普通页一般 1–2 轮；签名画面可以更多轮，并且要做不止一个版本。剩下的问题如果属于设计判断，交给用户，并附上具体建议。
 7. **独立审稿**（样张深化和成稿时）：自查做完后，请审稿子代理复查一遍，见下面的“独立审稿”。
-8. **PowerPoint 核对**（样张深化和成稿时，装有 PowerPoint 时）：`node engine/pptcheck.js <deckDir>`，处理它列出的字体，打开 `out/ppt/_compare.png` 看两边的差别。预览里正常、PowerPoint 里有问题的，以 PowerPoint 为准修改。见 `engine.md` 的“PowerPoint 核对”。
+8. **PowerPoint 核对**（样张深化和成稿时）：确认 `make.js` 输出的是“with PowerPoint”。由 LibreOffice 渲染时（没有 PowerPoint，或用了 `--renderer libreoffice`），在装有 PowerPoint 的电脑上运行 `node engine/pptcheck.js <deckDir>`，处理它列出的字体，打开 `out/ppt/_compare.png` 看两边的差别，以 PowerPoint 为准修改。见 `engine.md` 的“渲染与字体核对”。
 
 ## 硬问题（必须修）
 
@@ -27,7 +27,8 @@
 | 单行标签的文本框余量不足（PowerPoint 会意外折行） | `nowrap: true`，或者把框加宽到 1.15 倍以上 |
 | 文字与文字、文字与图形意外重叠 | 重新排位置；有意叠压的标 `overlap: true` |
 | 对比度不足，或文字压在复杂图像上看不清 | 换成 theme 里更深的颜色；在图像上垫一块纯色 |
-| 字体被替换（渲染出来的字形明显不对，或 `pptcheck.js` 列出正文用了 theme 之外的字体） | 改用已安装、PowerPoint 能用的字体，并更新 theme |
+| 字体被替换（渲染出来的字形明显不对，或 QA 报“PowerPoint 用了 theme 之外的字体”） | 改用已安装、PowerPoint 能用的字体，并更新 theme |
+| 字体不在交付目标的清单里（QA 报“不在跨平台字体清单里”） | 从 `typography.md`「跨平台字体」里换一个气质相近的；确实只在自己的 Mac 上放映，由用户确认后把 `target` 改成 `mac` |
 | 缺字（QA 报“不在 … 里”） | 换一种写法，或把这个字拆成单独一段，指定一个有它的字体（见 `typography.md`） |
 | 数据和图形不一致：数值、比例、坐标轴起点 | 回到数据源修正 |
 | `design.md` 要求的元素缺失 | 按设计文稿补上 |
@@ -85,4 +86,4 @@
 - 给出 pptx 路径和缩略总览（或相关页面的渲染图、对比图）。
 - 一句话说明这次做了什么，以及仍然存在的问题。
 - 讲解时长估算（和目标时长对比）；是否经过独立审稿，审稿意见中没有采纳的部分和理由。
-- 如实区分：“已渲染检查”“PowerPoint 核对”（运行过 `pptcheck.js` 时）“QA 启发式检查”“未验证”（例如 Morph 的实际播放、Windows 上的字体）。
+- 如实区分：“已渲染检查”（写明由 PowerPoint 还是 LibreOffice 渲染）“QA 启发式检查”“未验证”（例如 Morph 的实际播放、Windows 上的实际显示）。

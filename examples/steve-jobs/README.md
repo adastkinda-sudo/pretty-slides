@@ -48,7 +48,7 @@ node engine/make.js examples/steve-jobs     # 构建 + QA + 渲染全部 23 页 
 
 ## 已知限制
 
-- 预览由 LibreOffice 渲染，不能播放 Morph 和页内动效；跨页 Morph 要在 PowerPoint 里放映确认。
+- 渲染图是静态的，看不到 Morph 和页内动效；跨页 Morph 要在 PowerPoint 里放映确认。
 - 阳光是每页一张生成的透明图片，在 PowerPoint 里不能当形状编辑。
-- 字体全部是 macOS 系统字体；在 Windows 上播放请用 PDF。
+- 字体全部是 macOS 字体（theme 的 `target` 是 `mac`），只适合在装有 PowerPoint 的 Mac 上放映。
 - 物件按公开的产品外形与尺寸原生绘制，不使用任何商标和照片；S11 的签名是程序生成的示意笔迹。
