@@ -57,7 +57,7 @@ k.chart('bar', data, { ..., horizontal: true, labels: true, grid: false, valAxis
 
 ## 公式
 
-- 简单公式用文本加 Unicode 符号排版：`softmax( QKᵀ / √dₖ ) V`，使用 `STIX Two Math` 或 `Cambria Math` 字体。上下标用 Unicode 字符，或者用 run 的 `superscript` / `subscript`。
+- 简单公式用文本加 Unicode 符号排版，使用 `STIX Two Math` 字体。上下标用 run 的 `superscript` / `subscript`：`['softmax( QK', { text: 'T', superscript: true }, ' / √d', { text: 'k', subscript: true }, ' ) V']`。不要用上下标的 Unicode 字符（`ᵀ`、`ₖ`）：STIX Two Math 里没有它们，PowerPoint 会换成别的字体显示，`make.js` 会报缺字。
 - 复杂公式（分式、矩阵、求和上下限）：目前引擎不能生成可编辑的 OMML 公式。可以把公式拆成多个文本对象手工排版，或者渲染成高分辨率 PNG 插入（并在备注中保留 LaTeX 源码）。这一点要在 `design.md` 中说明。
 - 公式旁边用一两个标注解释关键符号，而不是在下面写一段文字。
 
