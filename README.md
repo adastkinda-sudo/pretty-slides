@@ -83,6 +83,7 @@ Pretty Slides 换了一种做法。它的审美标准写在 [guides/aesthetic/pr
 npm --prefix engine install
 node engine/make.js examples/attention          # 构建示例
 node engine/make.js examples/steve-jobs         # 另一个示例（23 页）
+node engine/make.js examples/fonts              # 跨平台字体样本（也用于在 Windows 上实测）
 ```
 
 依赖：Node.js 18+、poppler（`pdftoppm`）、ImageMagick 7，以及 PowerPoint for Mac 或 LibreOffice（用于渲染）。macOS：`brew install poppler imagemagick`，没有 PowerPoint 时再 `brew install --cask libreoffice`。
