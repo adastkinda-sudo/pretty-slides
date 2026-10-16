@@ -8,34 +8,77 @@
 // line breaks (`/`), enumeration commas (`、`) and middle dots (`·`), since such lists are usually set as
 // separate labels; a Latin/number fragment whose space-separated words are each on the slide also counts.
 // Matching ignores whitespace, quotes and case.
+//
+// content.md: under each chapter's `- 必须上屏：` bullet, quoted text (inline or one sub-bullet per item) must
+// appear somewhere in the finished deck. Unquoted descriptions ("注意力公式") are not checked. This runs only
+// when the deck has every page of design.md's per-slide plan: sample decks carry a few pages by design.
+//
+// Placeholders: template text left on a slide ({{…}}, <论断标题>, SXX, lorem ipsum) is a hard issue;
+// TODO / TBD / FIXME / XXX / 待定 / 待补 / 占位, which can be legitimate content, are flagged softly, as is
+// anything of either kind in the speaker notes.
 
 const fs = require('fs');
 const path = require('path');
 const JSZip = require('jszip');
 
-// projects/<slug>/02-design/design.md, from 03-reference/, 04-deck/ or 03-reference/directions/<X>/.
-function findDesign(deckDir) {
+// projects/<slug>/<rel>, from 03-reference/, 04-deck/ or 03-reference/directions/<X>/.
+function findUp(deckDir, rel) {
   let d = deckDir;
   for (let i = 0; i < 4; i++) {
-    const f = path.join(d, '02-design', 'design.md');
+    const f = path.join(d, rel);
     if (fs.existsSync(f)) return f;
     d = path.dirname(d);
   }
   return null;
 }
+const findDesign = (deckDir) => findUp(deckDir, path.join('02-design', 'design.md'));
+const findContent = (deckDir) => findUp(deckDir, path.join('01-content', 'content.md'));
 
 const norm = (s) => String(s).normalize('NFKC').toLowerCase().replace(/[\s“”‘’"'「」『』]/g, '');
 
 const SEP = /[\/／、·・|｜]|\\n/;
 
+const quotedIn = (v) => [...v.matchAll(/“([^”]+)”|「([^」]+)」|"([^"]+)"/g)].map((m) => m[1] || m[2] || m[3]);
+const toItems = (texts) => texts.map((t) => t.trim())
+  .filter((t) => t && !/^(无|—|-|——)$/.test(t))
+  .map((text) => ({ text, frags: text.split(SEP).map((f) => f.trim()).filter((f) => norm(f)) }));
+
 // -> [{ text, frags }]
 function expectedItems(value) {
   const v = value.trim();
-  const quoted = [...v.matchAll(/“([^”]+)”|「([^」]+)」|"([^"]+)"/g)].map((m) => m[1] || m[2] || m[3]);
-  const texts = quoted.length ? quoted : [v.replace(/（[^（）]*）/g, '')];
-  return texts.map((t) => t.trim())
-    .filter((t) => t && !/^(无|—|-|——)$/.test(t))
-    .map((text) => ({ text, frags: text.split(SEP).map((f) => f.trim()).filter((f) => norm(f)) }));
+  const quoted = quotedIn(v);
+  return toItems(quoted.length ? quoted : [v.replace(/（[^（）]*）/g, '')]);
+}
+
+// Quoted items under content.md's `必须上屏` bullets -> [{ text, frags }]
+function parseMustShow(md) {
+  const items = [];
+  let inList = false, indent = 0;
+  for (const line of md.split('\n')) {
+    const lead = line.match(/^(\s*)-\s*(?:\*\*)?必须上屏(?:\*\*)?\s*[：:]\s*(.*)$/);
+    if (lead) { inList = true; indent = lead[1].length; items.push(...toItems(quotedIn(lead[2]))); continue; }
+    if (!inList || !line.trim()) continue;
+    const sub = line.match(/^(\s*)-\s+(.*)$/);
+    if (!sub || sub[1].length <= indent) { inList = false; continue; }
+    items.push(...toItems(quotedIn(sub[2])));
+  }
+  return items;
+}
+
+const HARD_PH = [/\{\{[^{}]*\}\}/, /<[^<>\n]*\p{Script=Han}[^<>\n]*>/u, /\bSXX\b/, /lorem ipsum/i];
+const SOFT_PH = [/\b(?:TODO|TBD|FIXME|XXX)\b/, /待定|待补|占位/];
+const hits = (text, res) => res.map((re) => text.match(re)).filter(Boolean).map((m) => m[0]);
+
+// Leftover template text on a slide (texts: its paragraphs) and in its notes -> { hard: [], soft: [] }
+function placeholders(texts, notes = '') {
+  const hard = [], soft = [];
+  const onSlideHard = [...new Set(texts.flatMap((t) => hits(t, HARD_PH)))];
+  const onSlideSoft = [...new Set(texts.flatMap((t) => hits(t, SOFT_PH)))];
+  const inNotes = [...new Set(hits(String(notes), [...HARD_PH, ...SOFT_PH]))];
+  if (onSlideHard.length) hard.push(`页面上有模板占位符: ${onSlideHard.map((t) => `“${t}”`).join('、')}`);
+  if (onSlideSoft.length) soft.push(`页面上疑似占位符: ${onSlideSoft.map((t) => `“${t}”`).join('、')}（是正文内容可忽略）`);
+  if (inNotes.length) soft.push(`讲稿里有占位符: ${inNotes.map((t) => `“${t}”`).join('、')}`);
+  return { hard, soft };
 }
 
 // Items not found on the slide, each with the fragments that are missing.
@@ -87,27 +130,33 @@ function paragraphs(xml) {
 }
 
 // manifest: [{ id, index }]; chrome: per slide, the paragraphs of structure-layer text (k.text chrome: true),
-// such as section markers, which design.md describes in its structure layer rather than per slide. Returns { design, reports: [{ id, soft: [] }] } or null when no design.md is found.
-async function checkText(deckDir, pptxBuffer, manifest, chrome = []) {
+// such as section markers, which design.md describes in its structure layer rather than per slide; notes: per slide.
+// Returns { design, content, reports: [{ id, soft: [] }], deck: [], placeholders: [{ id, hard: [], soft: [] }] };
+// design / content are null when the file is not found, and reports / deck are then empty.
+async function checkText(deckDir, pptxBuffer, manifest, { chrome = [], notes = [] } = {}) {
+  const zip = await JSZip.loadAsync(pptxBuffer);
+  const slides = [];
+  for (const m of manifest) {
+    const file = zip.file(`ppt/slides/slide${m.index}.xml`);
+    slides.push(file ? paragraphs(await file.async('string')) : []);
+  }
+  const ph = manifest.map((m, i) => ({ id: m.id, ...placeholders(slides[i], notes[i]) }));
   const design = findDesign(deckDir);
-  if (!design) return null;
+  const res = { design, content: null, reports: [], deck: [], placeholders: ph };
+  if (!design) return res;
   const md = fs.readFileSync(design, 'utf8');
   const pages = parseDesign(md);
   const whole = norm(md);
-  const zip = await JSZip.loadAsync(pptxBuffer);
-  const reports = [];
   for (const [i, m] of manifest.entries()) {
     const skip = new Set((chrome[i] || []).map(norm));
     const soft = [];
     const page = pages[m.id];
-    const file = zip.file(`ppt/slides/slide${m.index}.xml`);
-    const texts = file ? paragraphs(await file.async('string')) : [];
+    const texts = slides[i];
     const onSlide = norm(texts.join(''));
     if (!page) soft.push('design.md 里没有这一页的逐页方案');
     else if (!page.items.length) soft.push('design.md 里这一页没有写“画面文字”');
     else {
       const missing = missingItems(page.items, onSlide);
-      const show = (m) => (m.partial ? `“${m.lost.join('”“')}”（在“${m.text}”中）` : `“${m.text}”`);
       if (missing.length) soft.push(`design.md 要求、页面上没有: ${missing.map(show).join('、')}`);
     }
     // Longer text on the slide that design.md never mentions: invented in production, or not synced back.
@@ -116,9 +165,20 @@ async function checkText(deckDir, pptxBuffer, manifest, chrome = []) {
       return n.length >= 4 && /[\p{L}]/u.test(n) && !whole.includes(n) && !skip.has(n);
     });
     if (extra.length) soft.push(`页面上有、design.md 没写: ${extra.slice(0, 5).map((t) => `“${t.slice(0, 30)}”`).join('、')}${extra.length > 5 ? ` 等 ${extra.length} 处` : ''}`);
-    reports.push({ id: m.id, soft });
+    res.reports.push({ id: m.id, soft });
   }
-  return { design, reports };
+  // content.md's must-show text, against the whole deck, once the deck has every page design.md plans.
+  const content = findContent(deckDir);
+  const ids = new Set(manifest.map((m) => m.id));
+  const planned = Object.keys(pages);
+  if (content && planned.length && planned.every((id) => ids.has(id))) {
+    res.content = content;
+    const missing = missingItems(parseMustShow(fs.readFileSync(content, 'utf8')), norm(slides.flat().join('')));
+    if (missing.length) res.deck.push(`content.md 必须上屏、整套页面上都没有: ${missing.map(show).join('、')}`);
+  }
+  return res;
 }
 
-module.exports = { checkText, parseDesign, findDesign, missingItems };
+const show = (m) => (m.partial ? `“${m.lost.join('”“')}”（在“${m.text}”中）` : `“${m.text}”`);
+
+module.exports = { checkText, parseDesign, parseMustShow, placeholders, findDesign, findContent, missingItems };

@@ -105,7 +105,9 @@ async function build(opt) {
   const used = [...Object.values(theme.fonts || {}), ...Object.keys(theme.fontPairs || {}), ...Object.values(theme.type || {}).map((t) => t.font)];
   const badPairs = [...new Set(used.filter((f) => f && cjkSuffixed(f)))];
   const timing = estimate(notes, { target: deck.minutes, rate: deck.speechRate });
-  const text = await checkText(opt.dir, buf, manifest, chrome);
+  const text = await checkText(opt.dir, buf, manifest, { chrome, notes: notes.map((n) => n.notes) });
+  // Leftover placeholders are reported with the slide's QA.
+  text.placeholders.forEach((p, i) => { reports[i].hard.push(...p.hard); reports[i].soft.push(...p.soft); });
   return { name, pptxPath, manifest, reports, missing: missingFonts(theme), badPairs, timing, text };
 }
 
@@ -180,11 +182,14 @@ function contactArgs(manifest, rDir, out) {
     r.soft.forEach((m) => console.log(`  · ${m}`));
   }
   console.log(hardCount ? `\nQA: ${hardCount} hard issue(s) — fix before showing the user.` : '\nQA: no hard issues (geometry heuristics only; still inspect the renders).');
-  if (res.text) {
-    const hits = res.text.reports.filter((r) => r.soft.length && (!opt.only || opt.only.includes(r.id)));
-    const rel = path.relative(process.cwd(), res.text.design);
-    console.log(`\n画面文字核对（对照 ${rel.startsWith('..') ? res.text.design : rel}）: ${hits.length ? '' : '一致'}`);
+  if (res.text.design) {
+    const t = res.text;
+    const show = (f) => { const rel = path.relative(process.cwd(), f); return rel.startsWith('..') ? f : rel; };
+    const hits = t.reports.filter((r) => r.soft.length && (!opt.only || opt.only.includes(r.id)));
+    const against = [t.design, t.content].filter(Boolean).map(show).join('、');
+    console.log(`\n画面文字核对（对照 ${against}）: ${hits.length || t.deck.length ? '' : '一致'}`);
     for (const r of hits) r.soft.forEach((m) => console.log(`  · ${r.id} ${m}`));
+    t.deck.forEach((m) => console.log(`  · ${m}`));
   }
   const t = res.timing;
   console.log(`\n讲解时长估算: 约 ${t.minutes.toFixed(0)} 分钟（备注 ${Math.round(t.total)} 字当量，按 ${t.rate} 字/分钟）${t.target ? `，目标 ${t.target} 分钟` : ''}`);
