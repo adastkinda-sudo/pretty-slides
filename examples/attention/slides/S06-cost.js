@@ -31,7 +31,7 @@ module.exports = {
       if (prev) {
         const ax1 = prev.right + 0.2, ax2 = m.x - 0.2, ay = baseY - 0.5;
         k.line({ x1: ax1, y1: ay, x2: ax2, y2: ay, color: 'accent', weight: 1, arrow: 'end', build: i });
-        k.text('×4', { style: 'word', font: 'latinLight', size: 22, color: 'accent', x: (ax1 + ax2) / 2 - 0.4, y: ay - 0.45, w: 0.8, align: 'center', nowrap: true, build: i });
+        k.text('×4', { style: 'word', font: 'numeral', size: 22, color: 'accent', x: (ax1 + ax2) / 2 - 0.4, y: ay - 0.45, w: 0.8, align: 'center', nowrap: true, build: i });
       }
       prev = m;
     });

@@ -1,4 +1,4 @@
-// Design tokens — "暗室之光": attention is light finding pattern in a dark, lawless room. Typography: T1 "电影片头" (Songti headlines with wide tracking, Didot for Latin/numbers/letters, Gill Sans labels)
+// Design tokens — "暗室之光": attention is light finding pattern in a dark, lawless room. Typography: T1 "电影片头" (Songti headlines with wide tracking, Didot for Latin letters, Bodoni 72 for numbers, Gill Sans labels)
 // The example sentence is set as a prompt typed to the model (Menlo), with a prompt mark and a cursor.
 // One world for the whole deck: warm charcoal with grain, lit by whatever the page is about. Amber heat is the only color.
 module.exports = {
@@ -23,6 +23,7 @@ module.exports = {
     sans: 'Hiragino Sans GB',
     latin: 'Didot',
     latinLight: 'Didot',
+    numeral: 'Bodoni 72', // Didot's digits are oldstyle in PowerPoint; Bodoni 72's are lining everywhere
     label: 'Gill Sans',
     prompt: 'Menlo', // the example sentence: a prompt typed to the model
     mono: 'Menlo',
@@ -42,7 +43,7 @@ module.exports = {
     caption: { font: 'sans', size: 11, leading: 1.5, color: 'stone' },
     word: { font: 'prompt', size: 20, leading: 1.2, color: 'stone' },
     letter: { font: 'latin', size: 64, leading: 1, color: 'ink' },
-    number: { font: 'latin', size: 120, leading: 1, color: 'accent' },
+    number: { font: 'numeral', size: 120, leading: 1, color: 'accent' },
     math: { font: 'STIX Two Math', size: 22, leading: 1.2, color: 'graphite' },
   },
   chart: { series: ['accent', 'stone'] },

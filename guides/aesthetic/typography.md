@@ -28,7 +28,7 @@ pptx 不嵌入字体。**设计文稿里写的字体，必须在播放的电脑�
 | 英文无衬线 | `Gill Sans`、`Optima`、`Futura` | 人文、优雅、几何；Gill Sans 线条均匀，适合小字和标签 |
 | 英文无衬线 | `Avenir Next` / `Avenir Next Medium` | 更柔和的几何风格（**避免** `Avenir Next Demi Bold`，渲染会出现假粗体） |
 | 英文衬线 | `Baskerville`、`Charter`、`Hoefler Text`、`Didot`（展示用）、`Bodoni 72` | 古典、编辑感 |
-| 数字 | `Helvetica Neue Light`、`DIN Alternate`、`Didot` | 大号数字 |
+| 数字 | `Helvetica Neue Light`、`DIN Alternate`、`Bodoni 72` | 大号数字 |
 | 等宽 | `Menlo`、`SF Mono`（不一定有）、`PT Mono` | 代码 |
 | 数学 | `STIX Two Math`、`STIX Two Text` | 公式 |
 
@@ -42,13 +42,17 @@ pptx 不嵌入字体。**设计文稿里写的字体，必须在播放的电脑�
 | 瑞士极简 | Hiragino Sans GB（粗体） | Hiragino Sans GB | Helvetica Neue |
 | 人文学术 | Songti SC | Hiragino Sans GB | Baskerville / Charter |
 | 精确技术 | Hiragino Sans GB | Hiragino Sans GB | Helvetica Neue + Menlo |
-| 电影片头（暗场） | Songti SC，字距 +5–8% | Hiragino Sans GB | Didot（大字号、数字、符号）+ Gill Sans（小字、标签） |
+| 电影片头（暗场） | Songti SC，字距 +5–8% | Hiragino Sans GB | Didot（大字号西文、符号）+ Bodoni 72（数字）+ Gill Sans（小字、标签） |
 
 一套演示通常只用 **1–2 个字体家族**，再加一两个有明确职责的点缀字体（例如引用原文用的斜体）。
 
 **例子要像它在真实世界里的样子。** 讲 AI 时，输入给模型的句子用等宽字体加提示符和光标，像一条真正的 prompt；模型输出的内容同理。讲古籍时，原文用宋体或楷体竖排。这样的字体选择让观众有代入感，比单纯“好看”的字体更有说服力。
 
 **高反差衬线体（Didot、Bodoni）只用于大字号**（约 20pt 以上）：它们的细线在小字号投影时会消失。同一套里的小字、标签、页码改用 Gill Sans 这类线条均匀的字体。
+
+**Didot 不用来写数字。** Didot（常规体）的数字在 PowerPoint 里是旧式数字（`0` 像小写的 `o`，`3`、`4`、`5`、`7`、`9` 下沉），而 LibreOffice 预览里是等高数字，预览看不出来。高反差衬线的大号数字用 `Bodoni 72`，它在两边都是等高数字；Didot Bold 的数字也是等高的。`make.js` 遇到 Didot 常规体里的数字会给出提示。
+
+**字体里要有这个字。** 字体缺的字符，PowerPoint 和 LibreOffice 会各自换成别的字体显示，常见的是箭头（`↑`、`→`）、上下标字符（`ᵀ`、`ₖ`）和不常用的符号。`make.js` 会逐段检查文字是否都在它的字体里，缺字报硬问题。修法：换一种写法（上下标用 `superscript` / `subscript`），或者把这个字拆成单独一段，指定一个有它的字体（例如箭头用 `Lucida Grande`）。这个字体不能是 `fontPairs` 里的中文字体：配对会把它的西文字符（包括箭头）又换回配对的西文字体。
 
 ### 中西文混排
 

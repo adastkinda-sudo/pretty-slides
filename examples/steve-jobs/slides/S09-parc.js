@@ -72,7 +72,7 @@ function gui(k, R, build) {
     if (i === 2) { box(85, 39 + i * 10, 155.5, 48.5 + i * 10, { fill: ink }); Inv(s, 85, 39 + i * 10, 155.5, 48.5 + i * 10); } else T(s, 88, 40 + i * 10);
   });
   ['area', 'center', 'corner', 'intersect:'].forEach((s, i) => T(s, 160, 40 + i * 10));
-  ['intersect: aRectangle', '   ↑ Rectangle', '      origin: (origin max: aRectangle origin)', '      corner: (corner min: aRectangle corner)'].forEach((s, i) => T(s, 16, 124 + i * 10, { w: 200 }));
+  ['intersect: aRectangle', ['   ', { text: '↑', font: 'symbol' }, ' Rectangle'], '      origin: (origin max: aRectangle origin)', '      corner: (corner min: aRectangle corner)'].forEach((s, i) => T(s, 16, 124 + i * 10, { w: 200 }));
 
   // window 2, in front: a painting, with its tools as small pictures down the left side
   tab(118, 168, 'Painting', 44);

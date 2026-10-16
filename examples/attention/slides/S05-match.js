@@ -59,6 +59,6 @@ module.exports = {
     const out = vector(k, { x: vX, y: midY - 0.12, cell: 0.18, gap: 0.035, seed: 22, lo: 0.3, hi: 0.95, build: [3, 0] });
     k.text('it 的新表示\n以 animal 为主', { style: 'caption', x: vX, y: midY + 0.25, w: out.w + 0.2, build: 3 });
 
-    k.text('softmax( QKᵀ / √dₖ ) V', { style: 'math', size: 20, x: k.M.x, y: 6.3, w: 4, nowrap: true, build: 3 });
+    k.text(['softmax( QK', { text: 'T', superscript: true }, ' / √d', { text: 'k', subscript: true }, ' ) V'], { style: 'math', size: 20, x: k.M.x, y: 6.3, w: 4, nowrap: true, build: 3 });
   },
 };
