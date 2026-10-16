@@ -6,7 +6,8 @@
   "license": "MIT",
   "type": "commonjs",
   "scripts": {
-    "example": "node make.js ../examples/attention"
+    "example": "node make.js ../examples/attention",
+    "test": "node --test test/*.test.js"
   },
   "dependencies": {
     "jszip": "3.10.1",

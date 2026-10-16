@@ -3,7 +3,11 @@
 // design.md, section "逐页方案": each slide is a `### S07 · …` heading; its `- **画面文字**：` bullet lists
 // the on-screen text, one sub-bullet per item (`- 标题：…`). The value after the first colon is the text;
 // quoted segments (“…” 「…」 "…"), when present, are taken as the exact text and the rest as annotation;
-// a trailing （…） annotation is dropped; ` / ` separates lines. Matching ignores whitespace, quotes and case.
+// full-width （…） is annotation, and an item that is all annotation is skipped.
+// An item matches when its whole text is on the slide, or when every fragment is: fragments are split at
+// line breaks (`/`), enumeration commas (`、`) and middle dots (`·`), since such lists are usually set as
+// separate labels; a Latin/number fragment whose space-separated words are each on the slide also counts.
+// Matching ignores whitespace, quotes and case.
 
 const fs = require('fs');
 const path = require('path');
@@ -22,12 +26,30 @@ function findDesign(deckDir) {
 
 const norm = (s) => String(s).normalize('NFKC').toLowerCase().replace(/[\s“”‘’"'「」『』]/g, '');
 
+const SEP = /[\/／、·・|｜]|\\n/;
+
+// -> [{ text, frags }]
 function expectedItems(value) {
   const v = value.trim();
   const quoted = [...v.matchAll(/“([^”]+)”|「([^」]+)」|"([^"]+)"/g)].map((m) => m[1] || m[2] || m[3]);
-  const texts = quoted.length ? quoted : [v.replace(/\s*[（(][^（）()]*[）)]\s*$/, '')];
-  return texts.flatMap((t) => t.split(/\s+\/\s+|\\n/)).map((t) => t.trim())
-    .filter((t) => t && !/^[（(].*[）)]$/.test(t) && !/^(无|—|-|——)$/.test(t));
+  const texts = quoted.length ? quoted : [v.replace(/（[^（）]*）/g, '')];
+  return texts.map((t) => t.trim())
+    .filter((t) => t && !/^(无|—|-|——)$/.test(t))
+    .map((text) => ({ text, frags: text.split(SEP).map((f) => f.trim()).filter((f) => norm(f)) }));
+}
+
+// Items not found on the slide, each with the fragments that are missing.
+function missingItems(items, onSlide) {
+  return items.flatMap((it) => {
+    if (onSlide.includes(norm(it.text))) return [];
+    // A Latin/number fragment also counts when each of its words is on the slide: label and value
+    // ("street 0.17") are often separate boxes. Not for Chinese, where common words would mask real drift.
+    const words = (f) => f.split(/\s+/);
+    const found = (f) => onSlide.includes(norm(f))
+      || (!/\p{Script=Han}/u.test(f) && words(f).every((w) => onSlide.includes(norm(w))));
+    const lost = it.frags.filter((f) => !found(f));
+    return lost.length ? [{ text: it.text, lost, partial: lost.length < it.frags.length }] : [];
+  });
 }
 
 function parseDesign(md) {
@@ -82,8 +104,9 @@ async function checkText(deckDir, pptxBuffer, manifest) {
     if (!page) soft.push('design.md 里没有这一页的逐页方案');
     else if (!page.items.length) soft.push('design.md 里这一页没有写“画面文字”');
     else {
-      const missing = page.items.filter((t) => !onSlide.includes(norm(t)));
-      if (missing.length) soft.push(`design.md 要求、页面上没有: ${missing.map((t) => `“${t}”`).join('、')}`);
+      const missing = missingItems(page.items, onSlide);
+      const show = (m) => (m.partial ? `“${m.lost.join('”“')}”（在“${m.text}”中）` : `“${m.text}”`);
+      if (missing.length) soft.push(`design.md 要求、页面上没有: ${missing.map(show).join('、')}`);
     }
     // Longer text on the slide that design.md never mentions: invented in production, or not synced back.
     const extra = texts.filter((t) => {
@@ -96,4 +119,4 @@ async function checkText(deckDir, pptxBuffer, manifest) {
   return { design, reports };
 }
 
-module.exports = { checkText, parseDesign, findDesign };
+module.exports = { checkText, parseDesign, findDesign, missingItems };
