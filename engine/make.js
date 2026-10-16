@@ -15,6 +15,8 @@ const PptxGenJS = require('pptxgenjs');
 const { makeKit } = require('./lib/kit');
 const { check } = require('./lib/qa');
 const { postProcess } = require('./lib/post');
+const { estimate } = require('./lib/timing');
+const { checkText } = require('./lib/textcheck');
 
 function args() {
   const a = process.argv.slice(2);
@@ -66,7 +68,7 @@ async function build(opt) {
   pptx.title = deck.title || name;
   if (deck.author) pptx.author = deck.author;
 
-  const manifest = [], transitions = [], reports = [], builds = [], lights = [];
+  const manifest = [], transitions = [], reports = [], builds = [], lights = [], notes = [];
   for (const [index, id] of deck.slides.entries()) {
     const file = findSlideFile(opt.dir, id);
     const mod = fresh(file);
@@ -80,6 +82,7 @@ async function build(opt) {
       throw e;
     }
     if (mod.notes) k.notes(String(mod.notes).trim());
+    notes.push({ id, notes: mod.notes || '' });
     transitions.push(mod.transition || theme.transition || 'none');
     builds.push(k._builds());
     lights.push(k._lights());
@@ -100,7 +103,9 @@ async function build(opt) {
   const cjkSuffixed = (f) => /(PingFang|Songti|Heiti|Hiragino|Kaiti|Yuanti|Lantinghei)/.test(f) && / (Ultralight|Thin|Light|Regular|Medium|Semibold|Bold|Heavy|Black)$/.test(f);
   const used = [...Object.values(theme.fonts || {}), ...Object.keys(theme.fontPairs || {}), ...Object.values(theme.type || {}).map((t) => t.font)];
   const badPairs = [...new Set(used.filter((f) => f && cjkSuffixed(f)))];
-  return { name, pptxPath, manifest, reports, missing: missingFonts(theme), badPairs };
+  const timing = estimate(notes, { target: deck.minutes, rate: deck.speechRate });
+  const text = await checkText(opt.dir, buf, manifest);
+  return { name, pptxPath, manifest, reports, missing: missingFonts(theme), badPairs, timing, text };
 }
 
 function render(opt, { name, pptxPath, manifest }) {
@@ -174,6 +179,15 @@ function contactArgs(manifest, rDir, out) {
     r.soft.forEach((m) => console.log(`  · ${m}`));
   }
   console.log(hardCount ? `\nQA: ${hardCount} hard issue(s) — fix before showing the user.` : '\nQA: no hard issues (geometry heuristics only; still inspect the renders).');
+  if (res.text) {
+    const hits = res.text.reports.filter((r) => r.soft.length && (!opt.only || opt.only.includes(r.id)));
+    const rel = path.relative(process.cwd(), res.text.design);
+    console.log(`\n画面文字核对（对照 ${rel.startsWith('..') ? res.text.design : rel}）: ${hits.length ? '' : '一致'}`);
+    for (const r of hits) r.soft.forEach((m) => console.log(`  · ${r.id} ${m}`));
+  }
+  const t = res.timing;
+  console.log(`\n讲解时长估算: 约 ${t.minutes.toFixed(0)} 分钟（备注 ${Math.round(t.total)} 字当量，按 ${t.rate} 字/分钟）${t.target ? `，目标 ${t.target} 分钟` : ''}`);
+  t.soft.forEach((m) => console.log(`  · ${m}`));
   if (opt.render) {
     const r = render(opt, res);
     console.log(`✓ rendered ${r.targets.map((t) => t.id).join(', ')} → ${path.relative(process.cwd(), r.rDir)}/`);

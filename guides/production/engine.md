@@ -8,7 +8,7 @@
 
 ```text
 <deckDir>/                   # 03-reference/ 或 04-deck/
-├── deck.js                  # { name, title, theme: './theme.js', slides: ['S01', 'S02', ...] }
+├── deck.js                  # { name, title, theme: './theme.js', slides: ['S01', ...], minutes?: 20 }
 ├── theme.js                 # 设计令牌（design.md 中“设计系统”的代码版）
 ├── parts.js                 # 可选：本 deck 内复用的图形部件（整套的视觉母题，例如向量条）
 ├── slides/S01-cover.js      # 一页一个文件；文件名 = 页面 ID + 短名
@@ -34,6 +34,11 @@ node engine/compare.js <out.png> <dirA> <dirB> [dirC] [--only S01,S05] [--labels
 
 QA 输出分两级：`✗` 是硬问题，给用户看之前必须修掉；`·` 是软提示，看渲染图后判断。QA 只是几何上的估算，**仍然必须看渲染图**。
 
+QA 之后还有两段输出：
+
+- **画面文字核对**：deck 目录向上能找到 `02-design/design.md` 时，逐页对照逐页方案里的“画面文字”（每个子条目取冒号后的文字；有引号时只取引号里的；末尾的（括注）和 ` / ` 换行标记不算），列出设计文稿要求而页面上没有的文字，以及页面上有而设计文稿里没写的较长文字。比较时忽略空白、引号和大小写。读的是构建出的 pptx。
+- **讲解时长估算**：由各页 `notes` 估算，汉字和数字每个算 1，英文单词每个算 1.3，括号里的动作提示不算；默认每分钟 170 字。`deck.js` 写了 `minutes`（目标时长）时，估算超出 15% 或不到 75% 会提示；`speechRate` 可以改语速。
+
 ## 幻灯片模块
 
 ```js
@@ -45,7 +50,7 @@ module.exports = {
   // textOnly: true,               // 纯公式或代码页，跳过“必须有图”的检查
   bg: 'paper',                     // 可选，默认 theme.background
   transition: 'fade',              // 可选：'none' | 'fade' | 'morph' | { type, duration }
-  notes: `演讲者备注……`,            // 可选，强烈建议写
+  notes: `讲稿……`,                  // 可以照着讲的口语讲稿；括号里写动作提示（单击 1），不计入时长估算
   build(k) {
     k.text('序列长度翻倍，代价变为四倍', { style: 'title', ...k.span(1, 8), y: k.M.top });
     // ...
