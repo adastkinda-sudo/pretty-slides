@@ -96,4 +96,4 @@ node engine/make.js examples/steve-jobs         # 另一个示例（23 页）
 ## 已知问题（待修）
 
 - **宋体的西文字形在 PowerPoint 中被替换。** 字体写成 `Songti SC` 时，西文字母在 PowerPoint 里显示为无衬线体。待查 PowerPoint 中字体框显示的名称。临时做法：西文使用独立的西文字体。
-- 预览中把苹方渲染成宋体的问题已经修复：原因是带字重后缀的中文字体名，现在由 QA 拦截（见 `typography.md`）。
+- 中文无衬线默认用冬青黑体，不用苹方：PowerPoint for Mac 会把苹方换成微软正黑体，而预览里看不出来，主题用了苹方时 QA 报硬问题。带字重后缀的中文字体名同样由 QA 拦截（见 `typography.md`）。
