@@ -29,6 +29,7 @@ module.exports = {
     roman: 'Hoefler Text',     // his name; his words in the original (Apple's own serif, 1991)
     italic: 'Hoefler Text',
     mono: 'Monaco',            // the 1984 Macintosh's monospaced face
+    symbol: 'Lucida Grande',   // arrows on the Alto screen: Helvetica Neue has none
   },
   fontPairs: { 'Hiragino Sans GB': 'Helvetica Neue', 'Songti SC': 'Hoefler Text' },
   backgroundImages: { paper: 'assets/room.jpg' },
