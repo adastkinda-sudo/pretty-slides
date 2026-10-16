@@ -4,6 +4,12 @@
 //   node engine/make.js <deckDir>                 build + QA + render all + contact sheet
 //   node engine/make.js <deckDir> --only S03,S07  build all, render only these slides
 //   node engine/make.js <deckDir> --no-render     build + QA only
+//   node engine/make.js <deckDir> --renderer libreoffice   render with LibreOffice instead of PowerPoint
+//
+// Renders come from PowerPoint for Mac when it is installed (the export is always the whole deck, about ten
+// seconds), else from LibreOffice. PowerPoint's renders also tell which fonts it really used: a font outside the
+// theme on a slide is a hard issue. LibreOffice does not see the fonts bundled inside PowerPoint (Microsoft YaHei,
+// Calibri, ...) and renders them in other fonts.
 //
 // <deckDir> must contain deck.js ({ name, theme, slides: ['S01', ...] }) and slides/<ID>-*.js.
 
@@ -17,21 +23,28 @@ const { check } = require('./lib/qa');
 const { postProcess } = require('./lib/post');
 const { estimate } = require('./lib/timing');
 const { checkText } = require('./lib/textcheck');
-const { fontIssues, chineseFamilies, cjkFallback, fixEastAsian } = require('./lib/fonts');
+const { fontIssues, chineseFamilies, cjkFallback, fixEastAsian, themeFonts, fc } = require('./lib/fonts');
 const { glyphReports } = require('./lib/glyphs');
+const powerpoint = require('./lib/powerpoint');
+const { parsePdffonts, foreignFonts } = require('./lib/pptfonts');
+const { bundledFiles } = require('./lib/fontlist');
 
 function args() {
   const a = process.argv.slice(2);
   if (!a[0] || a[0].startsWith('-')) {
-    console.error('usage: node engine/make.js <deckDir> [--only S01,S02] [--no-render] [--dpi 110]');
+    console.error('usage: node engine/make.js <deckDir> [--only S01,S02] [--no-render] [--dpi 110] [--renderer powerpoint|libreoffice]');
     process.exit(2);
   }
   const get = (f) => { const i = a.indexOf(f); return i >= 0 ? a[i + 1] : undefined; };
+  const renderer = get('--renderer') || (powerpoint.available() ? 'powerpoint' : 'libreoffice');
+  if (!['powerpoint', 'libreoffice'].includes(renderer)) throw new Error(`--renderer: powerpoint or libreoffice, not ${renderer}`);
+  if (renderer === 'powerpoint' && !powerpoint.available()) throw new Error('--renderer powerpoint: 没有找到 PowerPoint for Mac');
   return {
     dir: path.resolve(a[0]),
     only: get('--only')?.split(',').map((s) => s.trim()).filter(Boolean),
     render: !a.includes('--no-render'),
     dpi: Number(get('--dpi') || 110),
+    renderer,
   };
 }
 
@@ -95,18 +108,35 @@ async function build(opt) {
   text.placeholders.forEach((p, i) => { reports[i].hard.push(...p.hard); reports[i].soft.push(...p.soft); });
   // So are characters the run's font does not have.
   (await glyphReports(buf, manifest)).forEach((g, i) => { reports[i].hard.push(...g.hard); reports[i].soft.push(...g.soft); });
-  return { name, pptxPath, manifest, reports, fonts: fontIssues(theme), timing, text };
+  return { name, theme, pptxPath, manifest, reports, fonts: fontIssues(theme), timing, text };
 }
 
-function render(opt, { name, pptxPath, manifest }) {
+// pptx -> out/<name>.pdf, an intermediate deleted after rendering.
+function exportPdf(renderer, pptxPath, name) {
   const outDir = path.dirname(pptxPath);
-  const rDir = path.join(opt.dir, 'renders');
-  fs.mkdirSync(rDir, { recursive: true });
+  const pdf = path.join(outDir, `${name}.pdf`);
+  if (renderer === 'powerpoint') {
+    powerpoint.exportPdf(pptxPath, pdf);
+    return pdf;
+  }
+  fs.rmSync(pdf, { force: true });
   // Isolated LibreOffice profile so a running LibreOffice window doesn't block headless conversion.
   const profile = path.join(os.tmpdir(), 'pretty-slides-lo-profile');
   execFileSync('soffice', [`-env:UserInstallation=file://${profile}`, '--headless', '--convert-to', 'pdf', '--outdir', outDir, pptxPath], { stdio: 'ignore' });
-  const pdf = path.join(outDir, `${name}.pdf`);
   if (!fs.existsSync(pdf)) throw new Error('LibreOffice did not produce a PDF');
+  return pdf;
+}
+
+function render(opt, { name, theme, pptxPath, manifest }) {
+  const rDir = path.join(opt.dir, 'renders');
+  fs.mkdirSync(rDir, { recursive: true });
+  const pdf = exportPdf(opt.renderer, pptxPath, name);
+  fs.writeFileSync(path.join(path.dirname(pptxPath), 'render.json'), JSON.stringify({ renderer: opt.renderer }));
+  // Fonts PowerPoint used on each slide that the theme does not name.
+  const foreign = opt.renderer !== 'powerpoint' ? [] : foreignFonts(manifest.map((m) => ({
+    id: m.id,
+    fonts: parsePdffonts(execFileSync('pdffonts', ['-f', String(m.index), '-l', String(m.index), pdf], { encoding: 'utf8' })),
+  })), theme);
   const targets = opt.only ? manifest.filter((m) => opt.only.includes(m.id)) : manifest;
   const prevDir = path.join(rDir, '_prev'); // previous render of each slide, for before/after comparison
   for (const m of targets) {
@@ -119,6 +149,7 @@ function render(opt, { name, pptxPath, manifest }) {
     }
     fs.renameSync(`${prefix}.png`, dest);
   }
+  fs.rmSync(pdf, { force: true });
   // Remove renders of slides no longer in the deck.
   const ids = new Set(manifest.map((m) => m.id));
   for (const f of fs.readdirSync(rDir)) if (/^S\d+.*\.png$/.test(f) && !ids.has(f.replace('.png', ''))) fs.unlinkSync(path.join(rDir, f));
@@ -127,7 +158,7 @@ function render(opt, { name, pptxPath, manifest }) {
     contact = path.join(rDir, '_contact.png');
     execFileSync('magick', contactArgs(manifest, rDir, contact), { stdio: 'ignore' });
   }
-  return { rDir, targets, contact };
+  return { rDir, targets, contact, foreign };
 }
 
 // Contact sheet: rows of thumbnails labelled with slide IDs (no `montage`, which needs a default font).
@@ -152,8 +183,22 @@ function contactArgs(manifest, rDir, out) {
   const opt = args();
   const res = await build(opt);
   console.log(`✓ built ${path.relative(process.cwd(), res.pptxPath)} (${res.manifest.length} slides)`);
+  // A failed render (PowerPoint waiting on a dialog) is reported after the QA, which does not depend on it.
+  let r = null, renderError = null;
+  if (opt.render) {
+    try { r = render(opt, res); } catch (e) { renderError = e; }
+  }
+  for (const f of r?.foreign || []) {
+    const name = f.family ? `${f.family} (${f.ps})` : f.ps;
+    for (const id of f.pages) res.reports.find((x) => x.id === id).hard.push(`PowerPoint 用了 theme 之外的字体 ${name}：文字落到了别的字体上（缺字、字体名不对或字体不可用）— 改字体或改字`);
+  }
   let hardCount = 0;
   const f = res.fonts;
+  if (f.notPortable.length) {
+    hardCount += f.notPortable.length;
+    console.log(`\n不在跨平台字体清单里（Windows 或 Mac 版 PowerPoint 上会被替换）: ${f.notPortable.join(', ')} — 从 typography.md 的清单里选；只在自己的 Mac 上放映时，theme 写 target: 'mac'`);
+  }
+  if (f.chineseWindows.length) console.log(`\n· 这些字体只有中文版 Windows 默认装有（英文版 Windows 上会被替换）: ${f.chineseWindows.join(', ')} — 确认放映电脑，记在 project.md`);
   if (f.suffixed.length) {
     hardCount += f.suffixed.length;
     console.log(`\n中文字体不能带字重后缀（会被渲染成别的字体）: ${f.suffixed.join(', ')} — 只写家族名（如 'Hiragino Sans GB'），字重用 bold: true`);
@@ -186,9 +231,12 @@ function contactArgs(manifest, rDir, out) {
   const t = res.timing;
   console.log(`\n讲解时长估算: 约 ${t.minutes.toFixed(0)} 分钟（备注 ${Math.round(t.total)} 字当量，按 ${t.rate} 字/分钟）${t.target ? `，目标 ${t.target} 分钟` : ''}`);
   t.soft.forEach((m) => console.log(`  · ${m}`));
-  if (opt.render) {
-    const r = render(opt, res);
-    console.log(`✓ rendered ${r.targets.map((t) => t.id).join(', ')} → ${path.relative(process.cwd(), r.rDir)}/`);
+  if (r) {
+    console.log(`\n✓ rendered ${r.targets.map((t) => t.id).join(', ')} with ${opt.renderer === 'powerpoint' ? 'PowerPoint' : 'LibreOffice'} → ${path.relative(process.cwd(), r.rDir)}/`);
     if (r.contact) console.log(`✓ contact sheet → ${path.relative(process.cwd(), r.contact)}`);
+    const unseen = opt.renderer === 'powerpoint' ? [] : themeFonts(res.theme).filter((x) => bundledFiles(x).length && !fc([`:family=${x}`, 'family']));
+    if (unseen.length) console.log(`· LibreOffice 看不到 PowerPoint 自带的字体，预览里这些字体是替身: ${unseen.join(', ')} — 字形、换行以 PowerPoint 为准`);
+    else if (opt.renderer !== 'powerpoint') console.log('· 预览由 LibreOffice 渲染，与 PowerPoint 有细微差异；字体是否被替换没有核对');
   }
+  if (renderError) throw renderError;
 })().catch((e) => { console.error(`✗ ${e.stack || e.message}`); process.exit(1); });

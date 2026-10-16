@@ -1,21 +1,20 @@
 #!/usr/bin/env node
-// Check a built deck in PowerPoint itself (macOS, PowerPoint for Mac): which fonts PowerPoint really used, and how
-// its rendering differs from the LibreOffice preview in renders/.
+// Check a deck rendered with LibreOffice (make.js --renderer libreoffice) in PowerPoint itself: which fonts
+// PowerPoint really used, and how its rendering differs from the LibreOffice preview in renders/. When make.js
+// rendered with PowerPoint (its default where PowerPoint is installed) this check is already part of make.js.
 //
 //   node engine/pptcheck.js <deckDir>                 all slides
 //   node engine/pptcheck.js <deckDir> --only S03,S07  only these slides (the export is still the whole deck)
 //
-// Run make.js first. PowerPoint exports a copy of out/<name>.pptx to PDF (scripted, a few seconds per ten slides);
-// the PDF is only an intermediate and is deleted. Results go to out/ppt/: Sxx.png per slide and _compare.png
-// (LibreOffice preview beside PowerPoint) for the slides worth a look. Without PowerPoint the check is skipped.
+// Run make.js first. PowerPoint exports out/<name>.pptx to PDF (scripted, about ten seconds); the PDF is only an
+// intermediate and is deleted. Results go to out/ppt/: Sxx.png per slide and _compare.png (LibreOffice preview
+// beside PowerPoint) for the slides worth a look. Without PowerPoint the check is skipped.
 
 const fs = require('fs');
 const path = require('path');
 const { execFileSync, spawnSync } = require('child_process');
 const { parsePdffonts, foreignFonts } = require('./lib/pptfonts');
-
-const APP = '/Applications/Microsoft PowerPoint.app';
-const TIMEOUT = 300; // seconds for open + export
+const powerpoint = require('./lib/powerpoint');
 
 const a = process.argv.slice(2);
 if (!a[0] || a[0].startsWith('-')) {
@@ -27,37 +26,6 @@ const dir = path.resolve(a[0]);
 const only = get('--only')?.split(',').map((s) => s.trim()).filter(Boolean);
 const dpi = Number(get('--dpi') || 110);
 const rel = (f) => path.relative(process.cwd(), f);
-
-// Opens the copy, finds it by full path among open presentations (the user may have others open), exports, closes.
-const SCRIPT = `on run argv
-  set src to item 1 of argv
-  set dest to item 2 of argv
-  with timeout of (item 3 of argv as integer) seconds
-    tell application "Microsoft PowerPoint"
-      open POSIX file src
-      set p to missing value
-      repeat 100 times
-        repeat with i from 1 to count of presentations
-          if full name of presentation i is src then set p to presentation i
-        end repeat
-        if p is not missing value then exit repeat
-        delay 0.3
-      end repeat
-      if p is missing value then error "presentation did not open"
-      save p in (POSIX file dest) as save as PDF
-      close p saving no
-    end tell
-  end timeout
-end run`;
-
-function exportPdf(src, dest) {
-  const r = spawnSync('osascript', ['-e', SCRIPT, src, dest, String(TIMEOUT)], { encoding: 'utf8', timeout: (TIMEOUT + 30) * 1000 });
-  if (r.status === 0 && fs.existsSync(dest)) return;
-  const why = r.error?.code === 'ETIMEDOUT' || /timed out|-1712/.test(r.stderr || '')
-    ? 'PowerPoint 没有在限定时间内完成。它可能弹出了对话框：修复提示（见 engine.md“PowerPoint 提示‘修复’时”）、文件访问授权（deck 不在已授权的目录里），或首次启动的提示。处理完再运行。'
-    : (r.stderr || '').trim() || 'PowerPoint 没有生成 PDF';
-  throw new Error(why);
-}
 
 // Share of pixels that differ by more than 10%, or null when the preview is missing or a different size.
 function diff(a, b) {
@@ -77,7 +45,7 @@ try {
 }
 
 function main() {
-  if (process.platform !== 'darwin' || !fs.existsSync(APP)) {
+  if (!powerpoint.available()) {
     console.log('· 跳过：没有找到 PowerPoint for Mac。');
     return;
   }
@@ -87,21 +55,19 @@ function main() {
   const pptx = path.join(dir, 'out', `${name}.pptx`);
   const manifestFile = path.join(dir, 'out', 'manifest.json');
   if (!fs.existsSync(pptx) || !fs.existsSync(manifestFile)) throw new Error(`没有 ${rel(pptx)}：先运行 node engine/make.js ${rel(dir)}`);
+  const renderFile = path.join(dir, 'out', 'render.json');
+  if (fs.existsSync(renderFile) && JSON.parse(fs.readFileSync(renderFile, 'utf8')).renderer === 'powerpoint') {
+    console.log('· renders/ 已经由 PowerPoint 渲染，字体也已在 make.js 里核对，不需要再运行 pptcheck。');
+    return;
+  }
   const manifest = JSON.parse(fs.readFileSync(manifestFile, 'utf8'));
   const targets = only ? manifest.filter((m) => only.includes(m.id)) : manifest;
 
   const out = path.join(dir, 'out', 'ppt');
   fs.mkdirSync(out, { recursive: true });
-  // A copy, so a deck the user has open in PowerPoint is never closed or touched.
-  const copy = path.join(out, '_check.pptx');
   const pdf = path.join(out, '_check.pdf');
-  fs.copyFileSync(pptx, copy);
   const t0 = Date.now();
-  try {
-    exportPdf(copy, pdf);
-  } finally {
-    fs.rmSync(copy, { force: true });
-  }
+  powerpoint.exportPdf(pptx, pdf);
   const pages = Number(/Pages:\s+(\d+)/.exec(execFileSync('pdfinfo', [pdf], { encoding: 'utf8' }))[1]);
   if (pages !== manifest.length) console.log(`· PowerPoint 导出了 ${pages} 页，manifest 里有 ${manifest.length} 页：先重新运行 make.js`);
   console.log(`✓ PowerPoint 导出 ${pages} 页（${Math.round((Date.now() - t0) / 1000)} 秒）`);
