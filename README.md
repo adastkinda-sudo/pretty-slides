@@ -77,6 +77,7 @@ Pretty Slides 换了一种做法。它的审美标准写在 [guides/aesthetic/pr
 - **占位符检查**：页面上遗留的模板文字算硬问题，讲稿里的给出提示。
 - **讲解时长估算**：每页备注都是可以照着讲的讲稿，按字数估算总时长，与目标时长对比。
 - **渲染**：通过 LibreOffice 输出逐页 PNG 和缩略总览；保留上一版渲染，方便做前后对比。
+- **PowerPoint 核对**：装有 PowerPoint for Mac 时，`engine/pptcheck.js` 让 PowerPoint 实际渲染一遍，列出它用到的 theme 之外的字体，并和预览并排对比。
 - **手工修改回写**：`engine/dump.js` 读出你在 PowerPoint 中手动修改过的对象，AI 再把修改同步回代码。
 
 ```bash
@@ -89,7 +90,7 @@ node engine/make.js examples/steve-jobs         # 另一个示例（23 页）
 
 ## 已知限制
 
-- 预览由 LibreOffice 渲染，与 PowerPoint 有细微差异（中西文之间的间距、个别行高）。最终请在 PowerPoint 中检查。
+- 预览由 LibreOffice 渲染，与 PowerPoint 有细微差异（中西文之间的间距、个别行高）。装有 PowerPoint 时用 `pptcheck.js` 核对；没有时请在 PowerPoint 中检查。
 - Morph 只能在 PowerPoint 中放映验证。不生成页内逐项动画，也不生成可编辑的 OMML 公式。
 - pptx 不嵌入字体：播放的电脑上必须装有设计中使用的字体。
 

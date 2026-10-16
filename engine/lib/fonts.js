@@ -70,4 +70,4 @@ function fixEastAsian(xml, chinese, fallback) {
   return xml.replace(/<a:ea typeface="([^"]*)"[^>]*?\/>/g, (m, face) => (face && !chinese.has(face) ? `<a:ea typeface="${fallback}"/>` : m));
 }
 
-module.exports = { fontIssues, chineseFamilies, cjkFallback, fixEastAsian, PPT_UNAVAILABLE };
+module.exports = { fontIssues, chineseFamilies, cjkFallback, fixEastAsian, themeFonts, names, fc, PPT_UNAVAILABLE };
