@@ -35,6 +35,6 @@ module.exports = {
       }
       prev = m;
     });
-    dim(k, { x1: specs[2].x, x2: specs[2].x + 16 * pitch - gap, y: baseY - 16 * pitch - 0.15, label: 'n = 16 个词', build: 2 });
+    dim(k, { x1: specs[2].x, x2: specs[2].x + 16 * pitch - gap, y: baseY - 16 * pitch - 0.15, label: 'n = 16 个词', side: 'above', build: 2 });
   },
 };

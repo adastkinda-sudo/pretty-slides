@@ -80,12 +80,13 @@ function frame(k, { section, name, ink = 'stone', page }) {
   k.text(`${pad(index)} / ${pad(total)}`, { style: 'caption', font: 'label', color: ink, x: right - 1.2, y: y - 0.055, w: 1.2, align: 'right', nowrap: true, chrome: true });
 }
 
-// Dimension line (engineering-drawing style).
-function dim(k, { x1, x2, y, label, color = 'stone', build }) {
+// Dimension line (engineering-drawing style). The label goes below the line, or above it when what is measured
+// lies below (side: 'above').
+function dim(k, { x1, x2, y, label, color = 'stone', side = 'below', build }) {
   k.line({ x1, y1: y, x2, y2: y, color, weight: 0.5, build });
   k.line({ x1, y1: y - 0.06, x2: x1, y2: y + 0.06, color, weight: 0.5, build });
   k.line({ x1: x2, y1: y - 0.06, x2, y2: y + 0.06, color, weight: 0.5, build });
-  k.text(label, { style: 'caption', font: 'label', color, x: (x1 + x2) / 2 - 1, y: y + 0.08, w: 2, align: 'center', nowrap: true, build });
+  k.text(label, { style: 'caption', font: 'label', color, x: (x1 + x2) / 2 - 1, y: side === 'above' ? y - 0.3 : y + 0.08, w: 2, align: 'center', nowrap: true, build });
 }
 
 // Leader: a thin line from an annotation to its target, ending in a small lit dot.
