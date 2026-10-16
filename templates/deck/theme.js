@@ -1,5 +1,6 @@
 // Design tokens — the machine-readable half of 02-design/design.md. Change tokens here, not in slides.
-// Starting values copied from examples/attention (the 'Paper & Ink' palette). Replace them with the confirmed design.
+// Starting values: the 'Paper & Ink' palette and fonts from the cross-platform list in typography.md. Replace them
+// with the confirmed design.
 module.exports = {
   name: 'Paper & Ink',
   size: { w: 13.333, h: 7.5 },
@@ -16,15 +17,19 @@ module.exports = {
     glow: 'E4DCCB',      // k.light colour (on a light ground: a slightly warmer, brighter paper)
     // One world per deck: for a dark deck, make paper itself dark — don't mix light and dark pages.
   },
+  // 'cross-platform': the deck is shown on other computers, Windows included; only fonts from the list in
+  // typography.md. 'mac': shown from your own Mac with PowerPoint; any font PowerPoint for Mac can use.
+  target: 'cross-platform',
   fonts: {
-    serif: 'Songti SC',
-    sans: 'Hiragino Sans GB',
-    latin: 'Helvetica Neue',
-    latinLight: 'Helvetica Neue Light',
-    mono: 'Menlo',
+    serif: 'SimSun',
+    sans: 'Microsoft YaHei',
+    light: 'Microsoft YaHei Light',
+    latin: 'Calibri',
+    numeral: 'Palatino Linotype',
+    mono: 'Consolas',
   },
   // Latin glyphs inside runs set in the key font are rendered with the value font.
-  fontPairs: { 'Hiragino Sans GB': 'Helvetica Neue' }, // regular weight only — see typography.md
+  fontPairs: { SimSun: 'Palatino Linotype' }, // SimSun's own Latin letters are thin and plain — see typography.md
   grid: { margin: { x: 0.85, top: 0.75, bottom: 0.6 }, cols: 12, gutter: 0.22 },
   type: {
     display: { font: 'serif', size: 66, leading: 1.12, tracking: 0, color: 'ink' },
@@ -34,8 +39,8 @@ module.exports = {
     body: { font: 'sans', size: 15, leading: 1.6, color: 'graphite' },
     label: { font: 'sans', size: 11, leading: 1.3, tracking: 12, color: 'stone' },
     caption: { font: 'sans', size: 11, leading: 1.5, color: 'stone' },
-    number: { font: 'latinLight', size: 120, leading: 1, tracking: -3, color: 'ink' },
-    math: { font: 'STIX Two Math', size: 30, leading: 1.2, color: 'ink' },
+    number: { font: 'numeral', size: 120, leading: 1, tracking: -3, color: 'ink' },
+    math: { font: 'Cambria Math', size: 30, leading: 1.2, color: 'ink' },
   },
   chart: { series: ['accent', 'stone'] },
   transition: 'fade',
