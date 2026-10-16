@@ -35,7 +35,7 @@ cp projects/<slug>/03-reference/slides/*.js projects/<slug>/04-deck/slides/
 
 - `theme.js` 是**锁定**的：成稿阶段不改设计令牌。如果确实缺少某个令牌，可以新增，并在报告中说明；已有的值不改。
 - 样张页面原样保留。
-- `deck.js`：`name: '<slug>'`，`slides` 按 design.md 的顺序列出**全部**页面 ID。
+- `deck.js`：`name: '<slug>'`，`slides` 按 design.md 的顺序列出**全部**页面 ID；`minutes` 写 `project.md` 简报里的时长（分钟），用于讲解时长估算。
 - 新建 `04-deck/feedback.md`，写入标题“# 修改记录”和一张空表：`| 日期 | 页面 | 用户意见 | 修改 |`。
 
 ## 3. 分批制作
@@ -45,10 +45,10 @@ cp projects/<slug>/03-reference/slides/*.js projects/<slug>/04-deck/slides/
 每批：
 
 1. 按逐页方案写页面文件。构图、文字和动态都以 design.md 为准，视觉处理以样张为标准。**不在制作时重新设计**；方案缺失或无法实现时，选择最接近设计意图的做法，并记录下来，在报告中说明。
-2. 每页都要写 `notes`（演讲者备注），依据 design.md 的“备注要点”和 content.md；每页都写上节奏表里的 `rhythm`。
+2. 每页都要写 `notes`：**可以照着讲的口语讲稿**，依据 design.md 的“备注要点”和 content.md，把画面上的东西讲清楚；单击、指向等动作写在括号里，如“（单击 1）”。每页都写上节奏表里的 `rhythm`。
 3. dense 页必须有图解（设计文稿里的“图解”一项）。复用 `parts.js` 里的视觉母题。
 4. `node engine/make.js projects/<slug>/04-deck --only <本批ID>`
-5. 按 `review.md` 自查本批页面（用 Read 打开每一页的渲染图），修复后再渲染。
+5. 按 `review.md` 自查本批页面（用 Read 打开每一页的渲染图），处理“画面文字核对”的每一条，修复后再渲染。
 
 ## 4. 整套检查
 
@@ -56,7 +56,9 @@ cp projects/<slug>/03-reference/slides/*.js projects/<slug>/04-deck/slides/
 2. 看 `renders/_contact.png`：统一性、强度曲线、有没有突然变粗糙的页面；新页面和样张页面放在一起，是否属于同一套作品。
 3. **签名画面**（design.md 中标 ★ 的页）：样张里没有做过的，至少做两个版本，用 `node engine/compare.js` 并排比较，留下更好的那个；已经做过的，放回整套里再看一遍是否仍然是全场最强的画面。
 4. **工艺检查**：按 `review.md` 的“工艺检查”逐页过一遍，修掉细节问题。
-5. 修复，然后重新渲染受影响的页面。
+5. **讲解时长**：看 `make.js` 输出的估算。和 `minutes` 差得多时，先调整讲稿；仍然差得多，说明页数或内容量不对，写进报告，由用户决定增删页面。
+6. 修复，然后重新渲染受影响的页面。
+7. **独立审稿**：按 `review.md` 的“独立审稿”，调用 `deck-reviewer` 子代理审整套（页数多时可以分两三批，每批给出页面 ID）。处理意见，重新渲染受影响的页面。
 
 ## 5. 收尾
 
@@ -67,6 +69,6 @@ cp projects/<slug>/03-reference/slides/*.js projects/<slug>/04-deck/slides/
 
 1. pptx 路径、缩略总览路径、总页数。
 2. 制作中偏离或补充 design.md 的地方（逐条列出）。
-3. 自查中发现但没有修复的问题，附建议。
+3. 自查和独立审稿中发现但没有修复的问题，附建议；讲解时长估算与目标时长。
 4. 需要在 PowerPoint 中检查的项目：哪些页使用了 Morph；字体是否在播放电脑上可用。
 5. 给主会话的提示：把缩略总览展示给用户，请用户逐页提意见；意见用 `/revise` 处理。

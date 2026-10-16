@@ -29,7 +29,7 @@ argument-hint: "[S03] <修改意见>"
 | 单页 | “S03 的图太小”“这页的标题换个说法” | 该页源文件；如果改了画面文字，同步 design.md 中这一页的方案 |
 | 整套 | “强调色太艳”“标题都太大”“所有页去掉页码” | `theme.js` 和 design.md 的设计系统；记进 `project.md` 的决策记录；之后重新渲染整套 |
 | 内容 | “这里的数据不对”“加一个例子” | 先改 `content.md`，再改受影响的页面和备注 |
-| 结构 | “在 S05 后面加一页”“删掉 S09” | 在 design.md 中补写或删除这一页的方案；新页用新的 ID（如 `S05b`）；更新 `deck.js` |
+| 结构 | “在 S05 后面加一页”“删掉 S09” | 在 design.md 中补写或删除这一页的方案，同步故事串读和节奏表；新页用新的 ID（如 `S05b`）；更新 `deck.js` |
 
 **模糊的意见**（“不够高级”“有点乱”“没感觉”）：不要猜着改。先看渲染图，给出具体的诊断，以及 1–2 个可选的改法（引用 `anti-ai.md` 和 `review.md` 的标准），请用户选择。只有当现有方案和用户的话已经足够确定改法时，才直接改。
 
@@ -39,7 +39,7 @@ argument-hint: "[S03] <修改意见>"
 2. 渲染：
    - 单页修改：`node engine/make.js <deckDir> --only S03`（如果有 Morph 相邻页，一起渲染）。
    - 整套修改：`node engine/make.js <deckDir>`，并检查缩略总览。
-3. 用 Read 打开新的渲染图，按 `review.md` 自查。
+3. 用 Read 打开新的渲染图，按 `review.md` 自查。改了画面文字或讲稿时，看 `make.js` 输出的“画面文字核对”和“讲解时长估算”。用户要求再审一遍，或一轮修改涉及多页构图时，按 `review.md` 调用 `deck-reviewer` 复查改过的页面。
 4. 生成前后对比图并展示给用户（能发送文件就发送 PNG，否则给出路径）：
    `node engine/compare.js <deckDir>/renders/_compare.png <deckDir>/renders/_prev <deckDir> --only S03 --labels 修改前,修改后`
 5. 用户拿不准时，可以做两三个改法并排给用户选。
