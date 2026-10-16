@@ -57,12 +57,12 @@ k.chart('bar', data, { ..., horizontal: true, labels: true, grid: false, valAxis
 
 ## 公式
 
-- 简单公式用文本加 Unicode 符号排版，使用 `STIX Two Math` 字体。上下标用 run 的 `superscript` / `subscript`：`['softmax( QK', { text: 'T', superscript: true }, ' / √d', { text: 'k', subscript: true }, ' ) V']`。不要用上下标的 Unicode 字符（`ᵀ`、`ₖ`）：STIX Two Math 里没有它们，PowerPoint 会换成别的字体显示，`make.js` 会报缺字。
+- 简单公式用文本加 Unicode 符号排版，使用 `Cambria Math` 字体（只在自己的 Mac 上放映时也可以用 `STIX Two Math`）。上下标用 run 的 `superscript` / `subscript`：`['softmax( QK', { text: 'T', superscript: true }, ' / √d', { text: 'k', subscript: true }, ' ) V']`。不要用上下标的 Unicode 字符（`ᵀ`、`ₖ`）：数学字体大多只有其中一部分（Cambria Math 有 `ᵀ`、没有 `ₖ`），缺的字 PowerPoint 会换成别的字体显示，`make.js` 会报缺字。
 - 复杂公式（分式、矩阵、求和上下限）：目前引擎不能生成可编辑的 OMML 公式。可以把公式拆成多个文本对象手工排版，或者渲染成高分辨率 PNG 插入（并在备注中保留 LaTeX 源码）。这一点要在 `design.md` 中说明。
 - 公式旁边用一两个标注解释关键符号，而不是在下面写一段文字。
 
 ## 代码
 
-- 等宽字体（`Menlo`），16–20pt，一页最多 12–15 行。只展示讲解需要的那几行。
+- 等宽字体（`Consolas`；只在 Mac 上放映时也可以用 `Menlo`），16–20pt，一页最多 12–15 行。只展示讲解需要的那几行。
 - 当前讨论的行用强调色或浅色底标出，其余行用 graphite 色。
 - 不放 IDE 截图；不加“窗口装饰”（红黄绿三个圆点）。

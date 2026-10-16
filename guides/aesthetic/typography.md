@@ -15,7 +15,7 @@ pptx 不嵌入字体。**设计文稿里写的字体，必须在放映的电脑�
 
 `make.js` 按交付目标检查主题里的字体：跨平台的 deck 用了清单之外的字体是硬问题。装有 PowerPoint for Mac 时，预览由 PowerPoint 渲染，`make.js` 还会核对每页实际用到的字体，文字落到 theme 之外的字体上是硬问题。
 
-**中文字体只写家族名**（`Microsoft YaHei`、`Songti SC`），字重用 `bold: true`。`Microsoft YaHei Light`、`DengXian Light` 本身就是家族名，可以直接写。`Hiragino Sans GB W6` 这类带字重后缀的名字解析不稳定，会被渲染成别的字体，`make.js` 会把它判为硬问题。西文字体的字重名（`Calibri Light`、`Helvetica Neue Light`）可以正常使用。
+**中文字体只写家族名**（`Microsoft YaHei`、`SimSun`），字重用 `bold: true`。`Microsoft YaHei Light`、`DengXian Light` 本身就是家族名，可以直接写。`Hiragino Sans GB W6` 这类带字重后缀的名字解析不稳定，会被渲染成别的字体，`make.js` 会把它判为硬问题。西文字体的字重名（`Calibri Light`）可以正常使用。
 
 ### 跨平台字体
 
@@ -59,6 +59,8 @@ LibreOffice 看不到 PowerPoint 自带的字体（微软雅黑、Calibri 等）
 | 等宽 | `Menlo`、`SF Mono`（不一定有）、`PT Mono` | 代码 |
 | 数学 | `STIX Two Math`、`STIX Two Text` | 公式 |
 
+**Didot 不用来写数字。** Didot（常规体）的数字在 PowerPoint 里是旧式数字，而 LibreOffice 里是等高数字。高反差衬线的大号数字用 `Bodoni 72`，它在两边都是等高数字；Didot Bold 的数字也是等高的。`make.js` 遇到 Didot 常规体里的数字会给出提示。
+
 本机没有安装 Inter 和思源黑体（Source Han Sans）。除非用户先安装，否则不要用。
 
 ### 搭配示例（起点，不是菜单。字体同样应该服务于主题：讲古籍可以用宋体和楷体，讲工程可以用等宽字体）
@@ -86,9 +88,9 @@ LibreOffice 看不到 PowerPoint 自带的字体（微软雅黑、Calibri 等）
 
 **例子要像它在真实世界里的样子。** 讲 AI 时，输入给模型的句子用等宽字体加提示符和光标，像一条真正的 prompt；模型输出的内容同理。讲古籍时，原文用宋体或楷体竖排。这样的字体选择让观众有代入感，比单纯“好看”的字体更有说服力。
 
-**高反差衬线体（Didot、Bodoni）只用于大字号**（约 20pt 以上）：它们的细线在小字号投影时会消失。同一套里的小字、标签、页码改用 Gill Sans 这类线条均匀的字体。
+**笔画细的字体只用于大字号**（约 20pt 以上）：宋体（`SimSun`），以及 Mac 上的高反差衬线（Didot、Bodoni），细线在小字号投影时会发虚甚至消失。同一套里的小字、标签、页码改用线条均匀的字体：跨平台用 `Franklin Gothic Medium`、`Calibri` 或微软雅黑，Mac 上也可以用 Gill Sans。
 
-**Didot 不用来写数字。** Didot（常规体）的数字在 PowerPoint 里是旧式数字，而 LibreOffice 里是等高数字。高反差衬线的大号数字用 `Bodoni 72`，它在两边都是等高数字；Didot Bold 的数字也是等高的。`make.js` 遇到 Didot 常规体里的数字会给出提示。
+**数字的样式要统一。** 同一套里的大号数字要么都用等高数字，要么都用旧式数字（见上面「跨平台字体」表的数字一行）。Corbel、Candara、Georgia、Constantia 的数字是旧式的，拿它们写正文或标签时，数字会跟着下沉；需要等高数字时，把数字单独设成 Palatino Linotype 或 Cambria。
 
 **字体里要有这个字。** 字体缺的字符，PowerPoint 和 LibreOffice 会各自换成别的字体显示，常见的是箭头（`↑`、`→`）、上下标字符（`ᵀ`、`ₖ`）和不常用的符号。`make.js` 会逐段检查文字是否都在它的字体里，缺字报硬问题。修法：换一种写法（上下标用 `superscript` / `subscript`），或者把这个字拆成单独一段，指定一个有它的字体（例如箭头用 `Segoe UI Symbol`；只在 Mac 上放映时也可以用 `Lucida Grande`）。这个字体不能是 `fontPairs` 里的中文字体：配对会把它的西文字符（包括箭头）又换回配对的西文字体。
 
