@@ -3,13 +3,14 @@
 // A run names a Latin face (<a:latin>) and an East Asian face (<a:ea>). Chinese characters and CJK punctuation are
 // set in the East Asian face, everything else in the Latin face. A character missing from its face is set in some
 // other font, chosen differently by each renderer: PowerPoint used Times New Roman for ᵀ and ↑ and Segoe UI Symbol
-// for ₖ, where the preview showed something else. Coverage comes from fontconfig (`fc-list :family=<f> charset`).
+// for ₖ, where LibreOffice showed something else. Coverage comes from fontconfig (`fc-list :family=<f> charset`),
+// or, for fonts bundled inside PowerPoint, from their files (`fc-scan`).
 //
 // Didot (regular) maps digits to oldstyle figures; LibreOffice switches them to lining figures through the font's
 // AAT rules, PowerPoint does not. Digits in Didot regular get a soft hint.
 
 const JSZip = require('jszip');
-const { fc } = require('./fonts');
+const { fc, scanBundled } = require('./fonts');
 
 const EAST_ASIAN = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}　-〿＀-￯]/u;
 const OLDSTYLE_DIGITS = ['Didot']; // regular weight; bold and italic have lining digits
@@ -30,7 +31,7 @@ function parseCharset(out) {
 }
 
 // family -> (codepoint -> true/false), or null for a font fontconfig does not know.
-function coverage(lookup = (family) => fc([`:family=${family}`, 'charset'])) {
+function coverage(lookup = (family) => fc([`:family=${family}`, 'charset']) || scanBundled(family, ':charset=%{charset}\n')) {
   const cache = new Map();
   return (family) => {
     if (!cache.has(family)) {

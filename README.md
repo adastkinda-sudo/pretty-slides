@@ -72,12 +72,11 @@ Pretty Slides 换了一种做法。它的审美标准写在 [guides/aesthetic/pr
 - **原生可编辑**：文字、形状、线条、原生图表、表格都可以在 PowerPoint 中直接修改。
 - **设计令牌**：每个 deck 的 `theme.js` 锁定颜色、字体、字号和网格。页面代码只引用令牌。
 - **Morph**：同名对象跨页自动配对（PowerPoint 的 `!!name` 约定），用连续的页面代替逐项动画。
-- **几何 QA**：检查是否越界、文字溢出、文字重叠、对比度不足、字号过多，字体是否已安装，以及字体里有没有要显示的字。
+- **几何 QA**：检查是否越界、文字溢出、文字重叠、对比度不足、字号过多，字体是否适合交付目标（默认跨平台：Windows 和 Mac 版 PowerPoint 都有），以及字体里有没有要显示的字。
 - **画面文字核对**：对照设计文稿逐页列出漏掉或多出的文字；完整成稿还会核对内容文稿里“必须上屏”的文字。
 - **占位符检查**：页面上遗留的模板文字算硬问题，讲稿里的给出提示。
 - **讲解时长估算**：每页备注都是可以照着讲的讲稿，按字数估算总时长，与目标时长对比。
-- **渲染**：通过 LibreOffice 输出逐页 PNG 和缩略总览；保留上一版渲染，方便做前后对比。
-- **PowerPoint 核对**：装有 PowerPoint for Mac 时，`engine/pptcheck.js` 让 PowerPoint 实际渲染一遍，列出它用到的 theme 之外的字体，并和预览并排对比。
+- **渲染**：装有 PowerPoint for Mac 时由 PowerPoint 渲染逐页 PNG 和缩略总览，并核对每页实际用到的字体；没有时用 LibreOffice。保留上一版渲染，方便做前后对比。
 - **手工修改回写**：`engine/dump.js` 读出你在 PowerPoint 中手动修改过的对象，AI 再把修改同步回代码。
 
 ```bash
@@ -86,11 +85,10 @@ node engine/make.js examples/attention          # 构建示例
 node engine/make.js examples/steve-jobs         # 另一个示例（23 页）
 ```
 
-依赖：Node.js 18+、LibreOffice、poppler（`pdftoppm`）、ImageMagick 7。macOS：`brew install --cask libreoffice && brew install poppler imagemagick`。
+依赖：Node.js 18+、poppler（`pdftoppm`）、ImageMagick 7，以及 PowerPoint for Mac 或 LibreOffice（用于渲染）。macOS：`brew install poppler imagemagick`，没有 PowerPoint 时再 `brew install --cask libreoffice`。
 
 ## 已知限制
 
-- 预览由 LibreOffice 渲染，与 PowerPoint 有细微差异（中西文之间的间距、个别行高）。装有 PowerPoint 时用 `pptcheck.js` 核对；没有时请在 PowerPoint 中检查。
+- 渲染只能验证 Mac 版 PowerPoint。Windows 上的显示依据跨平台字体清单（微软公布的 Windows 11 字体列表），没有实测。没有 PowerPoint 时由 LibreOffice 渲染，看不到微软雅黑等 PowerPoint 自带的字体，要在 PowerPoint 中检查（`pptcheck.js`）。
 - Morph 只能在 PowerPoint 中放映验证。不生成页内逐项动画，也不生成可编辑的 OMML 公式。
-- pptx 不嵌入字体：播放的电脑上必须装有设计中使用的字体。
-- 中文无衬线默认用冬青黑体，不用苹方：PowerPoint for Mac 会把苹方换成微软正黑体，而预览里看不出来，主题用了苹方时 QA 报硬问题。带字重后缀的中文字体名同样由 QA 拦截（见 `typography.md`）。
+- pptx 不嵌入字体：放映的电脑上必须装有设计中使用的字体。默认只用 Windows 和 Mac 版 PowerPoint 都有的字体；只在自己的 Mac 上放映的 deck 可以用 macOS 字体（见 `typography.md`）。

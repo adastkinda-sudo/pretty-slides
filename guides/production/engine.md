@@ -2,7 +2,7 @@
 
 > 何时读：写或改任何幻灯片代码之前。
 
-引擎是 pptxgenjs 外面的一层薄封装，外加后处理（转场、Morph、字体配对）、几何 QA 和渲染。产出的是原生 pptx：文字、形状、线条、图表、表格都可以在 PowerPoint 里直接编辑。
+引擎是 pptxgenjs 外面的一层薄封装，外加后处理（转场、Morph、字体配对）、几何 QA 和渲染（装有 PowerPoint for Mac 时由 PowerPoint 渲染，否则用 LibreOffice）。产出的是原生 pptx：文字、形状、线条、图表、表格都可以在 PowerPoint 里直接编辑。
 
 ## deck 目录
 
@@ -14,7 +14,7 @@
 ├── slides/S01-cover.js      # 一页一个文件；文件名 = 页面 ID + 短名
 ├── assets/                  # 本 deck 用到的图片（加工后的版本）
 ├── out/<name>.pptx          # 构建产物（可再生）
-├── out/ppt/                 # pptcheck.js 的 PowerPoint 渲染图和对比图（可再生）
+├── out/ppt/                 # pptcheck.js 的 PowerPoint 渲染图和对比图（只在用 LibreOffice 渲染时需要，可再生）
 └── renders/S01.png …        # 渲染图；_contact.png 是缩略总览
 ```
 
@@ -27,11 +27,12 @@
 node engine/make.js <deckDir>                 # 构建 + QA + 渲染全部 + 缩略总览
 node engine/make.js <deckDir> --only S03,S07  # 只渲染这几页（修改时用）
 node engine/make.js <deckDir> --no-render     # 只构建 + QA
+node engine/make.js <deckDir> --renderer libreoffice  # 改用 LibreOffice 渲染（没有 PowerPoint 时的默认）
 node engine/dump.js <file.pptx> [页码]        # 读出 pptx 中各对象的名称、位置、文字
 node engine/texture.js <hex> <out.jpg>         # 生成与背景色匹配的纸张颗粒
 node engine/pptdiff.js <原文件.pptx> <修复后.pptx>  # PowerPoint 提示“修复”时，找出它改了什么
 node engine/compare.js <out.png> <dirA> <dirB> [dirC] [--only S01,S05] [--labels A,B,C]  # 并排对比图：一列一个 deck（或 renders 目录），一行一页
-node engine/pptcheck.js <deckDir> [--only S03,S07]  # 用 PowerPoint 渲染核对：实际用到的字体、与预览的差异（需要 PowerPoint for Mac）
+node engine/pptcheck.js <deckDir> [--only S03,S07]  # 预览由 LibreOffice 渲染时，用 PowerPoint 核对字体和画面差异
 npm --prefix engine test                      # 引擎回归测试（修改 engine/lib 后运行）
 ```
 
@@ -85,7 +86,7 @@ module.exports = {
 
 - `content`：字符串（`\n` 表示换段），或者 run 数组：`['普通', { text: '强调', color: 'accent' }, { text: 'Latin', font: 'latin' }]`。run 也可以带 `style`。
 - `opts`：`style`（theme.type 里的名字），`x y w h`，`align`（left/center/right），`valign`（默认 top），`paraSpace`（段后距，pt），`name`（Morph 配对名），`overlap: true`（有意叠压，跳过重叠检查），`nowrap: true`（不自动换行），`chrome: true`（结构层元素，允许放在边距内），`bleed: true`（有意出血的大字），`build: 1` 或 `build: [1, 300]`（页内动效：第几次单击淡入、延迟毫秒；所有元素都支持），`rotate`。
-- **单行标签一律 `nowrap: true`**：PowerPoint 的字体度量和预览不同，卡着宽度的文本框在 PowerPoint 里会意外折行（例如 “animal” 被折成 “anima / l”）。QA 会把余量小于 12% 的文本框判为硬问题。
+- **单行标签一律 `nowrap: true`**：PowerPoint 的字体度量和 LibreOffice 不同，Windows 和 Mac 之间也可能略有差别，卡着宽度的文本框会意外折行（例如 “animal” 被折成 “anima / l”）。QA 会把余量小于 12% 的文本框判为硬问题。
 - 也可以覆盖样式：`font size color bold italic tracking leading`。
 - 不写 `h` 时，按估算的高度自动给出。
 - 返回 `{ x, y, w, h, bottom, right, estH }`，可以用来排下一个元素：`const t = k.text(...); k.text(..., { y: t.y + t.estH + 0.3 })`。
@@ -141,18 +142,20 @@ module.exports = {
 - 需要跨页 Morph 的对象，在相关页面上起相同的 `name`。
 - 不要在幻灯片代码里写演示内容以外的东西（例如“TODO”“草稿”）：它们会出现在画面上。
 
-## PowerPoint 核对
+## 渲染与字体核对
 
-预览由 LibreOffice 渲染，预览正常不代表 PowerPoint 里正常：字体可能被替换，字形和间距也可能不同。装有 PowerPoint for Mac 时，`make.js` 之后运行 `node engine/pptcheck.js <deckDir>`：
+预览只有用 PowerPoint 渲染才可靠：LibreOffice 看不到 PowerPoint 自带的字体（微软雅黑、Calibri 等），还会替换字体、改变字形和间距。所以装有 PowerPoint for Mac 时，`make.js` 默认让 PowerPoint 渲染：
 
-- 用脚本让 PowerPoint 打开 `out/<name>.pptx` 的副本，导出 PDF 再转成逐页图片 `out/ppt/Sxx.png`。PDF 只是中间文件，用完即删。用户在 PowerPoint 里开着的原文件不受影响。
-- **字体**：列出 PowerPoint 实际用到、而 theme 里没有的字体，以及出现在哪些页。正文落到这些字体上是硬问题；个别符号回退（如公式里的 √ 落到 Segoe UI Symbol），看图判断。
-- **画面**：按像素差异列出和预览差别最大的几页，生成 `out/ppt/_compare.png`（左边预览，右边 PowerPoint），包含有字体问题的页和差异最大的页；`--only` 时就是指定的页。像素差异包含正常的中西文间距差别，只用来排序，不是合格线。
-- 没有 PowerPoint 时跳过。第一次运行时，PowerPoint 可能要求授权访问 deck 所在的目录，需要用户在对话框里点“选择…”授权；脚本等待超时（5 分钟）会报错并提示原因。PowerPoint 弹出修复提示时同样会超时，按下一节处理。
+- 用脚本让 PowerPoint 打开 `out/<name>.pptx` 的副本，导出 PDF 再转成逐页图片 `renders/Sxx.png`。整套导出约十几秒，`--only` 时也导出整套、只更新指定的页。PDF 只是中间文件，用完即删。用户在 PowerPoint 里开着的原文件不受影响。
+- **字体核对**：读出 PowerPoint 每页实际用到的字体，用到 theme 之外的字体是硬问题，说明文字落到了别的字体上（缺字、字体名不对或字体不可用）。
+- **交付目标**：theme 的 `target` 是 `cross-platform`（默认）时，主题里不在跨平台字体清单里的字体是硬问题，只有中文版 Windows 默认装有的字体给出提示（清单见 `aesthetic/typography.md`）。
+- 第一次运行时，PowerPoint 可能要求授权访问 deck 所在的目录，需要用户在对话框里点“选择…”授权；脚本等待超时（5 分钟）会报错并提示原因。PowerPoint 弹出修复提示时同样会超时，按下一节处理。
+
+没有 PowerPoint 时用 LibreOffice 渲染，`make.js` 会列出预览里被替身代替的字体；字形和换行以 PowerPoint 为准。之后在装有 PowerPoint 的电脑上运行 `node engine/pptcheck.js <deckDir>`：它让 PowerPoint 渲染到 `out/ppt/`，列出 theme 之外的字体，按像素差异列出与 LibreOffice 预览差别最大的几页，并生成 `out/ppt/_compare.png`（左边 LibreOffice，右边 PowerPoint）。像素差异包含正常的中西文间距差别，只用来排序，不是合格线。
 
 ## PowerPoint 提示“修复”时
 
-LibreOffice 对不合规范的 XML 很宽容，所以预览正常不代表 PowerPoint 能接受。`make.js` 的后处理已经修正了 pptxgenjs 已知的几类问题（多余的内容类型声明、备注母版共用主题、图表的悬空坐标轴、同一段落里重复的 `pPr`、动画的 `bldP`），并会在包内引用指向不存在的部件时直接报错。如果仍然出现修复提示：
+LibreOffice 对不合规范的 XML 很宽容，PowerPoint 则会提示“修复”；用 PowerPoint 渲染时，修复对话框会让渲染一直等到超时。`make.js` 的后处理已经修正了 pptxgenjs 已知的几类问题（多余的内容类型声明、备注母版共用主题、图表的悬空坐标轴、同一段落里重复的 `pPr`、动画的 `bldP`），并会在包内引用指向不存在的部件时直接报错。如果仍然出现修复提示：
 
 1. 让用户点“修复”，另存一份。
 2. `node engine/pptdiff.js out/<name>.pptx <修复后>.pptx`，看 PowerPoint 改了哪里。重新保存本身也会带来一些无关的变化（属性顺序、命名空间位置、图片去重、扩展信息），要找的是在多页上重复出现、或者删除和合并了内容的变化。
@@ -162,5 +165,6 @@ LibreOffice 对不合规范的 XML 很宽容，所以预览正常不代表 Power
 
 - 页内动效目前只有淡入（`build`）；移动和变形用跨页 Morph（见 `aesthetic/motion.md`）。
 - 不生成可编辑的 OMML 公式（见 `aesthetic/data-and-diagrams.md`）。
-- 预览由 LibreOffice 渲染，与 PowerPoint 有差异：中西文之间的自动间距、个别字体的行高；径向渐变在 LibreOffice 里会随形状拉伸成椭圆，在 PowerPoint 里则是正圆（所以 `k.light` 的承载形状必须是正方形）。涉及渐变、透明度的效果，用 `pptcheck.js` 看 PowerPoint 的渲染；动效只能在 PowerPoint 中放映检查。
-- pptx 不嵌入字体，播放环境必须装有所用字体。
+- 用 LibreOffice 渲染时，与 PowerPoint 有差异：中西文之间的自动间距、个别字体的行高；径向渐变在 LibreOffice 里会随形状拉伸成椭圆，在 PowerPoint 里则是正圆（所以 `k.light` 的承载形状必须是正方形）。
+- 静态渲染看不到动效，动效只能在 PowerPoint 中放映检查。
+- pptx 不嵌入字体，放映的电脑必须装有所用字体。渲染只能验证 Mac 版 PowerPoint；Windows 上的效果依据跨平台字体清单，没有实测。
