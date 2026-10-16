@@ -1,11 +1,12 @@
-// Font checks against the fonts installed on this machine (fontconfig), and the East Asian font fix for runs
-// whose font has no Chinese glyphs.
+// Font checks: the theme's fonts against the deck's target (fontlist.js) and the fonts this machine has, and the
+// East Asian font fix for runs whose font has no Chinese glyphs.
 //
-// LibreOffice (the preview) and PowerPoint do not see the same fonts. PingFang is installed on macOS, so the
-// preview renders it, but PowerPoint for Mac does not use it and substitutes Microsoft JhengHei / YaHei: the
-// preview looks right and the file does not. Fonts PowerPoint is known to substitute are a hard issue.
+// LibreOffice and PowerPoint do not see the same fonts. PingFang is installed on macOS, so LibreOffice renders it,
+// but PowerPoint for Mac does not use it and substitutes Microsoft JhengHei / YaHei. The other way round, the fonts
+// bundled inside PowerPoint (Microsoft YaHei, Calibri, ...) are invisible to fontconfig and LibreOffice.
 
 const { execFileSync } = require('child_process');
+const { CORE, CHINESE_WINDOWS, CHINESE, bundledFiles, target } = require('./fontlist');
 
 // Verified on PowerPoint for Mac 16.114 (macOS 27): text set in these faces is rendered in another font.
 const PPT_UNAVAILABLE = [/^PingFang /];
@@ -28,6 +29,13 @@ function fc(args) {
   try { return execFileSync('fc-list', args, { encoding: 'utf8' }); } catch { return null; }
 }
 
+// fc-scan of the font files PowerPoint bundles for this family ('' when there are none); format as fc-scan --format.
+function scanBundled(family, format) {
+  const files = bundledFiles(family);
+  if (!files.length) return '';
+  try { return execFileSync('fc-scan', ['--format', format, ...files], { encoding: 'utf8' }); } catch { return ''; }
+}
+
 // Every font family the theme names (roles, pairs, type styles).
 function themeFonts(theme) {
   const wanted = new Set([...Object.values(theme.fonts || {}), ...Object.keys(theme.fontPairs || {}), ...Object.values(theme.fontPairs || {})]);
@@ -36,21 +44,32 @@ function themeFonts(theme) {
   return [...wanted].filter(Boolean);
 }
 
-// -> { missing: [], pptUnavailable: [], suffixed: [] }; installed: output of `fc-list : family fullname`
-// (null when fontconfig is unavailable, which skips the installed check).
-function fontIssues(theme, installed = fc([':', 'family', 'fullname'])) {
+// -> { target, notPortable, chineseWindows, missing, pptUnavailable, suffixed }
+// notPortable / chineseWindows: fonts outside the cross-platform list, and fonts only a Chinese Windows has (both
+// empty for a 'mac' deck). installed: output of `fc-list : family fullname` (null when fontconfig is unavailable,
+// which skips the installed check); bundled(f): PowerPoint for Mac bundles f.
+function fontIssues(theme, installed = fc([':', 'family', 'fullname']), bundled = (f) => bundledFiles(f).length > 0) {
   const fonts = themeFonts(theme);
+  const t = target(theme);
+  const notPortable = t === 'mac' ? [] : fonts.filter((f) => !CORE.includes(f) && !CHINESE_WINDOWS.includes(f));
+  const rest = fonts.filter((f) => !notPortable.includes(f));
   const have = installed == null ? null : names(installed);
   return {
-    missing: have ? fonts.filter((f) => !have.has(f) && !have.has(`${f} Regular`)) : [],
-    pptUnavailable: fonts.filter((f) => PPT_UNAVAILABLE.some((re) => re.test(f))),
-    suffixed: fonts.filter((f) => CJK_NAME.test(f) && WEIGHT_SUFFIX.test(f)),
+    target: t,
+    notPortable,
+    chineseWindows: t === 'mac' ? [] : fonts.filter((f) => CHINESE_WINDOWS.includes(f)),
+    missing: have ? rest.filter((f) => !have.has(f) && !have.has(`${f} Regular`) && !bundled(f)) : [],
+    pptUnavailable: rest.filter((f) => PPT_UNAVAILABLE.some((re) => re.test(f))),
+    suffixed: rest.filter((f) => CJK_NAME.test(f) && WEIGHT_SUFFIX.test(f)),
   };
 }
 
-// Families that cover Chinese; zhOut: output of `fc-list :lang=zh family` (null -> empty set).
+// Families that cover Chinese: the Chinese fonts of the cross-platform list, plus those fontconfig knows;
+// zhOut: output of `fc-list :lang=zh family` (null -> none).
 function chineseFamilies(zhOut = fc([':lang=zh', 'family'])) {
-  return zhOut == null ? new Set() : names(zhOut);
+  const set = zhOut == null ? new Set() : names(zhOut);
+  CHINESE.forEach((f) => set.add(f));
+  return set;
 }
 
 // The font for Chinese text in a run whose font has no Chinese glyphs: theme.cjkFallback, else the theme's
@@ -70,4 +89,4 @@ function fixEastAsian(xml, chinese, fallback) {
   return xml.replace(/<a:ea typeface="([^"]*)"[^>]*?\/>/g, (m, face) => (face && !chinese.has(face) ? `<a:ea typeface="${fallback}"/>` : m));
 }
 
-module.exports = { fontIssues, chineseFamilies, cjkFallback, fixEastAsian, themeFonts, names, fc, PPT_UNAVAILABLE };
+module.exports = { fontIssues, chineseFamilies, cjkFallback, fixEastAsian, themeFonts, names, fc, scanBundled, PPT_UNAVAILABLE };
