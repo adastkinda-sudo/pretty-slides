@@ -49,7 +49,7 @@ function matrix(k, { x, y, n, cell, gap, weight, build }) {
 
 // Lay the example sentence out on one line, centred, as a monospaced prompt; returns x/width/centre per token.
 function sentence(k, { size = 20, gap = 0.26 } = {}) {
-  const ws = TOKENS.map((t) => t.length * 0.602 * size / 72); // Menlo advance ≈ 0.6 em
+  const ws = TOKENS.map((t) => t.length * 0.55 * size / 72); // Consolas advance = 0.55 em
   const total = ws.reduce((a, b) => a + b, 0) + gap * (TOKENS.length - 1);
   let x = (k.W - total) / 2 + 0.275; // centre the prompt mark + sentence together
   return ws.map((w) => { const p = { x, w, cx: x + w / 2 }; x += w + gap; return p; });
