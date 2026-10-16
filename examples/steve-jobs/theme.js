@@ -21,6 +21,7 @@ module.exports = {
     // what is shown on a screen (Mac, iPhone): its paper, its ink, the hairlines that measure it
     screen: 'F6F5EF', screenInk: '1E1D1B', screenRule: 'A7A298',
   },
+  target: 'mac', // macOS fonts: shown from a Mac with PowerPoint (typography.md)
   fonts: {
     serif: 'Songti SC',        // titles: the room's voice
     sans: 'Hiragino Sans GB',       // facts, labels

@@ -18,6 +18,7 @@ module.exports = {
     ember: '6B2A16',     // dim heat
     glow: '4A3820',      // the light pool on each page's focus (k.light)
   },
+  target: 'mac', // macOS fonts: shown from a Mac with PowerPoint (typography.md)
   fonts: {
     head: 'Songti SC',
     sans: 'Hiragino Sans GB',
