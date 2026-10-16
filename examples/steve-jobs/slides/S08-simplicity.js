@@ -25,7 +25,7 @@ module.exports = {
     const a = place(k, 'apple2');
     k.light({ cx: a.cx, cy: 3.2, r: 4.2, strength: 0.4 });
 
-    // the one English title of the deck, written across the wall in Hoefler Text; the Chinese and the source under it
+    // the one English title of the deck, written across the wall in Palatino Linotype; the Chinese and the source under it
     const t = k.text('Simplicity is the ultimate sophistication.', { style: 'display', size: 44, tracking: 0, x: k.M.x, y: 1.02, w: k.innerW, align: 'center', nowrap: true, build: 1 });
     const zh = k.text('简单，是最终的复杂。', { style: 'lead', color: 'ink', x: k.M.x, y: t.y + 0.98, w: k.innerW, align: 'center', nowrap: true, build: 1 });
     k.text('Apple II 宣传册，1977', { style: 'caption', x: k.M.x, y: zh.y + 0.5, w: k.innerW, align: 'center', nowrap: true, build: 1 });

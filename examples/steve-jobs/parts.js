@@ -184,7 +184,7 @@ function lifeline(k, { current, links = [], fresh = [], freshBuild, delay = 0, s
     else if (i < ci) k.dot({ cx, cy: y, r: 0.035, fill: 'stone', name });
     else k.dot({ cx, cy: y, r: 0.035, fill: 'paperDeep', line: 'seam', lineW: 0.75, name });
   });
-  // year labels under the line: the year in Helvetica, what happened in the sans face (Hiragino Sans GB)
+  // year labels under the line: the year in Arial, what happened in the sans face (Microsoft YaHei)
   const tag = (id, what, color, whatColor = color, build) => {
     const runs = [{ text: id, style: 'year', color }];
     if (what) runs.push({ text: `　${what}`, style: 'label', tracking: 0, color: whatColor });
@@ -264,7 +264,7 @@ function leader(k, { from, to, color = 'seam', dot = 'stone', build }) {
 }
 
 // Dimension line (engineering drawing): a hairline with end ticks. Horizontal (x1 → x2 at y) or vertical (y1 → y2 at x).
-// style: 'year' (Helvetica, for figures and units: "1 ft") or 'label' (Hiragino Sans GB, for a Chinese label: "九年").
+// style: 'year' (Arial, for figures and units: "1 ft") or 'label' (Microsoft YaHei, for a Chinese label: "九年").
 function dim(k, { x1, x2, y, y1, y2, x, label, color = 'stone', side = 'below', build, style = 'year' }) {
   const ls = style === 'year' ? { style } : { style, tracking: 0 };
   const t = 0.06;
@@ -282,10 +282,10 @@ function dim(k, { x1, x2, y, y1, y2, x, label, color = 'stone', side = 'below', 
 }
 
 // Lay a word out in a given face so its cells can be measured: advance widths (em) for the letters we use.
-// Monaco is monospaced (every letter 0.600 em). Hoefler Text, from the font's hmtx; no kerning between these letters.
+// Consolas is monospaced (every letter 0.550 em). Palatino Linotype, from the font's hmtx; no kerning between these letters.
 const ADVANCE = {
-  mono: () => 0.6001,
-  roman: (ch) => ({ m: 0.827, i: 0.28, n: 0.548, u: 0.523 })[ch],
+  mono: () => 0.5498,
+  roman: (ch) => ({ m: 0.883, i: 0.291, n: 0.582, u: 0.603 })[ch],
 };
 function cells(word, face, sizePt) {
   let x = 0;

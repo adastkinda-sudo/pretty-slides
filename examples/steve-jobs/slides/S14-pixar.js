@@ -1,5 +1,5 @@
 // S14 — 交叉（两条线）：墙上一张草图。横轴是时间，从 1986（买下 Pixar）到 1995.11（《玩具总动员》）：
-// 一条“Art”从上方弯下来（Hoefler Text Italic），一条“Technology”从下方升上去（Helvetica Neue），九年里慢慢靠近，
+// 一条“Art”从上方弯下来（Palatino Linotype Italic），一条“Technology”从下方升上去（Arial），九年里慢慢靠近，
 // 在 1995 相遇，此后并排走下去——相遇点就是第一部全电脑动画长片。下面的刻度与尺寸线标出九年亏损。午后偏淡的一小块光落在交点上。
 // NeXT 的立方体缩小到右边的角落（obj-cube，在阴影里），等 S16。视觉中心：阳光里的交点。
 const { sun, place, lifeline, linksBefore, marks, stroke } = require('../parts');

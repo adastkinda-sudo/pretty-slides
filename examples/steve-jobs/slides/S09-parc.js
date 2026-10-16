@@ -24,7 +24,7 @@ module.exports = {
     // ── left, out of the sun: the command line ──
     const m = place(k, 'cli');
     const r = m.raster, cw = r.w / 40, lh = r.h / 24;
-    const pt = cw / 0.6 * 72;
+    const pt = cw / 0.5498 * 72;
     k.text(']CATALOG', { style: 'screenMono', size: +pt.toFixed(2), color: 'screen', x: r.x, y: r.y + lh * 1 - 0.01, w: cw * 12, nowrap: true, overlap: true });
     k.rect({ x: r.x + cw * 8, y: r.y + lh * 1 + lh * 0.12, w: cw * 0.95, h: lh * 0.8, fill: 'screen' });
 
@@ -50,7 +50,7 @@ function gui(k, R, build) {
   const u = R.w / 300;
   const X = (x) => R.x + x * u, Y = (y) => R.y + y * u;
   const ink = 'screenInk', paper = 'screen';
-  const font = 'Helvetica Neue';
+  const font = 'latin';
   const fs = 7.2 * u * 72 * 0.98;             // a 7-unit line of text, in points
   const T = (s, x, y, { w = 80, ...o } = {}) => k.text(s, { style: 'caption', font, size: +fs.toFixed(2), leading: 1.0, color: ink, x: X(x), y: Y(y) - fs / 72 * 0.12, w: w * u, nowrap: true, overlap: true, build, ...o });
   // white on black (title tabs, the selected line): the text box is the black box itself, so its centre sits on it

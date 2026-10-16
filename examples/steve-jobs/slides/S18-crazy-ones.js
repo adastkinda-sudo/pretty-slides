@@ -1,5 +1,5 @@
 // S18 — 引文（全片最大的一句话）：房间里什么都没有，也没有任何肖像——广告本身是黑白肖像加一句话，我们只留那句话。
-// 下午很淡的一块光落在它上面；右下是那句广告词 Think different.（Hoefler Text Italic）。视觉中心：那句话。
+// 下午很淡的一块光落在它上面；右下是那句广告词 Think different.（Palatino Linotype Italic）。视觉中心：那句话。
 const { sun, lifeline, linksBefore, marks } = require('../parts');
 
 module.exports = {
