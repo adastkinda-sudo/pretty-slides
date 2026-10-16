@@ -68,7 +68,7 @@ LibreOffice 看不到 PowerPoint 自带的字体（微软雅黑、Calibri 等）
 | 方向 | 标题 | 正文 | 西文与数字 |
 |---|---|---|---|
 | 现代清晰 | Microsoft YaHei Light（大字号）/ Microsoft YaHei 粗体 | Microsoft YaHei | Calibri / Calibri Light |
-| 人文编辑 | SimSun（大字号） | Microsoft YaHei | Palatino Linotype |
+| 人文编辑（deck 模板的默认值） | SimSun（大字号） | Microsoft YaHei | Palatino Linotype |
 | 学术严谨 | Microsoft YaHei 粗体 | Microsoft YaHei | Cambria + Cambria Math |
 | 精确技术 | Microsoft YaHei 粗体 | Microsoft YaHei | Consolas + Franklin Gothic Medium（数字） |
 | 叙事引文（中文版 Windows） | KaiTi | DengXian | Georgia（旧式数字） |
