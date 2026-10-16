@@ -86,8 +86,9 @@ function paragraphs(xml) {
     .filter(Boolean);
 }
 
-// manifest: [{ id, index }]; returns { design, reports: [{ id, soft: [] }] } or null when no design.md is found.
-async function checkText(deckDir, pptxBuffer, manifest) {
+// manifest: [{ id, index }]; chrome: per slide, the paragraphs of structure-layer text (k.text chrome: true),
+// such as section markers, which design.md describes in its structure layer rather than per slide. Returns { design, reports: [{ id, soft: [] }] } or null when no design.md is found.
+async function checkText(deckDir, pptxBuffer, manifest, chrome = []) {
   const design = findDesign(deckDir);
   if (!design) return null;
   const md = fs.readFileSync(design, 'utf8');
@@ -95,7 +96,8 @@ async function checkText(deckDir, pptxBuffer, manifest) {
   const whole = norm(md);
   const zip = await JSZip.loadAsync(pptxBuffer);
   const reports = [];
-  for (const m of manifest) {
+  for (const [i, m] of manifest.entries()) {
+    const skip = new Set((chrome[i] || []).map(norm));
     const soft = [];
     const page = pages[m.id];
     const file = zip.file(`ppt/slides/slide${m.index}.xml`);
@@ -111,7 +113,7 @@ async function checkText(deckDir, pptxBuffer, manifest) {
     // Longer text on the slide that design.md never mentions: invented in production, or not synced back.
     const extra = texts.filter((t) => {
       const n = norm(t);
-      return n.length >= 4 && /[\p{L}]/u.test(n) && !whole.includes(n);
+      return n.length >= 4 && /[\p{L}]/u.test(n) && !whole.includes(n) && !skip.has(n);
     });
     if (extra.length) soft.push(`页面上有、design.md 没写: ${extra.slice(0, 5).map((t) => `“${t.slice(0, 30)}”`).join('、')}${extra.length > 5 ? ` 等 ${extra.length} 处` : ''}`);
     reports.push({ id: m.id, soft });

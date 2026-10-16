@@ -68,7 +68,7 @@ async function build(opt) {
   pptx.title = deck.title || name;
   if (deck.author) pptx.author = deck.author;
 
-  const manifest = [], transitions = [], reports = [], builds = [], lights = [], notes = [];
+  const manifest = [], transitions = [], reports = [], builds = [], lights = [], notes = [], chrome = [];
   for (const [index, id] of deck.slides.entries()) {
     const file = findSlideFile(opt.dir, id);
     const mod = fresh(file);
@@ -88,6 +88,7 @@ async function build(opt) {
     lights.push(k._lights());
     manifest.push({ id, index: index + 1, title: mod.title || '', rhythm: mod.rhythm || '', file: path.relative(opt.dir, file) });
     const q = k._qa();
+    chrome.push(q.boxes.filter((b) => b.kind === 'text' && b.chrome).flatMap((b) => b.paras));
     reports.push(check({ id, boxes: q.boxes, bg: q.bg, W, H, M: k.M, rhythm: mod.rhythm, textOnly: mod.textOnly }));
   }
 
@@ -104,7 +105,7 @@ async function build(opt) {
   const used = [...Object.values(theme.fonts || {}), ...Object.keys(theme.fontPairs || {}), ...Object.values(theme.type || {}).map((t) => t.font)];
   const badPairs = [...new Set(used.filter((f) => f && cjkSuffixed(f)))];
   const timing = estimate(notes, { target: deck.minutes, rate: deck.speechRate });
-  const text = await checkText(opt.dir, buf, manifest);
+  const text = await checkText(opt.dir, buf, manifest, chrome);
   return { name, pptxPath, manifest, reports, missing: missingFonts(theme), badPairs, timing, text };
 }
 
