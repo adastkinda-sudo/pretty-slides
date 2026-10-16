@@ -1,5 +1,5 @@
 // S10 — 主体 + 旁注 + 联系：房间里唯一的东西是一台 Macintosh，正午的太阳照着它和它身后的墙；
-// 屏幕上同一个词的两种排法（Monaco 等宽 / Hoefler Text 按比例），每个字母落在它占的格子里。
+// 屏幕上同一个词的两种排法（Consolas 等宽 / Palatino Linotype 按比例），每个字母落在它占的格子里。
 // 地板上的生命线：一条蓝线从 1972（书法课）连到 1984。视觉中心：屏幕上的两个 minimum。
 const { sun, place, lifeline, linksBefore, marks, leader, cells } = require('../parts');
 
@@ -13,7 +13,7 @@ module.exports = {
 （单击 2）他在斯坦福说：如果我当年没有旁听那门书法课，Mac 就不会有多种字体，也不会有按比例的字距；而 Windows 只是抄了 Mac，所以很可能所有的个人电脑都不会有。
 （单击 3）地板上，一条蓝线从 1972 年连到 1984 年。十年前那门“没用的”课，在这里第一次被连上了。
 口头补充：屏幕上的窗口和按钮是圆角的，也是他坚持的。他拉着工程师 Bill Atkinson 在街上走，指给他看：“圆角矩形到处都是！”
-来源：[1] 斯坦福演讲，2005；[3]；[14] folklore.org。屏幕里的两行字是示意：Monaco 是 1984 年 Mac 的等宽字体，下一行用 Hoefler Text。`,
+来源：[1] 斯坦福演讲，2005；[3]；[14] folklore.org。屏幕里的两行字是示意：上一行用等宽字体 Consolas，下一行用按比例的 Palatino Linotype。`,
   build(k) {
     k.light({ cx: 6.8, cy: 3.1, r: 3.4, strength: 0.55 });
     sun(k);
@@ -26,7 +26,7 @@ module.exports = {
     const m = place(k, 'mac');
 
     // the screen: the same word, monospaced and proportional. Each letter sits in the cell it is given:
-    // in Monaco every cell is as wide as an m, in Hoefler Text each letter takes only what it needs.
+    // in Consolas every cell is as wide as an m, in Palatino Linotype each letter takes only what it needs.
     const a = m.active, word = 'minimum';
     const mono = cells(word, 'mono', 26), prop = cells(word, 'roman', 26);
     const wx = a.x + (a.w - mono[mono.length - 1]) / 2;

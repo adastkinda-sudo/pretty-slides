@@ -1,5 +1,6 @@
-// Design tokens — "暗室之光": attention is light finding pattern in a dark, lawless room. Typography: T1 "电影片头" (Songti headlines with wide tracking, Didot for Latin letters, Bodoni 72 for numbers, Gill Sans labels)
-// The example sentence is set as a prompt typed to the model (Menlo), with a prompt mark and a cursor.
+// Design tokens — "暗室之光": attention is light finding pattern in a dark, lawless room. Typography: "电影片头" (SimSun headlines with wide tracking,
+// Palatino Linotype for Latin letters and numbers, Franklin Gothic labels), cross-platform (typography.md).
+// The example sentence is set as a prompt typed to the model (Consolas), with a prompt mark and a cursor.
 // One world for the whole deck: warm charcoal with grain, lit by whatever the page is about. Amber heat is the only color.
 module.exports = {
   name: 'Light in the Dark',
@@ -18,18 +19,16 @@ module.exports = {
     ember: '6B2A16',     // dim heat
     glow: '4A3820',      // the light pool on each page's focus (k.light)
   },
-  target: 'mac', // macOS fonts: shown from a Mac with PowerPoint (typography.md)
   fonts: {
-    head: 'Songti SC',
-    sans: 'Hiragino Sans GB',
-    latin: 'Didot',
-    latinLight: 'Didot',
-    numeral: 'Bodoni 72', // Didot's digits are oldstyle in PowerPoint; Bodoni 72's are lining everywhere
-    label: 'Gill Sans',
-    prompt: 'Menlo', // the example sentence: a prompt typed to the model
-    mono: 'Menlo',
+    head: 'SimSun', // large sizes only: thin strokes go faint when small
+    sans: 'Microsoft YaHei',
+    latin: 'Palatino Linotype',
+    numeral: 'Palatino Linotype', // lining digits
+    label: 'Franklin Gothic Medium',
+    prompt: 'Consolas', // the example sentence: a prompt typed to the model
+    mono: 'Consolas',
   },
-  fontPairs: { 'Songti SC': 'Didot', 'Hiragino Sans GB': 'Gill Sans' }, // family names only
+  fontPairs: { SimSun: 'Palatino Linotype' }, // family names only
   // The room: base + very fine grain + darkened corners. The light itself is a shape (k.light) on each page's focus,
   // so it can glide between pages with Morph.
   backgroundImages: { paper: 'assets/room.jpg' },
@@ -45,7 +44,7 @@ module.exports = {
     word: { font: 'prompt', size: 20, leading: 1.2, color: 'stone' },
     letter: { font: 'latin', size: 64, leading: 1, color: 'ink' },
     number: { font: 'numeral', size: 120, leading: 1, color: 'accent' },
-    math: { font: 'STIX Two Math', size: 22, leading: 1.2, color: 'graphite' },
+    math: { font: 'Cambria Math', size: 22, leading: 1.2, color: 'graphite' },
   },
   chart: { series: ['accent', 'stone'] },
   transition: { type: 'morph', duration: 1400 }, // every page: the light glides to the next focus

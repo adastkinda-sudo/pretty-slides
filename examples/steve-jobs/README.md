@@ -15,7 +15,7 @@ node engine/make.js examples/steve-jobs     # 构建 + QA + 渲染全部 23 页 
 - **每页只放一件东西**：父亲的篱笆、一对字母、Apple I、Apple II、Macintosh、NeXT 立方体、iPod、iPhone。
 - **每件东西按真实尺寸画**：Mac 128K 按 244 × 345 mm，屏幕按 512 × 342 像素；iPhone 按 61 × 115 × 11.6 mm。
 - **画出它怎样工作**：Mac 的屏幕上，同一个词用等宽和按比例两种字距各排一遍；iPod 画出滚轮的三下点击。
-- **两种声音**：墙上写的话用衬线（Songti SC / Hoefler Text），事实、年份、标签用无衬线。
+- **两种声音**：墙上写的话用衬线（宋体 / Palatino Linotype），事实、年份、标签用无衬线。
 
 **太阳是时间。** 窗外的阳光从封面的清晨走到最后一页的黄昏，他的一生是一天。光斑和影子由 `room.py` 按房间的相机、窗和每件物件的真实尺寸算出，物件和它的影子永远对得上。
 
@@ -50,5 +50,4 @@ node engine/make.js examples/steve-jobs     # 构建 + QA + 渲染全部 23 页 
 
 - 渲染图是静态的，看不到 Morph 和页内动效；跨页 Morph 要在 PowerPoint 里放映确认。
 - 阳光是每页一张生成的透明图片，在 PowerPoint 里不能当形状编辑。
-- 字体全部是 macOS 字体（theme 的 `target` 是 `mac`），只适合在装有 PowerPoint 的 Mac 上放映。
 - 物件按公开的产品外形与尺寸原生绘制，不使用任何商标和照片；S11 的签名是程序生成的示意笔迹。

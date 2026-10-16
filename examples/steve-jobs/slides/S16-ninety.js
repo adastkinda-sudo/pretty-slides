@@ -25,8 +25,7 @@ NeXT 的操作系统 NeXTSTEP，后来成了 Mac OS X 的基础；再后来，�
     const life = lifeline(k, { current: '1997', links: linksBefore('S16'), fresh: '1985-1997', freshBuild: 2, linkLabels: { 1985: 'NeXT' } });
     k.line({ x1: x97, y1: c.bottom + 0.08, x2: x97, y2: life.y - 0.1, color: 'seam', weight: 0.5 });
 
-    // the number and the sentence on the wall, in the long light. Hoefler's figures are old-style: the 9 drops below
-    // the line, the 0 stands at x-height; the headline shares the number's baseline (≈ 3.6 in).
+    // the number and the sentence on the wall, in the long light; the headline shares the number's baseline (≈ 3.4 in).
     k.light({ cx: 2.9, cy: 2.9, r: 3.0, strength: 0.4 });
     const n = k.text('90', { style: 'number', x: k.M.x - 0.06, y: 0.8, w: 2.95, nowrap: true, overlap: true, name: 'number' }); // the box's empty top runs under the part marker
     k.text('天，离破产。', { style: 'headline', x: k.M.x + 3.0, y: 2.74, w: 4.2, nowrap: true });

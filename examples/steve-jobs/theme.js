@@ -21,18 +21,17 @@ module.exports = {
     // what is shown on a screen (Mac, iPhone): its paper, its ink, the hairlines that measure it
     screen: 'F6F5EF', screenInk: '1E1D1B', screenRule: 'A7A298',
   },
-  target: 'mac', // macOS fonts: shown from a Mac with PowerPoint (typography.md)
   fonts: {
-    serif: 'Songti SC',        // titles: the room's voice
-    sans: 'Hiragino Sans GB',       // facts, labels
-    latin: 'Helvetica Neue',
-    latinMedium: 'Helvetica Neue Medium',
-    roman: 'Hoefler Text',     // his name; his words in the original (Apple's own serif, 1991)
-    italic: 'Hoefler Text',
-    mono: 'Monaco',            // the 1984 Macintosh's monospaced face
-    symbol: 'Lucida Grande',   // arrows on the Alto screen: Helvetica Neue has none
+    serif: 'SimSun',              // titles: the room's voice
+    sans: 'Microsoft YaHei',      // facts, labels
+    latin: 'Arial',
+    latinMedium: 'Arial',
+    roman: 'Palatino Linotype',   // his name; his words in the original (Hermann Zapf, a calligrapher, drew Palatino)
+    italic: 'Palatino Linotype',
+    mono: 'Consolas',
+    symbol: 'Segoe UI Symbol',    // arrows on the Alto screen
   },
-  fontPairs: { 'Hiragino Sans GB': 'Helvetica Neue', 'Songti SC': 'Hoefler Text' },
+  fontPairs: { 'Microsoft YaHei': 'Arial', SimSun: 'Palatino Linotype' },
   backgroundImages: { paper: 'assets/room.jpg' },
   grid: { margin: { x: 0.9, top: 0.7, bottom: 0.55 }, cols: 12, gutter: 0.22 },
   type: {

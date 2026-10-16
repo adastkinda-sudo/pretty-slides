@@ -4,7 +4,7 @@
 // wheel, ringed by its four buttons (MENU on top, previous and next at the sides, play/pause below) and with the select
 // button in its centre. No logo (the first iPod's front carries none).
 // The screen shows the main menu of iPod software 1.x as an illustration (示意): the real one was set in Chicago, the
-// 1984 Mac's system face, which no current Mac has; Helvetica Neue stands in.
+// 1984 Mac's system face, which no current Mac has; Arial stands in.
 // Morph: the body parts carry the same names as objects/iphone.js — 'obj-pocket' (body), -side, -bezel, -glass (the
 // white front → the black glass), -screen, -button (select button → Home button), -glare — so the iPod becomes the
 // iPhone (S19 → S20). The wheel, its buttons and the screen's menu have their own names and fade out.

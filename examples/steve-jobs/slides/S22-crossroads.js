@@ -1,5 +1,5 @@
-// S22 — 交叉：黄昏，很低、很长的橙色光。房间里站着一根立杆，杆顶两块成直角交叉的街牌：Technology（Helvetica Neue）
-// 与 Liberal Arts（Hoefler Text）——这套演示的两种声音，在同一个地方交叉。光落在两块牌上，它们的影子投在右边的墙上。
+// S22 — 交叉：黄昏，很低、很长的橙色光。房间里站着一根立杆，杆顶两块成直角交叉的街牌：Technology（Arial）
+// 与 Liberal Arts（Palatino Linotype）——这套演示的两种声音，在同一个地方交叉。光落在两块牌上，它们的影子投在右边的墙上。
 // 左边墙上：一句话、他的话，最后一行是他复杂的一面。视觉中心：光里的两块牌交叉的地方。Morph → S23（拉远成全景）。
 const { sun, place, lifeline, linksBefore, marks } = require('../parts');
 

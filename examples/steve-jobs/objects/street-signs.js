@@ -4,7 +4,7 @@
 // (a street post is ~3 m; here the blades are what matters, so the post below them is 0.75 m).
 // Drawn in the room's true perspective (parts.project), turned so that both blades are seen: "turn" is the angle of the
 // Technology blade from the wall. The lettering is the fonts' own outlines (street-signs.glyphs.json, extracted with
-// fontTools from Helvetica Neue Medium and Hoefler Text, with their kerning) projected onto each blade, so it
+// fontTools from Arial and Palatino Linotype, with their kerning) projected onto each blade, so it
 // foreshortens as a real sign does. That makes the two words shapes, not editable text — like the sign itself.
 // room.py only knows boxes standing on the floor: it casts the post's shadow (real = the post). The blades and clamps
 // throw their own shadows here, from the page's sun (at.sun: direction and window), clipped to the patch of light.

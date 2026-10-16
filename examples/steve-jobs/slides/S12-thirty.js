@@ -19,9 +19,8 @@ module.exports = {
     marks(k, { part: '二　车库', date: '1985' });
     lifeline(k, { current: '1985', until: '1985', links: linksBefore('S12') });
 
-    // Hoefler Text's figures are old-style: the 3 drops below the line, the 0 stands at x-height. The headline's
-    // second line shares the number's baseline (≈ 3.5 in).
-    const n = k.text('30', { style: 'number', x: k.M.x - 0.06, y: 0.7, w: 2.95, nowrap: true, name: 'number' });
+    // The headline's second line shares the number's baseline (≈ 3.4 in).
+    const n = k.text('30', { style: 'number', x: k.M.x - 0.06, y: 0.8, w: 2.95, nowrap: true, name: 'number' });
     k.text('岁，被自己创办的\n公司赶了出去。', { style: 'headline', size: 36, x: k.M.x + 3.05, y: 2.09, w: 4.6 });
     const q = k.text('我成年后整个生活的重心，不见了。', { style: 'voice', size: 20, x: k.M.x + 3.05, y: 3.9, w: 5.2, nowrap: true, build: 1 });
     k.text('斯坦福大学毕业典礼，2005', { style: 'caption', x: q.x, y: q.y + q.estH + 0.1, w: 3, nowrap: true, build: 1 });
