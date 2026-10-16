@@ -101,7 +101,7 @@ function mixHex(a, b, t) {
   return p.map((v, i) => Math.round(v + (q[i] - v) * t).toString(16).padStart(2, '0')).join('').toUpperCase();
 }
 
-async function postProcess(buffer, { transitions, fontPairs, builds = [], lights = [] }) {
+async function postProcess(buffer, { transitions, fontPairs, eastAsian, builds = [], lights = [] }) {
   const zip = await JSZip.loadAsync(buffer);
   for (let i = 0; i < transitions.length; i++) {
     const file = `ppt/slides/slide${i + 1}.xml`;
@@ -111,6 +111,7 @@ async function postProcess(buffer, { transitions, fontPairs, builds = [], lights
         xml = xml.split(`<a:latin typeface="${cjk}"`).join(`<a:latin typeface="${latin}"`);
       }
     }
+    if (eastAsian) xml = eastAsian(xml);
     xml = singlePPr(xml);
     const tx = transitionXml(transitions[i]);
     if (tx) xml = xml.replace('</p:clrMapOvr>', `</p:clrMapOvr>${tx}`);

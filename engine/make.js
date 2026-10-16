@@ -17,6 +17,7 @@ const { check } = require('./lib/qa');
 const { postProcess } = require('./lib/post');
 const { estimate } = require('./lib/timing');
 const { checkText } = require('./lib/textcheck');
+const { fontIssues, chineseFamilies, cjkFallback, fixEastAsian } = require('./lib/fonts');
 
 function args() {
   const a = process.argv.slice(2);
@@ -34,21 +35,6 @@ function args() {
 }
 
 function fresh(mod) { delete require.cache[require.resolve(mod)]; return require(mod); }
-
-// Fonts named in the theme but not installed get silently substituted — the most common way a deck loses its look.
-function missingFonts(theme) {
-  let list;
-  try { list = execFileSync('fc-list', [':', 'family', 'fullname'], { encoding: 'utf8' }); } catch { return []; }
-  const names = new Set();
-  for (const line of list.split('\n')) {
-    const [fam, full] = line.split(':fullname=');
-    [...(fam || '').split(','), ...(full || '').split(',')].forEach((n) => n && names.add(n.replace(/\\/g, '').trim()));
-  }
-  const has = (f) => names.has(f) || names.has(`${f} Regular`);
-  const wanted = new Set([...Object.values(theme.fonts || {}), ...Object.values(theme.fontPairs || {})]);
-  Object.values(theme.type || {}).forEach((t) => { if (t.font && !theme.fonts?.[t.font]) wanted.add(t.font); });
-  return [...wanted].filter((f) => !has(f));
-}
 
 function findSlideFile(dir, id) {
   const sd = path.join(dir, 'slides');
@@ -93,22 +79,20 @@ async function build(opt) {
   }
 
   const raw = await pptx.write({ outputType: 'nodebuffer' });
-  const buf = await postProcess(raw, { transitions, fontPairs: theme.fontPairs, builds, lights });
+  const chinese = chineseFamilies();
+  const fallback = cjkFallback(theme, chinese);
+  const eastAsian = (xml) => fixEastAsian(xml, chinese, fallback);
+  const buf = await postProcess(raw, { transitions, fontPairs: theme.fontPairs, eastAsian, builds, lights });
   const outDir = path.join(opt.dir, 'out');
   fs.mkdirSync(outDir, { recursive: true });
   const pptxPath = path.join(outDir, `${name}.pptx`);
   fs.writeFileSync(pptxPath, buf);
   fs.writeFileSync(path.join(outDir, 'manifest.json'), JSON.stringify(manifest, null, 2));
-  // CJK faces must be named by family only ('PingFang SC'); weight comes from bold: true.
-  // Weight-suffixed CJK names ('PingFang SC Light') resolve inconsistently and fall back to another face (often a serif).
-  const cjkSuffixed = (f) => /(PingFang|Songti|Heiti|Hiragino|Kaiti|Yuanti|Lantinghei)/.test(f) && / (Ultralight|Thin|Light|Regular|Medium|Semibold|Bold|Heavy|Black)$/.test(f);
-  const used = [...Object.values(theme.fonts || {}), ...Object.keys(theme.fontPairs || {}), ...Object.values(theme.type || {}).map((t) => t.font)];
-  const badPairs = [...new Set(used.filter((f) => f && cjkSuffixed(f)))];
   const timing = estimate(notes, { target: deck.minutes, rate: deck.speechRate });
   const text = await checkText(opt.dir, buf, manifest, { chrome, notes: notes.map((n) => n.notes) });
   // Leftover placeholders are reported with the slide's QA.
   text.placeholders.forEach((p, i) => { reports[i].hard.push(...p.hard); reports[i].soft.push(...p.soft); });
-  return { name, pptxPath, manifest, reports, missing: missingFonts(theme), badPairs, timing, text };
+  return { name, pptxPath, manifest, reports, fonts: fontIssues(theme), timing, text };
 }
 
 function render(opt, { name, pptxPath, manifest }) {
@@ -166,13 +150,18 @@ function contactArgs(manifest, rDir, out) {
   const res = await build(opt);
   console.log(`✓ built ${path.relative(process.cwd(), res.pptxPath)} (${res.manifest.length} slides)`);
   let hardCount = 0;
-  if (res.badPairs.length) {
-    hardCount += res.badPairs.length;
-    console.log(`\n中文字体不能带字重后缀（会被渲染成别的字体）: ${res.badPairs.join(', ')} — 只写家族名（如 'PingFang SC'），字重用 bold: true`);
+  const f = res.fonts;
+  if (f.suffixed.length) {
+    hardCount += f.suffixed.length;
+    console.log(`\n中文字体不能带字重后缀（会被渲染成别的字体）: ${f.suffixed.join(', ')} — 只写家族名（如 'Hiragino Sans GB'），字重用 bold: true`);
   }
-  if (res.missing.length) {
-    hardCount += res.missing.length;
-    console.log(`\n字体未安装（会被替换）: ${res.missing.join(', ')}`);
+  if (f.missing.length) {
+    hardCount += f.missing.length;
+    console.log(`\n字体未安装（会被替换）: ${f.missing.join(', ')}`);
+  }
+  if (f.pptUnavailable.length) {
+    hardCount += f.pptUnavailable.length;
+    console.log(`\nPowerPoint 用不了这些字体（预览里正常，PowerPoint 会换成别的字体）: ${f.pptUnavailable.join(', ')} — 中文无衬线用 'Hiragino Sans GB'`);
   }
   for (const r of res.reports) {
     if (opt.only && !opt.only.includes(r.id)) continue;
