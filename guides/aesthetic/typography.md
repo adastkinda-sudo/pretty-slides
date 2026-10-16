@@ -19,7 +19,7 @@ pptx 不嵌入字体。**设计文稿里写的字体，必须在放映的电脑�
 
 ### 跨平台字体
 
-所有 Windows 10/11 都自带，Mac 版 PowerPoint 也有（macOS 自带，或装在 PowerPoint 里），不需要联网或订阅 Microsoft 365。每一种都在 Mac 版 PowerPoint 16.114 上验证过常规体和粗体；Windows 一侧依据微软公布的 Windows 11 字体列表。
+所有 Windows 10/11 都自带，Mac 版 PowerPoint 也有（macOS 自带，或装在 PowerPoint 里），不需要联网或订阅 Microsoft 365。每一种都在 Mac 版 PowerPoint 16.114 上验证过常规体和粗体；Windows 一侧依据微软公布的 Windows 11 字体列表。每种字体的样子和几组搭配，见 `examples/fonts/` 的样本（它也是在 Windows 上实测用的文件）。
 
 | 角色 | 字体（fontFace 写法） | 气质与用法 |
 |---|---|---|
@@ -63,14 +63,15 @@ LibreOffice 看不到 PowerPoint 自带的字体（微软雅黑、Calibri 等）
 
 ### 搭配示例（起点，不是菜单。字体同样应该服务于主题：讲古籍可以用宋体和楷体，讲工程可以用等宽字体）
 
-跨平台：
+跨平台（`examples/fonts/` 的 S03–S07 是这几组的样本页）：
 
 | 方向 | 标题 | 正文 | 西文与数字 |
 |---|---|---|---|
 | 现代清晰 | Microsoft YaHei Light（大字号）/ Microsoft YaHei 粗体 | Microsoft YaHei | Calibri / Calibri Light |
 | 人文编辑 | SimSun（大字号） | Microsoft YaHei | Palatino Linotype |
 | 学术严谨 | Microsoft YaHei 粗体 | Microsoft YaHei | Cambria + Cambria Math |
-| 精确技术 | Microsoft YaHei | Microsoft YaHei | Consolas + Franklin Gothic Medium（数字） |
+| 精确技术 | Microsoft YaHei 粗体 | Microsoft YaHei | Consolas + Franklin Gothic Medium（数字） |
+| 叙事引文（中文版 Windows） | KaiTi | DengXian | Georgia（旧式数字） |
 
 只在自己的 Mac 上放映：
 

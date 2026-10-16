@@ -73,5 +73,6 @@ templates/                立项、设计文稿、deck 骨架模板
 engine/                   制作引擎（pptxgenjs + 后处理 + QA + 渲染）
 examples/attention/       引擎自测与质量基准示例（不是风格模板）
 examples/steve-jobs/      完整流水线示例：23 页、物件与阳光（不是风格模板）
+examples/fonts/           跨平台字体样本与搭配；也用于在 Windows 上实测
 projects/<slug>/          每个演示一个目录（不进本仓库的 git）
 ```
