@@ -20,14 +20,14 @@ module.exports = {
   },
   fonts: {
     head: 'Songti SC',
-    sans: 'PingFang SC',
+    sans: 'Hiragino Sans GB',
     latin: 'Didot',
     latinLight: 'Didot',
     label: 'Gill Sans',
     prompt: 'Menlo', // the example sentence: a prompt typed to the model
     mono: 'Menlo',
   },
-  fontPairs: { 'Songti SC': 'Didot', 'PingFang SC': 'Gill Sans' }, // family names only
+  fontPairs: { 'Songti SC': 'Didot', 'Hiragino Sans GB': 'Gill Sans' }, // family names only
   // The room: base + very fine grain + darkened corners. The light itself is a shape (k.light) on each page's focus,
   // so it can glide between pages with Morph.
   backgroundImages: { paper: 'assets/room.jpg' },

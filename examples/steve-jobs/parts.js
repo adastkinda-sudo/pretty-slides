@@ -184,7 +184,7 @@ function lifeline(k, { current, links = [], fresh = [], freshBuild, delay = 0, s
     else if (i < ci) k.dot({ cx, cy: y, r: 0.035, fill: 'stone', name });
     else k.dot({ cx, cy: y, r: 0.035, fill: 'paperDeep', line: 'seam', lineW: 0.75, name });
   });
-  // year labels under the line: the year in Helvetica, what happened in PingFang
+  // year labels under the line: the year in Helvetica, what happened in the sans face (Hiragino Sans GB)
   const tag = (id, what, color, whatColor = color, build) => {
     const runs = [{ text: id, style: 'year', color }];
     if (what) runs.push({ text: `　${what}`, style: 'label', tracking: 0, color: whatColor });
@@ -264,7 +264,7 @@ function leader(k, { from, to, color = 'seam', dot = 'stone', build }) {
 }
 
 // Dimension line (engineering drawing): a hairline with end ticks. Horizontal (x1 → x2 at y) or vertical (y1 → y2 at x).
-// style: 'year' (Helvetica, for figures and units: "1 ft") or 'label' (PingFang, for a Chinese label: "九年").
+// style: 'year' (Helvetica, for figures and units: "1 ft") or 'label' (Hiragino Sans GB, for a Chinese label: "九年").
 function dim(k, { x1, x2, y, y1, y2, x, label, color = 'stone', side = 'below', build, style = 'year' }) {
   const ls = style === 'year' ? { style } : { style, tracking: 0 };
   const t = 0.06;

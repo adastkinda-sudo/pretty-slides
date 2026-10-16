@@ -18,13 +18,13 @@ module.exports = {
   },
   fonts: {
     serif: 'Songti SC',
-    sans: 'PingFang SC',
+    sans: 'Hiragino Sans GB',
     latin: 'Helvetica Neue',
     latinLight: 'Helvetica Neue Light',
     mono: 'Menlo',
   },
   // Latin glyphs inside runs set in the key font are rendered with the value font.
-  fontPairs: { 'PingFang SC': 'Helvetica Neue' }, // regular weight only — see typography.md
+  fontPairs: { 'Hiragino Sans GB': 'Helvetica Neue' }, // regular weight only — see typography.md
   grid: { margin: { x: 0.85, top: 0.75, bottom: 0.6 }, cols: 12, gutter: 0.22 },
   type: {
     display: { font: 'serif', size: 66, leading: 1.12, tracking: 0, color: 'ink' },

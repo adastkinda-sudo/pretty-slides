@@ -23,14 +23,14 @@ module.exports = {
   },
   fonts: {
     serif: 'Songti SC',        // titles: the room's voice
-    sans: 'PingFang SC',       // facts, labels
+    sans: 'Hiragino Sans GB',       // facts, labels
     latin: 'Helvetica Neue',
     latinMedium: 'Helvetica Neue Medium',
     roman: 'Hoefler Text',     // his name; his words in the original (Apple's own serif, 1991)
     italic: 'Hoefler Text',
     mono: 'Monaco',            // the 1984 Macintosh's monospaced face
   },
-  fontPairs: { 'PingFang SC': 'Helvetica Neue', 'Songti SC': 'Hoefler Text' },
+  fontPairs: { 'Hiragino Sans GB': 'Helvetica Neue', 'Songti SC': 'Hoefler Text' },
   backgroundImages: { paper: 'assets/room.jpg' },
   grid: { margin: { x: 0.9, top: 0.7, bottom: 0.55 }, cols: 12, gutter: 0.22 },
   type: {

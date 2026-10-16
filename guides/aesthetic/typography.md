@@ -6,7 +6,9 @@
 
 ## 1. 字体：只用真实存在的
 
-pptx 不嵌入字体。**设计文稿里写的字体，必须在播放的电脑上存在。** 否则 PowerPoint 会悄悄替换成别的字体，审美立刻崩掉。`make.js` 会检查本机是否安装了主题里的字体。
+pptx 不嵌入字体。**设计文稿里写的字体，必须在播放的电脑上存在。** 否则 PowerPoint 会悄悄替换成别的字体，审美立刻崩掉。`make.js` 会检查本机是否安装了主题里的字体，以及 PowerPoint 能不能用它。
+
+**不要用苹方（`PingFang SC`）。** 它装在 Mac 上，LibreOffice 预览里也显示正常，但 PowerPoint for Mac 不用它，会换成微软正黑体（中文标点也随之变成居中的繁体样式）。预览看不出这个问题，`make.js` 会把它判为硬问题。中文无衬线用冬青黑体（`Hiragino Sans GB`）。
 
 先在 `design.md` 里确定播放环境：
 
@@ -15,11 +17,11 @@ pptx 不嵌入字体。**设计文稿里写的字体，必须在播放的电脑�
 
 ### macOS 上已验证可用的字体
 
-**中文字体只写家族名**（`PingFang SC`、`Songti SC`），字重用 `bold: true`。`PingFang SC Light` 这类带字重后缀的中文字体名解析不稳定，会被渲染成别的字体（常常是宋体），`make.js` 会把它判为硬问题。西文字体的字重名（`Helvetica Neue Light`）可以正常使用。
+**中文字体只写家族名**（`Hiragino Sans GB`、`Songti SC`），字重用 `bold: true`。`Hiragino Sans GB W6` 这类带字重后缀的中文字体名解析不稳定，会被渲染成别的字体（常常是宋体），`make.js` 会把它判为硬问题。西文字体的字重名（`Helvetica Neue Light`）可以正常使用。
 
 | 角色 | 字体（fontFace 写法） | 气质 |
 |---|---|---|
-| 中文无衬线 | `PingFang SC`（粗体：`bold: true`） | 现代、干净；中文正文的默认选择 |
+| 中文无衬线 | `Hiragino Sans GB`（冬青黑体；粗体：`bold: true`） | 现代、干净；中文正文的默认选择 |
 | 中文衬线 | `Songti SC`（粗体：`bold: true`） | 编辑感、人文、学术；大标题极佳 |
 | 中文楷体 | `STKaiti` / `Kaiti SC` | 引文、手记；只在少数页面用 |
 | 英文无衬线 | `Helvetica Neue Light` / `Helvetica Neue` / `Helvetica Neue Medium` | 瑞士风格，中性 |
@@ -36,11 +38,11 @@ pptx 不嵌入字体。**设计文稿里写的字体，必须在播放的电脑�
 
 | 方向 | 标题 | 正文 | 西文与数字 |
 |---|---|---|---|
-| 现代编辑 | Songti SC | PingFang SC | Helvetica Neue |
-| 瑞士极简 | PingFang SC（粗体） | PingFang SC | Helvetica Neue |
-| 人文学术 | Songti SC | PingFang SC | Baskerville / Charter |
-| 精确技术 | PingFang SC | PingFang SC | Helvetica Neue + Menlo |
-| 电影片头（暗场） | Songti SC，字距 +5–8% | PingFang SC | Didot（大字号、数字、符号）+ Gill Sans（小字、标签） |
+| 现代编辑 | Songti SC | Hiragino Sans GB | Helvetica Neue |
+| 瑞士极简 | Hiragino Sans GB（粗体） | Hiragino Sans GB | Helvetica Neue |
+| 人文学术 | Songti SC | Hiragino Sans GB | Baskerville / Charter |
+| 精确技术 | Hiragino Sans GB | Hiragino Sans GB | Helvetica Neue + Menlo |
+| 电影片头（暗场） | Songti SC，字距 +5–8% | Hiragino Sans GB | Didot（大字号、数字、符号）+ Gill Sans（小字、标签） |
 
 一套演示通常只用 **1–2 个字体家族**，再加一两个有明确职责的点缀字体（例如引用原文用的斜体）。
 
@@ -50,7 +52,9 @@ pptx 不嵌入字体。**设计文稿里写的字体，必须在播放的电脑�
 
 ### 中西文混排
 
-theme 中的 `fontPairs` 可以让中文字体里的西文字符改用另一个西文字体渲染，例如 `{ 'PingFang SC': 'Helvetica Neue' }`。苹方自带的西文已经不错，配对是可选项。
+theme 中的 `fontPairs` 可以让中文字体里的西文字符改用另一个西文字体渲染，例如 `{ 'Hiragino Sans GB': 'Helvetica Neue' }`。冬青黑体自带的西文可以直接用，配对是可选项。
+
+反过来，中文写在西文字体的文字框里（例如 Gill Sans 标签里的“按内容检索”），`make.js` 会把这段中文的字体设成主题的中文无衬线（`fonts.sans`），也可以用 theme 的 `cjkFallback` 另外指定。
 
 配对的键同样只写中文字体的家族名。
 
