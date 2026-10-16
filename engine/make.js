@@ -18,6 +18,7 @@ const { postProcess } = require('./lib/post');
 const { estimate } = require('./lib/timing');
 const { checkText } = require('./lib/textcheck');
 const { fontIssues, chineseFamilies, cjkFallback, fixEastAsian } = require('./lib/fonts');
+const { glyphReports } = require('./lib/glyphs');
 
 function args() {
   const a = process.argv.slice(2);
@@ -92,6 +93,8 @@ async function build(opt) {
   const text = await checkText(opt.dir, buf, manifest, { chrome, notes: notes.map((n) => n.notes) });
   // Leftover placeholders are reported with the slide's QA.
   text.placeholders.forEach((p, i) => { reports[i].hard.push(...p.hard); reports[i].soft.push(...p.soft); });
+  // So are characters the run's font does not have.
+  (await glyphReports(buf, manifest)).forEach((g, i) => { reports[i].hard.push(...g.hard); reports[i].soft.push(...g.soft); });
   return { name, pptxPath, manifest, reports, fonts: fontIssues(theme), timing, text };
 }
 
