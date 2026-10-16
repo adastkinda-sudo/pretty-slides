@@ -65,6 +65,7 @@
 | lead | | | | | |
 | body | | | | | |
 | label | | | | | |
+| quote | | | | | |
 | caption | | | | | |
 | number | | | | | |
 
