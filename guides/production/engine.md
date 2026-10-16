@@ -119,9 +119,10 @@ module.exports = {
 module.exports = {
   size: { w: 13.333, h: 7.5 }, lang: 'zh-CN', background: 'paper',
   colors: { paper, paperDeep, ink, graphite, stone, hairline, accent, glow, ... }, // glow：k.light 的光色
-  fonts: { serif: 'Songti SC', sans: 'Hiragino Sans GB', ... },     // 角色名 → 真实字体名（不用苹方，见 typography.md）
-  fontPairs: { 'Hiragino Sans GB': 'Helvetica Neue' },               // 可选：中文字体里的西文改用某字体
-  cjkFallback: 'Hiragino Sans GB',                                   // 可选：西文字体里的中文用哪个字体（默认 fonts.sans）
+  target: 'cross-platform',                                          // 默认；只在自己的 Mac 上放映时写 'mac'（见 typography.md）
+  fonts: { serif: 'SimSun', sans: 'Microsoft YaHei', latin: 'Palatino Linotype', ... }, // 角色名 → 真实字体名，只用交付目标允许的字体
+  fontPairs: { SimSun: 'Palatino Linotype' },                        // 可选：中文字体里的西文改用某字体
+  cjkFallback: 'Microsoft YaHei',                                    // 可选：西文字体里的中文用哪个字体（默认 fonts.sans）
   backgroundImages: { paper: 'assets/grain-paper.jpg' },             // 可选：某个背景色用纹理图（node engine/texture.js 生成）
   grid: { margin: { x: 0.85, top: 0.75, bottom: 0.6 }, cols: 12, gutter: 0.22 },
   type: { display: { font: 'serif', size: 66, leading: 1.12, tracking: 0, color: 'ink' }, ... },
