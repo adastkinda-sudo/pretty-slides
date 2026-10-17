@@ -449,10 +449,12 @@ def sunlight(pid, dpi=150):
         ao = ndimage.gaussian_filter(contact(boxes, wall, xw, z), 0.01 * dpi)
         # light where the sun falls; elsewhere the room's dimming (ambient) plus the contact shadows
         a_dim = sun.get('ambient', 0) * (1 - m) + ao
-        net = a_sun - a_dim
-        alpha = np.clip(np.abs(net), 0, 1)
-        color = np.where((net >= 0)[..., None], rgb(sun['color']), rgb(COL['shade']))
-        rgba = np.dstack([color, alpha[..., None] * 255]).astype(np.uint8)
+        # Two layers flattened into one png: the light on the wall, the dimming over it (Porter-Duff "over"). In the
+        # penumbra both are partial; a single colour per pixel would leave a seam of bare wall where they cross.
+        a_l, a_d = np.clip(a_sun, 0, 1)[..., None], np.clip(a_dim, 0, 1)[..., None]
+        alpha = a_d + a_l * (1 - a_d)
+        color = (rgb(COL['shade']) * a_d + rgb(sun['color']) * a_l * (1 - a_d)) / np.maximum(alpha, 1e-6)
+        rgba = np.dstack([np.round(color), alpha * 255]).astype(np.uint8)
         if sun.get('ambient', 0) > 0:   # the dimming covers the whole room: keep the full canvas
             y0 = x0 = 0
         else:
